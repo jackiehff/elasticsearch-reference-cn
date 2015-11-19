@@ -12,4 +12,5 @@
 * cat APIs
 * Cluster APIs
 * Query DSL
+* Mapping
 
