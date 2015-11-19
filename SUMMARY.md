@@ -10,4 +10,5 @@
 * Aggregations
 * Indices APIs
 * cat APIs
+* Cluster APIs
 
