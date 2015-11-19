@@ -1,5 +1,6 @@
 # Summary
 
+* [Introduction](README.md)
 * Getting Started
 * Setup
 * Breaking changes
@@ -8,4 +9,5 @@
 * Search APIs
 * Aggregations
 * Indices APIs
+* cat APIs
 
