@@ -13,4 +13,5 @@
 * Cluster APIs
 * Query DSL
 * Mapping
+* Analysis
 
