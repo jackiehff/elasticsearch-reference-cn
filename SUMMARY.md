@@ -17,4 +17,5 @@
 * Modules
 * Index Modules
 * Testing
+* Glossary of terms
 
