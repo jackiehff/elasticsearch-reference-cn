@@ -14,4 +14,5 @@
 * Query DSL
 * Mapping
 * Analysis
+* Modules
 
