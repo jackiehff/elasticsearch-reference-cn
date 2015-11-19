@@ -7,4 +7,5 @@
 * Document APIs
 * Search APIs
 * Aggregations
+* Indices APIs
 
