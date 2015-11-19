@@ -4,4 +4,5 @@
 * Setup
 * Breaking changes
 * API Conventions
+* Document APIs
 
