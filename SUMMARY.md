@@ -11,4 +11,5 @@
 * Indices APIs
 * cat APIs
 * Cluster APIs
+* Query DSL
 
