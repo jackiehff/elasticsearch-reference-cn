@@ -1,7 +1,7 @@
 # Summary
 
 # [Introduction](README.md)
-# Getting Started
+# [Getting Started](Getting Started.md)
 ## Basic Concepts
 ## Installation
 ## Exploring Your Cluster
