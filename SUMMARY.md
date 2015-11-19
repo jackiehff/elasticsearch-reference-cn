@@ -6,4 +6,5 @@
 * API Conventions
 * Document APIs
 * Search APIs
+* Aggregations
 
