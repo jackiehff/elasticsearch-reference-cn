@@ -5,4 +5,5 @@
 * Breaking changes
 * API Conventions
 * Document APIs
+* Search APIs
 
