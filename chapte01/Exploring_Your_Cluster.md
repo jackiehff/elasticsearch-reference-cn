@@ -28,6 +28,7 @@
 host         ip        heap.percent ram.percent load node.role master name
 mwubuntu1    127.0.1.1            8           4 0.00 d         *      New Goblin</code></pre>
   Here, we can see our one node named "New Goblin", which is the single node that is currently in our cluster.
+
 * * *
 
 # List All Indices
@@ -40,6 +41,7 @@ And the response:
 <pre><code>curl 'localhost:9200/_cat/indices?v'
 health index pri rep docs.count docs.deleted store.size pri.store.size</code></pre>
 Which simply means we have no indices yet in the cluster.
+
 * * *
 
 # Create an Index
@@ -68,3 +70,77 @@ You might also notice that the customer index has a yellow health tagged to it. 
 * * *
 
 # Index and Query a Document
+Let’s now put something into our customer index. Remember previously that in order to index a document, we must tell Elasticsearch which type in the index it should go to.
+
+Let’s index a simple customer document into the customer index, "external" type, with an ID of 1 as follows:
+
+Our JSON document: { "name": "John Doe" }
+
+<pre><code>curl -XPUT 'localhost:9200/customer/external/1?pretty' -d '
+{
+  "name": "John Doe"
+}'</code></pre>
+
+And the response:
+<pre><code>curl -XPUT 'localhost:9200/customer/external/1?pretty' -d '
+{
+  "name": "John Doe"
+}'
+{
+  "_index" : "customer",
+  "_type" : "external",
+  "_id" : "1",
+  "_version" : 1,
+  "created" : true
+}</code></pre>
+
+From the above, we can see that a new customer document was successfully created inside the customer index and the external type. The document also has an internal id of 1 which we specified at index time.
+
+It is important to note that Elasticsearch does not require you to explicitly create an index first before you can index documents into it. In the previous example, Elasticsearch will automatically create the customer index if it didn’t already exist beforehand.
+
+Let’s now retrieve that document that we just indexed:
+<pre><code>curl -XGET 'localhost:9200/customer/external/1?pretty'</code></pre>
+And the response:
+
+<pre><code>curl -XGET 'localhost:9200/customer/external/1?pretty'
+{
+  "_index" : "customer",
+  "_type" : "external",
+  "_id" : "1",
+  "_version" : 1,
+  "found" : true, "_source" : { "name": "John Doe" }
+}</code></pre>
+Nothing out of the ordinary here other than a field, found, stating that we found a document with the requested ID 1 and another field, _source, which returns the full JSON document that we indexed from the previous step.
+
+* * *
+
+# Delete an Index
+
+Now let’s delete the index that we just created and then list all the indexes again:
+
+<pre><code>curl -XDELETE 'localhost:9200/customer?pretty'
+curl 'localhost:9200/_cat/indices?v'</code></pre>
+And the response:
+
+<pre><code>curl -XDELETE 'localhost:9200/customer?pretty'
+{
+  "acknowledged" : true
+}
+curl 'localhost:9200/_cat/indices?v'
+health index pri rep docs.count docs.deleted store.size pri.store.size</code></pre>
+Which means that the index was deleted successfully and we are now back to where we started with nothing in our cluster.
+
+Before we move on, let’s take a closer look again at some of the API commands that we have learned so far:
+
+<pre><code>curl -XPUT 'localhost:9200/customer'
+curl -XPUT 'localhost:9200/customer/external/1' -d '
+{
+  "name": "John Doe"
+}'
+curl 'localhost:9200/customer/external/1'
+curl -XDELETE 'localhost:9200/customer'</code></pre>
+If we study the above commands carefully, we can actually see a pattern of how we access data in Elasticsearch. That pattern can be summarized as follows:
+
+<pre><code>curl -X<REST Verb> <Node>:<Port>/<Index>/<Type>/<ID>
+</code></pre>
+This REST access pattern is pervasive throughout all the API commands that if you can simply remember it, you will have a good head start at mastering Elasticsearch.
