@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>安装 | Introduction</title>
+        <title>安装 | 简单说明</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.5.2">
@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1.2" data-chapter-title="安装" data-filepath="chapte01/Installation.md" data-basepath=".." data-revision="Fri Nov 20 2015 22:00:49 GMT+0800 (CST)">
+    <div class="book" data-level="1.2" data-chapter-title="安装" data-filepath="chapte01/Installation.md" data-basepath=".." data-revision="Sat Nov 21 2015 01:58:05 GMT+0800 (CST)">
     
 
 <div class="book-summary">
@@ -2535,7 +2535,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href="../" >Introduction</a>
+        <a href="../" >简单说明</a>
     </h1>
 </div>
 
@@ -2545,7 +2545,46 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="installation">Installation</h1>
+                        <p>&#x5B89;&#x88C5;Elasticsearch&#x8981;&#x6C42;JDK&#x7684;&#x7248;&#x672C;&#x81F3;&#x5C11;&#x662F;Java 7. &#x7279;&#x522B;&#x662F;&#x5728;&#x7F16;&#x5199;&#x672C;&#x6559;&#x7A0B;&#x65F6;&#xFF0C;&#x63A8;&#x8350;&#x4F7F;&#x7528; Oracle JDK 1.8.0_25&#x7248;&#x672C;. &#x7531;&#x4E8E;Java&#x5728;&#x4E0D;&#x540C;&#x5E73;&#x53F0;&#x4E0A;&#x7684;&#x5B89;&#x88C5;&#x8FC7;&#x7A0B;&#x90FD;&#x4E0D;&#x4E00;&#x6837;&#xFF0C;&#x6240;&#x4EE5;&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x4E0D;&#x518D;&#x8BE6;&#x7EC6;&#x63CF;&#x8FF0;JDK&#x7684;&#x5B89;&#x88C5;&#x7EC6;&#x8282;. &#x53EF;&#x4EE5;&#x5728;Oracle&#x7F51;&#x7AD9;&#x4E0A;&#x627E;&#x5230;Oracle&#x5B98;&#x65B9;&#x63A8;&#x8350;&#x7684;&#x5B89;&#x88C5;&#x6587;&#x6863;. &#x7B80;&#x5355;&#x7684;&#x8BF4;, &#x5728;&#x5B89;&#x88C5;Elasticsearch&#x4E4B;&#x524D;, &#x8BF7;&#x8FD0;&#x884C;&#x5982;&#x4E0B;&#x547D;&#x4EE4;&#x68C0;&#x67E5;&#x4F60;&#x5B89;&#x88C5;&#x7684;Java&#x7248;&#x672C;(&#x5982;&#x679C;&#x9700;&#x8981;&#x7684;&#x8BDD;&#x5C31;&#x76F8;&#x5E94;&#x5730;&#x5B89;&#x88C5;&#x6216;&#x5347;&#x7EA7;):</p>
+<pre><code>java -version
+echo $JAVA_HOME
+</code></pre>
+
+<p>&#x4E00;&#x65E6;Java&#x5B89;&#x88C5;&#x5B8C;&#x6210;, &#x6211;&#x4EEC;&#x5C31;&#x53EF;&#x4EE5;&#x4E0B;&#x8F7D;&#x548C;&#x8FD0;&#x884C;Elasticsearch&#x4E86;. &#x53EF;&#x4EE5;&#x5728;www.elastic.co/downloads&#x4E0A;&#x4E0B;&#x8F7D;&#x6240;&#x6709;&#x7248;&#x672C;&#x7684;&#x4E8C;&#x8FDB;&#x5236;&#x5B89;&#x88C5;&#x6587;&#x4EF6;. &#x5BF9;&#x4E8E;&#x6BCF;&#x4E2A;&#x53D1;&#x5E03;&#x7248;&#x672C;, &#x4F60;&#x90FD;&#x53EF;&#x4EE5;&#x5728; zip &#x6216; tar &#x5F52;&#x6863;&#x6587;&#x4EF6;, &#x6216;&#x8005;  DEB &#x6216; RPM &#x5305;&#x4E4B;&#x95F4;&#x9009;&#x62E9;. &#x4E3A;&#x4E86;&#x7B80;&#x5355;&#x8D77;&#x89C1;&#xFF0C;&#x6211;&#x4EEC;&#x5C31;&#x4F7F;&#x7528;tar&#x6587;&#x4EF6;.</p>
+<p>&#x53EF;&#x4EE5;&#x4F7F;&#x7528;&#x5982;&#x4E0B;&#x65B9;&#x5F0F;&#x4E0B;&#x8F7D;Elasticsearch 2.0.0 tar&#x5305; (Windows&#x7528;&#x6237;&#x9700;&#x8981;&#x4E0B;&#x8F7D;zip&#x5305;):</p>
+<pre><code>curl -L -O https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.0.0/elasticsearch-2.0.0.tar.gz</code></pre>
+
+
+<p>&#x7136;&#x540E;&#x4F7F;&#x7528;&#x5982;&#x4E0B;&#x547D;&#x4EE4;&#x89E3;&#x538B; (Windows&#x7CFB;&#x7EDF;&#x89E3;&#x538B;zip&#x5305;):</p>
+<pre><code>tar -xvf elasticsearch-2.0.0.tar.gz</code></pre>
+
+<p>&#x5B83;&#x4F1A;&#x5728;&#x5F53;&#x524D;&#x76EE;&#x5F55;&#x4E0B;&#x521B;&#x5EFA;&#x4E00;&#x5806;&#x7684;&#x6587;&#x4EF6;&#x548C;&#x6587;&#x4EF6;&#x5939;. &#x63A5;&#x7740;&#x6211;&#x4EEC;&#x8FDB;&#x5165;&#x5230;bin&#x76EE;&#x5F55;&#x4E0B;:</p>
+<pre><code>cd elasticsearch-2.0.0/bin</code></pre>
+
+<p>&#x73B0;&#x5728;&#x6211;&#x4EEC;&#x5C31;&#x53EF;&#x4EE5;&#x542F;&#x52A8;&#x8282;&#x70B9;&#x548C;&#x5355;&#x4E2A;&#x96C6;&#x7FA4; (Windows&#x7528;&#x6237;&#x9700;&#x8981;&#x8FD0;&#x884C; elasticsearch.bat &#x6587;&#x4EF6;):</p>
+<pre><code>./elasticsearch</code></pre>
+
+<p>&#x5982;&#x679C;&#x4E00;&#x5207;&#x987A;&#x5229;&#x7684;&#x8BDD;, &#x4F60;&#x4F1A;&#x770B;&#x5230;&#x7C7B;&#x4F3C;&#x4E0B;&#x9762;&#x7684;&#x4E00;&#x5806;&#x4FE1;&#x606F;:</p>
+<pre><code>./elasticsearch
+[2014-03-13 13:42:17,218][INFO ][node           ] [New Goblin] version[2.0.0], pid[2085], build[5c03844/2014-02-25T15:52:53Z]
+[2014-03-13 13:42:17,219][INFO ][node           ] [New Goblin] initializing ...
+[2014-03-13 13:42:17,223][INFO ][plugins        ] [New Goblin] loaded [], sites []
+[2014-03-13 13:42:19,831][INFO ][node           ] [New Goblin] initialized
+[2014-03-13 13:42:19,832][INFO ][node           ] [New Goblin] starting ...
+[2014-03-13 13:42:19,958][INFO ][transport      ] [New Goblin] bound_address {inet[/0:0:0:0:0:0:0:0:9300]}, publish_address {inet[/192.168.8.112:9300]}
+[2014-03-13 13:42:23,030][INFO ][cluster.service] [New Goblin] new_master [New Goblin][rWMtGj3dQouz2r6ZFL9v4g][mwubuntu1][inet[/192.168.8.112:9300]], reason: zen-disco-join (elected_as_master)
+[2014-03-13 13:42:23,100][INFO ][discovery      ] [New Goblin] elasticsearch/rWMtGj3dQouz2r6ZFL9v4g
+[2014-03-13 13:42:23,125][INFO ][http           ] [New Goblin] bound_address {inet[/0:0:0:0:0:0:0:0:9200]}, publish_address {inet[/192.168.8.112:9200]}
+[2014-03-13 13:42:23,629][INFO ][gateway        ] [New Goblin] recovered [1] indices into cluster_state
+[2014-03-13 13:42:23,630][INFO ][node           ] [New Goblin] started
+</code></pre>
+
+<p>&#x65E0;&#x9700;&#x6DF1;&#x5165;&#x4E86;&#x89E3;, &#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x770B;&#x5230;&#x540D;&#x4E3A; &quot;New Goblin&quot; (&#x5728;&#x4F60;&#x7684;&#x4F8B;&#x5B50;&#x4E2D;&#x5C06;&#x662F;&#x4E0D;&#x540C;&#x7684;&#x6F2B;&#x753B;&#x4EBA;&#x7269;) &#x7684;&#x8282;&#x70B9;&#x5DF2;&#x7ECF;&#x6210;&#x529F;&#x542F;&#x52A8;&#x5E76;&#x9009;&#x4E3E;&#x5979;&#x81EA;&#x5DF1;&#x4E3A;&#x5355;&#x4E00;&#x96C6;&#x7FA4;&#x4E2D;&#x7684;master. &#x6682;&#x65F6;&#x8FD8;&#x4E0D;&#x7528;&#x62C5;&#x5FC3;master&#x662F;&#x4EC0;&#x4E48;&#x610F;&#x601D;. &#x8FD9;&#x91CC;&#x6700;&#x91CD;&#x8981;&#x7684;&#x662F;&#x6211;&#x4EEC;&#x5DF2;&#x7ECF;&#x5728;&#x4E00;&#x4E2A;&#x96C6;&#x7FA4;&#x4E2D;&#x542F;&#x52A8;&#x4E86;&#x4E00;&#x4E2A;&#x8282;&#x70B9;.</p>
+<p>&#x4E4B;&#x524D;&#x63D0;&#x5230;&#x8FC7;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x4FEE;&#x6539;&#x96C6;&#x7FA4;&#x6216;&#x8005;&#x8282;&#x70B9;&#x7684;&#x540D;&#x5B57;. &#x8FD9;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x542F;&#x52A8;Elasticsearch&#x7684;&#x65F6;&#x5019;&#x5728;&#x547D;&#x4EE4;&#x884C;&#x8F93;&#x5165;&#x4EE5;&#x4E0B;&#x547D;&#x4EE4;&#x5B8C;&#x6210;:</p>
+<pre><code>./elasticsearch --cluster.name my_cluster_name --node.name my_node_name
+</code></pre>
+
+<p>&#x540C;&#x65F6;&#x6CE8;&#x610F;&#x6807;&#x8BB0;&#x4E3A;http&#x7684;&#x884C;&#x5E26;&#x6709;&#x8BBF;&#x95EE;&#x8282;&#x70B9;&#x7684;HTTP&#x5730;&#x5740;(192.168.8.112)&#x548C;&#x7AEF;&#x53E3; (9200)&#x4FE1;&#x606F;. Elasticsearch&#x9ED8;&#x8BA4;&#x4F7F;&#x7528;9200 &#x7AEF;&#x53E3;&#x6765;&#x4E3A;&#x5176;REST API&#x63D0;&#x4F9B;&#x8BBF;&#x95EE;. &#x5982;&#x679C;&#x9700;&#x8981;&#x7684;&#x8BDD;&#x8FD9;&#x4E2A;&#x7AEF;&#x53E3;&#x662F;&#x53EF;&#x914D;&#x7F6E;&#x7684;.</p>
 
                     
                     </section>

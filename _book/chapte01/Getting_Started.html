@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>入门 | Introduction</title>
+        <title>入门 | 简单说明</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.5.2">
@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1" data-chapter-title="入门" data-filepath="chapte01/Getting_Started.md" data-basepath=".." data-revision="Fri Nov 20 2015 22:00:49 GMT+0800 (CST)">
+    <div class="book" data-level="1" data-chapter-title="入门" data-filepath="chapte01/Getting_Started.md" data-basepath=".." data-revision="Sat Nov 21 2015 01:58:05 GMT+0800 (CST)">
     
 
 <div class="book-summary">
@@ -2535,7 +2535,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href="../" >Introduction</a>
+        <a href="../" >简单说明</a>
     </h1>
 </div>
 
@@ -2545,7 +2545,15 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="getting-started">Getting Started</h1>
+                        <p>Elasticsearch is a highly scalable open-source full-text search and analytics engine. It allows you to store, search, and analyze big volumes of data quickly and in near real time. It is generally used as the underlying engine/technology that powers applications that have complex search features and requirements.</p>
+<p>Here are a few sample use-cases that Elasticsearch could be used for:</p>
+<ul>
+<li>You run an online web store where you allow your customers to search for products that you sell. In this case, you can use Elasticsearch to store your entire product catalog and inventory and provide search and autocomplete suggestions for them.</li>
+<li>You want to collect log or transaction data and you want to analyze and mine this data to look for trends, statistics, summarizations, or anomalies. In this case, you can use Logstash (part of the Elasticsearch/Logstash/Kibana stack) to collect, aggregate, and parse your data, and then have Logstash feed this data into Elasticsearch. Once the data is in Elasticsearch, you can run searches and aggregations to mine any information that is of interest to you.</li>
+<li>You run a price alerting platform which allows price-savvy customers to specify a rule like &quot;I am interested in buying a specific electronic gadget and I want to be notified if the price of gadget falls below $X from any vendor within the next month&quot;. In this case you can scrape vendor prices, push them into Elasticsearch and use its reverse-search (Percolator) capability to match price movements against customer queries and eventually push the alerts out to the customer once matches are found.</li>
+<li>You have analytics/business-intelligence needs and want to quickly investigate, analyze, visualize, and ask ad-hoc questions on a lot of data (think millions or billions of records). In this case, you can use Elasticsearch to store your data and then use Kibana (part of the Elasticsearch/Logstash/Kibana stack) to build custom dashboards that can visualize aspects of your data that are important to you. Additionally, you can use the Elasticsearch aggregations functionality to perform complex business intelligence queries against your data.</li>
+</ul>
+<p>For the rest of this tutorial, I will guide you through the process of getting Elasticsearch up and running, taking a peek inside it, and performing basic operations like indexing, searching, and modifying your data. At the end of this tutorial, you should have a good idea of what Elasticsearch is, how it works, and hopefully be inspired to see how you can use it to either build sophisticated search applications or to mine intelligence from your data.</p>
 
                     
                     </section>
