@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="2" data-chapter-title="设置" data-filepath="chapte02/Setup.md" data-basepath=".." data-revision="Sat Nov 21 2015 01:58:05 GMT+0800 (CST)">
+    <div class="book" data-level="2" data-chapter-title="设置" data-filepath="chapte02/Setup.md" data-basepath=".." data-revision="Fri Nov 27 2015 03:25:11 GMT+0800 (CST)">
     
 
 <div class="book-summary">
@@ -314,14 +314,29 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="3.1" data-path="chapte03/Breaking_changes_in_2.0.html">
+        <li class="chapter " data-level="3.1" data-path="chapte03/Breaking_changes_in_2.1.html">
+            
+                
+                    <a href="../chapte03/Breaking_changes_in_2.1.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.1.</b>
+                        
+                        2.1版本中的重大变更
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="chapte03/Breaking_changes_in_2.0.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_2.0.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.1.</b>
+                            <b>3.2.</b>
                         
                         2.0版本中的重大变更
                     </a>
@@ -329,14 +344,14 @@
             
         </li>
     
-        <li class="chapter " data-level="3.2" data-path="chapte03/Breaking_changes_in_1.6.html">
+        <li class="chapter " data-level="3.3" data-path="chapte03/Breaking_changes_in_1.6.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_1.6.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.2.</b>
+                            <b>3.3.</b>
                         
                         1.6版本中的重大变更
                     </a>
@@ -344,14 +359,14 @@
             
         </li>
     
-        <li class="chapter " data-level="3.3" data-path="chapte03/Breaking_changes_in_1.4.html">
+        <li class="chapter " data-level="3.4" data-path="chapte03/Breaking_changes_in_1.4.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_1.4.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.3.</b>
+                            <b>3.4.</b>
                         
                         1.4版本中的重大变更
                     </a>
@@ -359,14 +374,14 @@
             
         </li>
     
-        <li class="chapter " data-level="3.4" data-path="chapte03/Breaking_changes_in_1.0.html">
+        <li class="chapter " data-level="3.5" data-path="chapte03/Breaking_changes_in_1.0.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_1.0.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.4.</b>
+                            <b>3.5.</b>
                         
                         1.0版本中的重大变更
                     </a>
@@ -2546,6 +2561,34 @@
                     <section class="normal" id="section-">
                     
                         <h1 id="setup">Setup</h1>
+<p>This section includes information on how to setup elasticsearch and get it running. If you haven&#x2019;t already, download it, and then check the installation docs.</p>
+<p>Note
+Elasticsearch can also be installed from our repositories using apt or yum. See Repositories.</p>
+<p>Supported platformsedit</p>
+<p>The matrix of officially supported operating systems and JVMs is available here: Support Matrix. Elasticsearch is tested on the listed platforms, but it is possible that it will work on other platforms too.</p>
+<p>Installationedit</p>
+<p>After downloading the latest release and extracting it, elasticsearch can be started using:</p>
+<p>$ bin/elasticsearch
+On *nix systems, the command will start the process in the foreground.</p>
+<p>Running as a daemonedit</p>
+<p>To run it in the background, add the -d switch to it:</p>
+<p>$ bin/elasticsearch -d
+PIDedit</p>
+<p>The Elasticsearch process can write its PID to a specified file on startup, making it easy to shut down the process later on:</p>
+<p>$ bin/elasticsearch -d -p pid
+$ kill <code>cat pid</code></p>
+<p>The PID is written to a file called pid.</p>
+<p>The kill command sends a TERM signal to the PID stored in the pid file.</p>
+<p>Note
+The startup scripts provided for Linux and Windows take care of starting and stopping the Elasticsearch process for you.</p>
+<p>*NIX</p>
+<p>There are added features when using the elasticsearch shell script. The first, which was explained earlier, is the ability to easily run the process either in the foreground or the background.</p>
+<p>Another feature is the ability to pass -D or getopt long style configuration parameters directly to the script. When set, all override anything set using either JAVA_OPTS or ES_JAVA_OPTS. For example:</p>
+<p>$ bin/elasticsearch -Des.index.refresh_interval=5s --node.name=my-node
+Java (JVM) versionedit</p>
+<p>Elasticsearch is built using Java, and requires at least Java 8 in order to run. Only Oracle&#x2019;s Java and the OpenJDK are supported. The same JVM version should be used on all Elasticsearch nodes and clients.</p>
+<p>We recommend installing the Java 8 update 20 or later, or Java 7 update 55 or later. Previous versions of Java 7 are known to have bugs that can cause index corruption and data loss. Elasticsearch will refuse to start if a known-bad version of Java is used.</p>
+<p>The version of Java to use can be configured by setting the JAVA_HOME environment variable.</p>
 
                     
                     </section>

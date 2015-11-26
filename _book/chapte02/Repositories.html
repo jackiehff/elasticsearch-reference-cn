@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="2.5" data-chapter-title="仓库" data-filepath="chapte02/Repositories.md" data-basepath=".." data-revision="Sat Nov 21 2015 01:58:05 GMT+0800 (CST)">
+    <div class="book" data-level="2.5" data-chapter-title="仓库" data-filepath="chapte02/Repositories.md" data-basepath=".." data-revision="Fri Nov 27 2015 03:25:11 GMT+0800 (CST)">
     
 
 <div class="book-summary">
@@ -314,14 +314,29 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="3.1" data-path="chapte03/Breaking_changes_in_2.0.html">
+        <li class="chapter " data-level="3.1" data-path="chapte03/Breaking_changes_in_2.1.html">
+            
+                
+                    <a href="../chapte03/Breaking_changes_in_2.1.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.1.</b>
+                        
+                        2.1版本中的重大变更
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="chapte03/Breaking_changes_in_2.0.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_2.0.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.1.</b>
+                            <b>3.2.</b>
                         
                         2.0版本中的重大变更
                     </a>
@@ -329,14 +344,14 @@
             
         </li>
     
-        <li class="chapter " data-level="3.2" data-path="chapte03/Breaking_changes_in_1.6.html">
+        <li class="chapter " data-level="3.3" data-path="chapte03/Breaking_changes_in_1.6.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_1.6.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.2.</b>
+                            <b>3.3.</b>
                         
                         1.6版本中的重大变更
                     </a>
@@ -344,14 +359,14 @@
             
         </li>
     
-        <li class="chapter " data-level="3.3" data-path="chapte03/Breaking_changes_in_1.4.html">
+        <li class="chapter " data-level="3.4" data-path="chapte03/Breaking_changes_in_1.4.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_1.4.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.3.</b>
+                            <b>3.4.</b>
                         
                         1.4版本中的重大变更
                     </a>
@@ -359,14 +374,14 @@
             
         </li>
     
-        <li class="chapter " data-level="3.4" data-path="chapte03/Breaking_changes_in_1.0.html">
+        <li class="chapter " data-level="3.5" data-path="chapte03/Breaking_changes_in_1.0.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_1.0.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.4.</b>
+                            <b>3.5.</b>
                         
                         1.0版本中的重大变更
                     </a>
@@ -2546,6 +2561,79 @@
                     <section class="normal" id="section-">
                     
                         <h1 id="repositories">Repositories</h1>
+<p>Repositoriesedit</p>
+<p>On this page
+APT
+YUM
+Elasticsearch Reference:
+Getting Started
+Setup
+Configuration
+Running as a Service on Linux
+Running as a Service on Windows
+Directory Layout
+Repositories
+Upgrading
+Breaking changes
+API Conventions
+Document APIs
+Search APIs
+Aggregations
+Indices APIs
+cat APIs
+Cluster APIs
+Query DSL
+Mapping
+Analysis
+Modules
+Index Modules
+Testing
+Glossary of terms
+Release Notes
+We also have repositories available for APT and YUM based distributions. Note that we only provide binary packages, but no source packages, as the packages are created as part of the Elasticsearch build.</p>
+<p>We have split the major versions in separate urls to avoid accidental upgrades across major version. For all 2.x releases use 2.x as version number, for 3.x.y use 3.x etc&#x2026;</p>
+<p>We use the PGP key D88E42B4, Elasticsearch Signing Key, with fingerprint</p>
+<p>4609 5ACC 8548 582C 1A26 99A9 D27D 666C D88E 42B4
+to sign all our packages. It is available from <a href="https://pgp.mit.edu" target="_blank">https://pgp.mit.edu</a>.</p>
+<p>APTedit</p>
+<p>Download and install the Public Signing Key:</p>
+<p>wget -qO - <a href="https://packages.elastic.co/GPG-KEY-elasticsearch" target="_blank">https://packages.elastic.co/GPG-KEY-elasticsearch</a> | sudo apt-key add -
+Save the repository definition to /etc/apt/sources.list.d/elasticsearch-2.x.list:</p>
+<p>echo &quot;deb <a href="http://packages.elastic.co/elasticsearch/2.x/debian" target="_blank">http://packages.elastic.co/elasticsearch/2.x/debian</a> stable main&quot; | sudo tee -a /etc/apt/sources.list.d/elasticsearch-2.x.list
+Warning
+Use the echo method described above to add the Elasticsearch repository. Do not use add-apt-repository as it will add a deb-src entry as well, but we do not provide a source package. If you have added the deb-src entry, you will see an error like the following:</p>
+<p>Unable to find expected entry &apos;main/source/Sources&apos; in Release file (Wrong sources.list entry or malformed file)
+Just delete the deb-src entry from the /etc/apt/sources.list file and the installation should work as expected.</p>
+<p>Run apt-get update and the repository is ready for use. You can install it with:</p>
+<p>sudo apt-get update &amp;&amp; sudo apt-get install elasticsearch
+Warning
+If two entries exist for the same Elasticsearch repository, you will see an error like this during apt-get update:</p>
+<p>Duplicate sources.list entry <a href="http://packages.elastic.co/elasticsearch/2.x/debian/" target="_blank">http://packages.elastic.co/elasticsearch/2.x/debian/</a> ...`
+Examine /etc/apt/sources.list.d/elasticsearch-2.x.list for the duplicate entry or locate the duplicate entry amongst the files in /etc/apt/sources.list.d/ and the /etc/apt/sources.list file.</p>
+<p>Configure Elasticsearch to automatically start during bootup. If your distribution is using SysV init, then you will need to run:</p>
+<p>sudo update-rc.d elasticsearch defaults 95 10
+Otherwise if your distribution is using systemd:</p>
+<p>sudo /bin/systemctl daemon-reload
+sudo /bin/systemctl enable elasticsearch.service
+YUMedit</p>
+<p>Download and install the public signing key:</p>
+<p>rpm --import <a href="https://packages.elastic.co/GPG-KEY-elasticsearch" target="_blank">https://packages.elastic.co/GPG-KEY-elasticsearch</a>
+Add the following in your /etc/yum.repos.d/ directory in a file with a .repo suffix, for example elasticsearch.repo</p>
+<p>[elasticsearch-2.x]
+name=Elasticsearch repository for 2.x packages
+baseurl=<a href="http://packages.elastic.co/elasticsearch/2.x/centos" target="_blank">http://packages.elastic.co/elasticsearch/2.x/centos</a>
+gpgcheck=1
+gpgkey=<a href="http://packages.elastic.co/GPG-KEY-elasticsearch" target="_blank">http://packages.elastic.co/GPG-KEY-elasticsearch</a>
+enabled=1
+And your repository is ready for use. You can install it with:</p>
+<p>yum install elasticsearch
+Configure Elasticsearch to automatically start during bootup. If your distribution is using SysV init, then you will need to run:</p>
+<p>Warning
+The repositories do not work with older rpm based distributions that still use RPM v3, like CentOS5.</p>
+<p>chkconfig --add elasticsearch
+Otherwise if your distribution is using systemd:</p>
+<p>sudo /bin/systemctl daemon-reload
+sudo /bin/systemctl enable elasticsearch.service</p>
 
                     
                     </section>

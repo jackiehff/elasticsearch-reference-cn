@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="2.2" data-chapter-title="作为Linux的系统服务运行" data-filepath="chapte02/Running_as_a_Service_on_Linux.md" data-basepath=".." data-revision="Sat Nov 21 2015 01:58:05 GMT+0800 (CST)">
+    <div class="book" data-level="2.2" data-chapter-title="作为Linux的系统服务运行" data-filepath="chapte02/Running_as_a_Service_on_Linux.md" data-basepath=".." data-revision="Fri Nov 27 2015 03:25:11 GMT+0800 (CST)">
     
 
 <div class="book-summary">
@@ -314,14 +314,29 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="3.1" data-path="chapte03/Breaking_changes_in_2.0.html">
+        <li class="chapter " data-level="3.1" data-path="chapte03/Breaking_changes_in_2.1.html">
+            
+                
+                    <a href="../chapte03/Breaking_changes_in_2.1.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.1.</b>
+                        
+                        2.1版本中的重大变更
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="chapte03/Breaking_changes_in_2.0.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_2.0.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.1.</b>
+                            <b>3.2.</b>
                         
                         2.0版本中的重大变更
                     </a>
@@ -329,14 +344,14 @@
             
         </li>
     
-        <li class="chapter " data-level="3.2" data-path="chapte03/Breaking_changes_in_1.6.html">
+        <li class="chapter " data-level="3.3" data-path="chapte03/Breaking_changes_in_1.6.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_1.6.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.2.</b>
+                            <b>3.3.</b>
                         
                         1.6版本中的重大变更
                     </a>
@@ -344,14 +359,14 @@
             
         </li>
     
-        <li class="chapter " data-level="3.3" data-path="chapte03/Breaking_changes_in_1.4.html">
+        <li class="chapter " data-level="3.4" data-path="chapte03/Breaking_changes_in_1.4.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_1.4.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.3.</b>
+                            <b>3.4.</b>
                         
                         1.4版本中的重大变更
                     </a>
@@ -359,14 +374,14 @@
             
         </li>
     
-        <li class="chapter " data-level="3.4" data-path="chapte03/Breaking_changes_in_1.0.html">
+        <li class="chapter " data-level="3.5" data-path="chapte03/Breaking_changes_in_1.0.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_1.0.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.4.</b>
+                            <b>3.5.</b>
                         
                         1.0版本中的重大变更
                     </a>
@@ -2546,6 +2561,90 @@
                     <section class="normal" id="section-">
                     
                         <h1 id="running-as-a-service-on-linux">Running as a Service on Linux</h1>
+<p>Running as a Service on Linuxedit</p>
+<p>On this page
+Linux
+Elasticsearch Reference:
+Getting Started
+Setup
+Configuration
+Running as a Service on Linux
+Running as a Service on Windows
+Directory Layout
+Repositories
+Upgrading
+Breaking changes
+API Conventions
+Document APIs
+Search APIs
+Aggregations
+Indices APIs
+cat APIs
+Cluster APIs
+Query DSL
+Mapping
+Analysis
+Modules
+Index Modules
+Testing
+Glossary of terms
+Release Notes
+In order to run elasticsearch as a service on your operating system, the provided packages try to make it as easy as possible for you to start and stop elasticsearch during reboot and upgrades.</p>
+<p>Linuxedit</p>
+<p>Currently our build automatically creates a debian package and an RPM package, which is available on the download page. The package itself does not have any dependencies, but you have to make sure that you installed a JDK.</p>
+<p>Each package features a configuration file, which allows you to set the following parameters</p>
+<p>ES_USER</p>
+<p>The user to run as, defaults to elasticsearch</p>
+<p>ES_GROUP</p>
+<p>The group to run as, defaults to elasticsearch</p>
+<p>ES_HEAP_SIZE</p>
+<p>The heap size to start with</p>
+<p>ES_HEAP_NEWSIZE</p>
+<p>The size of the new generation heap</p>
+<p>ES_DIRECT_SIZE</p>
+<p>The maximum size of the direct memory</p>
+<p>MAX_OPEN_FILES</p>
+<p>Maximum number of open files, defaults to 65535</p>
+<p>MAX_LOCKED_MEMORY</p>
+<p>Maximum locked memory size. Set to &quot;unlimited&quot; if you use the bootstrap.mlockall option in elasticsearch.yml. You must also set ES_HEAP_SIZE.</p>
+<p>MAX_MAP_COUNT</p>
+<p>Maximum number of memory map areas a process may have. If you use mmapfs as index store type, make sure this is set to a high value. For more information, check the linux kernel documentation about max_map_count. This is set via sysctl before starting elasticsearch. Defaults to 65535</p>
+<p>LOG_DIR</p>
+<p>Log directory, defaults to /var/log/elasticsearch</p>
+<p>DATA_DIR</p>
+<p>Data directory, defaults to /var/lib/elasticsearch</p>
+<p>CONF_DIR</p>
+<p>Configuration file directory (which needs to include elasticsearch.yml and logging.yml files), defaults to /etc/elasticsearch</p>
+<p>ES_JAVA_OPTS</p>
+<p>Any additional java options you may want to apply. This may be useful, if you need to set the node.name property, but do not want to change the elasticsearch.yml configuration file, because it is distributed via a provisioning system like puppet or chef. Example: ES_JAVA_OPTS=&quot;-Des.node.name=search-01&quot;</p>
+<p>RESTART_ON_UPGRADE</p>
+<p>Configure restart on package upgrade, defaults to false. This means you will have to restart your elasticsearch instance after installing a package manually. The reason for this is to ensure, that upgrades in a cluster do not result in a continuous shard reallocation resulting in high network traffic and reducing the response times of your cluster.</p>
+<p>ES_GC_LOG_FILE</p>
+<p>The absolute log file path for creating a garbage collection logfile, which is done by the JVM. Note that this logfile can grow pretty quick and thus is disabled by default.</p>
+<p>Debian/Ubuntuedit</p>
+<p>The debian package ships with everything you need as it uses standard debian tools like update update-rc.d to define the runlevels it runs on. The init script is placed at /etc/init.d/elasticsearch as you would expect it. The configuration file is placed at /etc/default/elasticsearch.</p>
+<p>The debian package does not start up the service by default. The reason for this is to prevent the instance to accidentally join a cluster, without being configured appropriately. After installing using dpkg -i you can use the following commands to ensure, that elasticsearch starts when the system is booted and then start up elasticsearch:</p>
+<p>sudo update-rc.d elasticsearch defaults 95 10
+sudo /etc/init.d/elasticsearch start
+Users running Debian 8 or Ubuntu 14 or later may require configuration of systemd instead of update-rc.d. In those cases, please refer to the the section called &#x201C;Using systemdedit&#x201D; section.</p>
+<p>Installing the oracle JDKedit</p>
+<p>The usual recommendation is to run the Oracle JDK with elasticsearch. However Ubuntu and Debian only ship the OpenJDK due to license issues. You can easily install the oracle installer package though. In case you are missing the add-apt-repository command under Debian GNU/Linux, make sure have at least Debian Jessie and the package python-software-properties installed</p>
+<p>sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install oracle-java8-installer
+java -version
+The last command should verify a successful installation of the Oracle JDK.</p>
+<p>RPM based distributionsedit</p>
+<p>Using chkconfigedit</p>
+<p>Some RPM based distributions are using chkconfig to enable and disable services. The init script is located at /etc/init.d/elasticsearch, where as the configuration file is placed at /etc/sysconfig/elasticsearch. Like the debian package the RPM package is not started by default after installation, you have to do this manually by entering the following commands</p>
+<p>sudo /sbin/chkconfig --add elasticsearch
+sudo service elasticsearch start
+Using systemdedit</p>
+<p>Distributions like Debian Jessie, Ubuntu 14, and many of the SUSE derivitives do not use the chkconfig tool to register services, but rather systemd and its command /bin/systemctl to start and stop services (at least in newer versions, otherwise use the chkconfig commands above). The configuration file is also placed at /etc/sysconfig/elasticsearch if the system is rpm based and /etc/default/elasticsearch if it is deb. After installing the RPM, you have to change the systemd configuration and then start up elasticsearch</p>
+<p>sudo /bin/systemctl daemon-reload
+sudo /bin/systemctl enable elasticsearch.service
+sudo /bin/systemctl start elasticsearch.service
+Also note that changing the MAX_MAP_COUNT setting in /etc/sysconfig/elasticsearch does not have any effect, you will have to change it in /usr/lib/sysctl.d/elasticsearch.conf in order to have it applied at startup.</p>
 
                     
                     </section>

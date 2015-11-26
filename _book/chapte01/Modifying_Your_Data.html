@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1.4" data-chapter-title="修改数据" data-filepath="chapte01/Modifying_Your_Data.md" data-basepath=".." data-revision="Sat Nov 21 2015 01:58:05 GMT+0800 (CST)">
+    <div class="book" data-level="1.4" data-chapter-title="修改数据" data-filepath="chapte01/Modifying_Your_Data.md" data-basepath=".." data-revision="Fri Nov 27 2015 03:25:11 GMT+0800 (CST)">
     
 
 <div class="book-summary">
@@ -314,14 +314,29 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="3.1" data-path="chapte03/Breaking_changes_in_2.0.html">
+        <li class="chapter " data-level="3.1" data-path="chapte03/Breaking_changes_in_2.1.html">
+            
+                
+                    <a href="../chapte03/Breaking_changes_in_2.1.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.1.</b>
+                        
+                        2.1版本中的重大变更
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="chapte03/Breaking_changes_in_2.0.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_2.0.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.1.</b>
+                            <b>3.2.</b>
                         
                         2.0版本中的重大变更
                     </a>
@@ -329,14 +344,14 @@
             
         </li>
     
-        <li class="chapter " data-level="3.2" data-path="chapte03/Breaking_changes_in_1.6.html">
+        <li class="chapter " data-level="3.3" data-path="chapte03/Breaking_changes_in_1.6.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_1.6.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.2.</b>
+                            <b>3.3.</b>
                         
                         1.6版本中的重大变更
                     </a>
@@ -344,14 +359,14 @@
             
         </li>
     
-        <li class="chapter " data-level="3.3" data-path="chapte03/Breaking_changes_in_1.4.html">
+        <li class="chapter " data-level="3.4" data-path="chapte03/Breaking_changes_in_1.4.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_1.4.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.3.</b>
+                            <b>3.4.</b>
                         
                         1.4版本中的重大变更
                     </a>
@@ -359,14 +374,14 @@
             
         </li>
     
-        <li class="chapter " data-level="3.4" data-path="chapte03/Breaking_changes_in_1.0.html">
+        <li class="chapter " data-level="3.5" data-path="chapte03/Breaking_changes_in_1.0.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_1.0.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.4.</b>
+                            <b>3.5.</b>
                         
                         1.0版本中的重大变更
                     </a>
@@ -2546,6 +2561,101 @@
                     <section class="normal" id="section-">
                     
                         <h1 id="modifying-your-data">Modifying Your Data</h1>
+<p>Modifying Your Dataedit</p>
+<p>On this page
+Indexing/Replacing Documents
+Elasticsearch Reference:
+Getting Started
+Basic Concepts
+Installation
+Exploring Your Cluster
+Modifying Your Data
+Updating Documents
+Deleting Documents
+Batch Processing
+Exploring Your Data
+Conclusion
+Setup
+Breaking changes
+API Conventions
+Document APIs
+Search APIs
+Aggregations
+Indices APIs
+cat APIs
+Cluster APIs
+Query DSL
+Mapping
+Analysis
+Modules
+Index Modules
+Testing
+Glossary of terms
+Elasticsearch provides data manipulation and search capabilities in near real time. By default, you can expect a one second delay (refresh interval) from the time you index/update/delete your data until the time that it appears in your search results. This is an important distinction from other platforms like SQL wherein data is immediately available after a transaction is completed.</p>
+<p>Indexing/Replacing Documentsedit</p>
+<p>We&#x2019;ve previously seen how we can index a single document. Let&#x2019;s recall that command again:</p>
+<p>curl -XPUT &apos;localhost:9200/customer/external/1?pretty&apos; -d &apos;
+{
+  &quot;name&quot;: &quot;John Doe&quot;
+}&apos;
+Again, the above will index the specified document into the customer index, external type, with the ID of 1. If we then executed the above command again with a different (or same) document, Elasticsearch will replace (i.e. reindex) a new document on top of the existing one with the ID of 1:</p>
+<p>curl -XPUT &apos;localhost:9200/customer/external/1?pretty&apos; -d &apos;
+{
+  &quot;name&quot;: &quot;Jane Doe&quot;
+}&apos;
+The above changes the name of the document with the ID of 1 from &quot;John Doe&quot; to &quot;Jane Doe&quot;. If, on the other hand, we use a different ID, a new document will be indexed and the existing document(s) already in the index remains untouched.</p>
+<p>curl -XPUT &apos;localhost:9200/customer/external/2?pretty&apos; -d &apos;
+{
+  &quot;name&quot;: &quot;Jane Doe&quot;
+}&apos;
+The above indexes a new document with an ID of 2.</p>
+<p>When indexing, the ID part is optional. If not specified, Elasticsearch will generate a random ID and then use it to index the document. The actual ID Elasticsearch generates (or whatever we specified explicitly in the previous examples) is returned as part of the index API call.</p>
+<p>This example shows how to index a document without an explicit ID:</p>
+<p>curl -XPOST &apos;localhost:9200/customer/external?pretty&apos; -d &apos;
+{
+  &quot;name&quot;: &quot;Jane Doe&quot;
+}&apos;
+Note that in the above case, we are using the POST verb instead of PUT since we didn&#x2019;t specify an ID.</p>
+<p>Updating Documentsedit</p>
+<p>In addition to being able to index and replace documents, we can also update documents. Note though that Elasticsearch does not actually do in-place updates under the hood. Whenever we do an update, Elasticsearch deletes the old document and then indexes a new document with the update applied to it in one shot.</p>
+<p>This example shows how to update our previous document (ID of 1) by changing the name field to &quot;Jane Doe&quot;:</p>
+<p>curl -XPOST &apos;localhost:9200/customer/external/1/_update?pretty&apos; -d &apos;
+{
+  &quot;doc&quot;: { &quot;name&quot;: &quot;Jane Doe&quot; }
+}&apos;
+This example shows how to update our previous document (ID of 1) by changing the name field to &quot;Jane Doe&quot; and at the same time add an age field to it:</p>
+<p>curl -XPOST &apos;localhost:9200/customer/external/1/_update?pretty&apos; -d &apos;
+{
+  &quot;doc&quot;: { &quot;name&quot;: &quot;Jane Doe&quot;, &quot;age&quot;: 20 }
+}&apos;
+Updates can also be performed by using simple scripts. Note that dynamic scripts like the following are disabled by default as of 1.4.3, have a look at the scripting docs for more details. This example uses a script to increment the age by 5:</p>
+<p>curl -XPOST &apos;localhost:9200/customer/external/1/_update?pretty&apos; -d &apos;
+{
+  &quot;script&quot; : &quot;ctx._source.age += 5&quot;
+}&apos;
+In the above example, ctx._source refers to the current source document that is about to be updated.</p>
+<p>Note that as of this writing, updates can only be performed on a single document at a time. In the future, Elasticsearch might provide the ability to update multiple documents given a query condition (like an SQL UPDATE-WHERE statement).</p>
+<p>Deleting Documents</p>
+<p>Deleting a document is fairly straightforward. This example shows how to delete our previous customer with the ID of 2:</p>
+<p>curl -XDELETE &apos;localhost:9200/customer/external/2?pretty&apos;
+The delete-by-query plugin can delete all documents matching a specific query.</p>
+<p>Batch Processingedit</p>
+<p>In addition to being able to index, update, and delete individual documents, Elasticsearch also provides the ability to perform any of the above operations in batches using the _bulk API. This functionality is important in that it provides a very efficient mechanism to do multiple operations as fast as possible with as little network roundtrips as possible.</p>
+<p>As a quick example, the following call indexes two documents (ID 1 - John Doe and ID 2 - Jane Doe) in one bulk operation:</p>
+<p>curl -XPOST &apos;localhost:9200/customer/external/_bulk?pretty&apos; -d &apos;
+{&quot;index&quot;:{&quot;_id&quot;:&quot;1&quot;}}
+{&quot;name&quot;: &quot;John Doe&quot; }
+{&quot;index&quot;:{&quot;_id&quot;:&quot;2&quot;}}
+{&quot;name&quot;: &quot;Jane Doe&quot; }
+&apos;
+This example updates the first document (ID of 1) and then deletes the second document (ID of 2) in one bulk operation:</p>
+<p>curl -XPOST &apos;localhost:9200/customer/external/_bulk?pretty&apos; -d &apos;
+{&quot;update&quot;:{&quot;_id&quot;:&quot;1&quot;}}
+{&quot;doc&quot;: { &quot;name&quot;: &quot;John Doe becomes Jane Doe&quot; } }
+{&quot;delete&quot;:{&quot;_id&quot;:&quot;2&quot;}}
+&apos;
+Note above that for the delete action, there is no corresponding source document after it since deletes only require the ID of the document to be deleted.</p>
+<p>The bulk API executes all the actions sequentially and in order. If a single action fails for whatever reason, it will continue to process the remainder of the actions after it. When the bulk API returns, it will provide a status for each action (in the same order it was sent in) so that you can check if a specific action failed or not.</p>
 
                     
                     </section>

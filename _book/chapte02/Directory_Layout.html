@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="2.4" data-chapter-title="目录结构" data-filepath="chapte02/Directory_Layout.md" data-basepath=".." data-revision="Sat Nov 21 2015 01:58:05 GMT+0800 (CST)">
+    <div class="book" data-level="2.4" data-chapter-title="目录结构" data-filepath="chapte02/Directory_Layout.md" data-basepath=".." data-revision="Fri Nov 27 2015 03:25:11 GMT+0800 (CST)">
     
 
 <div class="book-summary">
@@ -314,14 +314,29 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="3.1" data-path="chapte03/Breaking_changes_in_2.0.html">
+        <li class="chapter " data-level="3.1" data-path="chapte03/Breaking_changes_in_2.1.html">
+            
+                
+                    <a href="../chapte03/Breaking_changes_in_2.1.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.1.</b>
+                        
+                        2.1版本中的重大变更
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="chapte03/Breaking_changes_in_2.0.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_2.0.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.1.</b>
+                            <b>3.2.</b>
                         
                         2.0版本中的重大变更
                     </a>
@@ -329,14 +344,14 @@
             
         </li>
     
-        <li class="chapter " data-level="3.2" data-path="chapte03/Breaking_changes_in_1.6.html">
+        <li class="chapter " data-level="3.3" data-path="chapte03/Breaking_changes_in_1.6.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_1.6.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.2.</b>
+                            <b>3.3.</b>
                         
                         1.6版本中的重大变更
                     </a>
@@ -344,14 +359,14 @@
             
         </li>
     
-        <li class="chapter " data-level="3.3" data-path="chapte03/Breaking_changes_in_1.4.html">
+        <li class="chapter " data-level="3.4" data-path="chapte03/Breaking_changes_in_1.4.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_1.4.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.3.</b>
+                            <b>3.4.</b>
                         
                         1.4版本中的重大变更
                     </a>
@@ -359,14 +374,14 @@
             
         </li>
     
-        <li class="chapter " data-level="3.4" data-path="chapte03/Breaking_changes_in_1.0.html">
+        <li class="chapter " data-level="3.5" data-path="chapte03/Breaking_changes_in_1.0.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_1.0.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.4.</b>
+                            <b>3.5.</b>
                         
                         1.0版本中的重大变更
                     </a>
@@ -2546,6 +2561,139 @@
                     <section class="normal" id="section-">
                     
                         <h1 id="directory-layout">Directory Layout</h1>
+<p>Directory Layoutedit</p>
+<p>On this page
+Default Paths
+Elasticsearch Reference:
+Getting Started
+Setup
+Configuration
+Running as a Service on Linux
+Running as a Service on Windows
+Directory Layout
+Repositories
+Upgrading
+Breaking changes
+API Conventions
+Document APIs
+Search APIs
+Aggregations
+Indices APIs
+cat APIs
+Cluster APIs
+Query DSL
+Mapping
+Analysis
+Modules
+Index Modules
+Testing
+Glossary of terms
+Release Notes
+The directory layout of an installation is as follows:</p>
+<p>Type     Description     Default Location     Setting
+home</p>
+<p>Home of elasticsearch installation.</p>
+<p>path.home</p>
+<p>bin</p>
+<p>Binary scripts including elasticsearch to start a node.</p>
+<p>{path.home}/bin</p>
+<p>conf</p>
+<p>Configuration files including elasticsearch.yml</p>
+<p>{path.home}/config</p>
+<p>path.conf</p>
+<p>data</p>
+<p>The location of the data files of each index / shard allocated on the node. Can hold multiple locations.</p>
+<p>{path.home}/data</p>
+<p>path.data</p>
+<p>logs</p>
+<p>Log files location.</p>
+<p>{path.home}/logs</p>
+<p>path.logs</p>
+<p>plugins</p>
+<p>Plugin files location. Each plugin will be contained in a subdirectory.</p>
+<p>{path.home}/plugins</p>
+<p>path.plugins</p>
+<p>repo</p>
+<p>Shared file system repository locations. Can hold multiple locations. A file system repository can be placed in to any subdirectory of any directory specified here.</p>
+<p>Not configured</p>
+<p>path.repo</p>
+<p>script</p>
+<p>Location of script files.</p>
+<p>{path.conf}/scripts</p>
+<p>path.script</p>
+<p>Multiple data paths may be specified, in order to spread data across multiple disks or locations, but all of the files from a single shard will be written to the same path. This can be configured as follows:</p>
+<hr>
+<p>path.data: /mnt/first,/mnt/second
+---------------------------------Or  in an array format:----------------------------------------</p>
+<h2 id="pathdata-mntfirst-mntsecond">path.data: [&quot;/mnt/first&quot;, &quot;/mnt/second&quot;]</h2>
+<p>Tip
+To stripe shards across multiple disks, please use a RAID driver instead.</p>
+<p>Default Pathsedit</p>
+<p>Below are the default paths that elasticsearch will use, if not explicitly changed.</p>
+<p>deb and rpmedit</p>
+<p>Type     Description     Location Debian/Ubuntu     Location RHEL/CentOS
+home</p>
+<p>Home of elasticsearch installation.</p>
+<p>/usr/share/elasticsearch</p>
+<p>/usr/share/elasticsearch</p>
+<p>bin</p>
+<p>Binary scripts including elasticsearch to start a node.</p>
+<p>/usr/share/elasticsearch/bin</p>
+<p>/usr/share/elasticsearch/bin</p>
+<p>conf</p>
+<p>Configuration files elasticsearch.yml and logging.yml.</p>
+<p>/etc/elasticsearch</p>
+<p>/etc/elasticsearch</p>
+<p>conf</p>
+<p>Environment variables including heap size, file descriptors.</p>
+<p>/etc/default/elasticsearch</p>
+<p>/etc/sysconfig/elasticsearch</p>
+<p>data</p>
+<p>The location of the data files of each index / shard allocated on the node.</p>
+<p>/var/lib/elasticsearch/data</p>
+<p>/var/lib/elasticsearch</p>
+<p>logs</p>
+<p>Log files location</p>
+<p>/var/log/elasticsearch</p>
+<p>/var/log/elasticsearch</p>
+<p>plugins</p>
+<p>Plugin files location. Each plugin will be contained in a subdirectory.</p>
+<p>/usr/share/elasticsearch/plugins</p>
+<p>/usr/share/elasticsearch/plugins</p>
+<p>repo</p>
+<p>Shared file system repository locations.</p>
+<p>Not configured</p>
+<p>Not configured</p>
+<p>script</p>
+<p>Location of script files.</p>
+<p>/etc/elasticsearch/scripts</p>
+<p>/etc/elasticsearch/scripts</p>
+<p>zip and tar.gzedit</p>
+<p>Type     Description     Location
+home</p>
+<p>Home of elasticsearch installation</p>
+<p>{extract.path}</p>
+<p>bin</p>
+<p>Binary scripts including elasticsearch to start a node</p>
+<p>{extract.path}/bin</p>
+<p>conf</p>
+<p>Configuration files elasticsearch.yml and logging.yml</p>
+<p>{extract.path}/config</p>
+<p>data</p>
+<p>The location of the data files of each index / shard allocated on the node</p>
+<p>{extract.path}/data</p>
+<p>logs</p>
+<p>Log files location</p>
+<p>{extract.path}/logs</p>
+<p>plugins</p>
+<p>Plugin files location. Each plugin will be contained in a subdirectory</p>
+<p>{extract.path}/plugins</p>
+<p>repo</p>
+<p>Shared file system repository locations.</p>
+<p>Not configured</p>
+<p>script</p>
+<p>Location of script files.</p>
+<p>{extract.path}/config/scripts</p>
 
                     
                     </section>
