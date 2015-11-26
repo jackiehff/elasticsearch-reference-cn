@@ -1,10 +1,19 @@
 Elasticsearch is a highly scalable open-source full-text search and analytics engine. It allows you to store, search, and analyze big volumes of data quickly and in near real time. It is generally used as the underlying engine/technology that powers applications that have complex search features and requirements.
 
+Elasticsearch是一个具有高可扩展性的开源的全文搜索和分析引擎. 它允许你快速且准实时地存储、搜索以及分析大规模数据.它通常用作底层的搜索引擎或技术来促使应用程序能够支持复杂的搜索功能和需求.
+
 Here are a few sample use-cases that Elasticsearch could be used for:
+下面是几个Elasticsearch可以应用到的示例用例：
 
 * You run an online web store where you allow your customers to search for products that you sell. In this case, you can use Elasticsearch to store your entire product catalog and inventory and provide search and autocomplete suggestions for them.
+* 你运行着一个可以允许顾客搜索你所售卖商品的网上商店. 在这种情况下, 你可以使用Elasticsearch来存储整个的产品类目以及库存信息并且为顾客提供搜索和自动完成推荐功能.
 * You want to collect log or transaction data and you want to analyze and mine this data to look for trends, statistics, summarizations, or anomalies. In this case, you can use Logstash (part of the Elasticsearch/Logstash/Kibana stack) to collect, aggregate, and parse your data, and then have Logstash feed this data into Elasticsearch. Once the data is in Elasticsearch, you can run searches and aggregations to mine any information that is of interest to you.
+* 你想要收集日志或者交易数据并且想要分析和挖掘这些数据来用于寻找趋势、统计、汇总或者异常. 在这种情况下, 你可以使用Logstash(Elasticsearch/Logstash/Kibana栈的一部分)来收集、聚合以及解析你的数据, 接着让Logstash将这些数据插入到Elasticsearch中.一旦数据存在于Elasticsearch中, 你就可以运行搜索和聚合来挖掘你感兴趣的信息.
 * You run a price alerting platform which allows price-savvy customers to specify a rule like "I am interested in buying a specific electronic gadget and I want to be notified if the price of gadget falls below $X from any vendor within the next month". In this case you can scrape vendor prices, push them into Elasticsearch and use its reverse-search (Percolator) capability to match price movements against customer queries and eventually push the alerts out to the customer once matches are found.
+* 你运行一个允许为价格敏感的顾客指定一个像"我想买一款电子产品并且到下个月之内如果有商家售卖的这款电子产品的价格降到X美元以下我都想收到通知"这样的规则的价格提醒平台. 在这种情况下你可以爬取商家的价格, 然后将它们推送到Elasticsearch中，接着使用Elasticsearch的反向搜索(Percolator) 功能来匹配针对顾客查询的价格变动，最后一旦发现有匹配的价格则推送提醒给顾客.
 * You have analytics/business-intelligence needs and want to quickly investigate, analyze, visualize, and ask ad-hoc questions on a lot of data (think millions or billions of records). In this case, you can use Elasticsearch to store your data and then use Kibana (part of the Elasticsearch/Logstash/Kibana stack) to build custom dashboards that can visualize aspects of your data that are important to you. Additionally, you can use the Elasticsearch aggregations functionality to perform complex business intelligence queries against your data.
+* 你有数据分析或商业智能方面的需求并且想要快速地在大量的数据(想象一下数百万或数十亿条记录)上进行研究、分析、可视化以及找寻特定问题的答案(ask ad-hoc questions?).在这种情况下, 你可以使用Elasticsearch来存储数据，然后使用Kibana (Elasticsearch/Logstash/Kibana栈的一部分) 构建自定义仪表盘，它可以可视化展现对你来说比较重要的数据的各个方面. 另外, 你可以使用Elasticsearch的聚合功能来对数据执行复杂的商业智能查询.
 
 For the rest of this tutorial, I will guide you through the process of getting Elasticsearch up and running, taking a peek inside it, and performing basic operations like indexing, searching, and modifying your data. At the end of this tutorial, you should have a good idea of what Elasticsearch is, how it works, and hopefully be inspired to see how you can use it to either build sophisticated search applications or to mine intelligence from your data.
+
+本教程接下来的部分，我会指导你经历Elasticsearch的安装和运行、简单窥探Elasticsearch内部原理以及 执行像索引、搜索和修改数据等基本的一些操作这些过程. 在本教程结束的时候,你应该对Elasticsearch是什么以及它是如何工作的有一个很好的了解, 并且希望能够启发你知道如何使用它来构建复杂的搜索应用程序或是从你的数据中挖掘商业智能.
