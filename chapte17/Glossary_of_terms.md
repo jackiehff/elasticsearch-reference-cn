@@ -19,27 +19,27 @@ The ID of a document identifies a document. The index/type/id of a document must
 
 ID是用来唯一标示一篇文档的。 一篇文档的索引/类型/id三者的组合必须唯一。 如果没有提供ID，系统会字段生成一个。 （见路由章节）
 
-### 字段
+###字段
 A document contains a list of fields, or key-value pairs. The value can be a simple (scalar) value (eg a string, integer, date), or a nested structure like an array or an object. A field is similar to a column in a table in a relational database. The mapping for each field has a field type (not to be confused with document type) which indicates the type of data that can be stored in that field, eg integer, string, object. The mapping also allows you to define (amongst other things) how the value for a field should be analyzed.
 
 一篇文档包含一组字段，或者键-值对。 字段值可以是简单类型值（如字符串，整数，日期）， 也可以是类似于数组或对象的复杂嵌套数据结构。 一个字段相当于关系型数据库中的一列。每个字段有一个字段类型的映射（不要和文档类型混淆），该类型标明了存储于该字段中的数据的类型，如字符串，整数，对象等。 字段的映射同时要求你定义如何对一个字段进行分词和其他选项。
 
-### 索引
+###索引
 An index is like a database in a relational database. It has a mapping which defines multiple types. An index is a logical namespace which maps to one or more primary shards and can have zero or more replica shards.
 
 一个索引好比关系型数据库中的一个数据库。 它有个映射用来定义多个索引类型。 索引是逻辑上的命名空间，对应物理上的一个或多个主分片，每个主分片可以有零个或多个从分片。
 
-### 映射
+###映射
 A mapping is like a schema definition in a relational database. Each index has a mapping, which defines each type within the index, plus a number of index-wide settings. A mapping can either be defined explicitly, or it will be generated automatically when a document is indexed.
 
 映射对应关系型数据库中的schema定义。 每个索引有一个映射，对索引中的每个索引类型进行定义， 外加一系列索引基本的设置选项。 映射可以被显示定义，也可以在文档被索引时自动生成。
 
-### 节点
+###节点
 A node is a running instance of elasticsearch which belongs to a cluster. Multiple nodes can be started on a single server for testing purposes, but usually you should have one node per server. At startup, a node will use unicast to discover an existing cluster with the same cluster name and will try to join that cluster.
 
 一个节点是集群中运行elasticsearch的一个实例。 测试时可以在一台机器上启动多个节点， 但通常你只会一台服务器上启动一个节点。 启动阶段，节点会利用单播机制来发现与其设置的集群名称相同的集群，并尝试加入该集群。
 
-### 主分片
+###主分片
 Each document is stored in a single primary shard. When you index a document, it is indexed first on the primary shard, then on all replicas of the primary shard. By default, an index has 5 primary shards. You can specify fewer or more primary shards to scale the number of documents that your index can handle. You cannot change the number of primary shards in an index, once the index is created. See also routing
 
 每篇文档只会被保存在一个主分片中。 当你索引一个文档时，该文档首先在主分片上被索引，然后被分发到所有从分片上索引。 一个索引默认有5个主分片。 在索引创建时，你可以指定更少或更多的主分片，从而提升你的索引处理文档数量的能力。一旦索引被创建后，主分片数量将不可改变。 见路由章节
