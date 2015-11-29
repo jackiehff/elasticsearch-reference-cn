@@ -1,1 +1,1 @@
-Elasticsearch is both a simple and complex product. We’ve so far learned the basics of what it is, how to look inside of it, and how to work with it using some of the REST APIs. I hope that this tutorial has given you a better understanding of what Elasticsearch is and more importantly, inspired you to further experiment with the rest of its great features!
+Elasticsearch是一款既简单又复杂的产品. 我们到目前为止已经学习了Elasticsearch 是什么、如何窥探它的内部以及如何使用某些REST APIs来使用它等这些基本内容. 我希望本教程已经让你更好的理解了Elasticsearch 是什么，更重要的是激励你进一步的实践它所包含其它的一些优秀的特性!

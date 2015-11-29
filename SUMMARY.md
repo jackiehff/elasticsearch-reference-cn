@@ -14,6 +14,7 @@
   - [仓库](chapte02/Repositories.md)
   - [版本升级](chapte02/Upgrading.md)
 * [重大变更](chapte03/Breaking_changes.md)
+  - [2.1版本中的重大变更](chapte03/Breaking_changes_in_2.1.md)
   - [2.0版本中的重大变更](chapte03/Breaking_changes_in_2.0.md)
   - [1.6版本中的重大变更](chapte03/Breaking_changes_in_1.6.md)
   - [1.4版本中的重大变更](chapte03/Breaking_changes_in_1.4.md)

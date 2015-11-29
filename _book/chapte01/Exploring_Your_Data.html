@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>检索数据 | Introduction</title>
+        <title>检索数据 | 简单说明</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.5.2">
@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1.5" data-chapter-title="检索数据" data-filepath="chapte01/Exploring_Your_Data.md" data-basepath=".." data-revision="Fri Nov 20 2015 22:00:49 GMT+0800 (CST)">
+    <div class="book" data-level="1.5" data-chapter-title="检索数据" data-filepath="chapte01/Exploring_Your_Data.md" data-basepath=".." data-revision="Fri Nov 27 2015 03:25:11 GMT+0800 (CST)">
     
 
 <div class="book-summary">
@@ -314,14 +314,29 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="3.1" data-path="chapte03/Breaking_changes_in_2.0.html">
+        <li class="chapter " data-level="3.1" data-path="chapte03/Breaking_changes_in_2.1.html">
+            
+                
+                    <a href="../chapte03/Breaking_changes_in_2.1.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.1.</b>
+                        
+                        2.1版本中的重大变更
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="chapte03/Breaking_changes_in_2.0.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_2.0.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.1.</b>
+                            <b>3.2.</b>
                         
                         2.0版本中的重大变更
                     </a>
@@ -329,14 +344,14 @@
             
         </li>
     
-        <li class="chapter " data-level="3.2" data-path="chapte03/Breaking_changes_in_1.6.html">
+        <li class="chapter " data-level="3.3" data-path="chapte03/Breaking_changes_in_1.6.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_1.6.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.2.</b>
+                            <b>3.3.</b>
                         
                         1.6版本中的重大变更
                     </a>
@@ -344,14 +359,14 @@
             
         </li>
     
-        <li class="chapter " data-level="3.3" data-path="chapte03/Breaking_changes_in_1.4.html">
+        <li class="chapter " data-level="3.4" data-path="chapte03/Breaking_changes_in_1.4.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_1.4.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.3.</b>
+                            <b>3.4.</b>
                         
                         1.4版本中的重大变更
                     </a>
@@ -359,14 +374,14 @@
             
         </li>
     
-        <li class="chapter " data-level="3.4" data-path="chapte03/Breaking_changes_in_1.0.html">
+        <li class="chapter " data-level="3.5" data-path="chapte03/Breaking_changes_in_1.0.html">
             
                 
                     <a href="../chapte03/Breaking_changes_in_1.0.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>3.4.</b>
+                            <b>3.5.</b>
                         
                         1.0版本中的重大变更
                     </a>
@@ -2535,7 +2550,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href="../" >Introduction</a>
+        <a href="../" >简单说明</a>
     </h1>
 </div>
 
@@ -2546,6 +2561,511 @@
                     <section class="normal" id="section-">
                     
                         <h1 id="exploring-your-data">Exploring Your Data</h1>
+<p>Exploring Your Dataedit</p>
+<p>On this page
+Sample Dataset
+Loading the Sample Dataset
+Elasticsearch Reference:
+Getting Started
+Basic Concepts
+Installation
+Exploring Your Cluster
+Modifying Your Data
+Exploring Your Data
+The Search API
+Introducing the Query Language
+Executing Searches
+Executing Filters
+Executing Aggregations
+Conclusion
+Setup
+Breaking changes
+API Conventions
+Document APIs
+Search APIs
+Aggregations
+Indices APIs
+cat APIs
+Cluster APIs
+Query DSL
+Mapping
+Analysis
+Modules
+Index Modules
+Testing
+Glossary of terms
+Release Notes
+Sample Datasetedit</p>
+<p>Now that we&#x2019;ve gotten a glimpse of the basics, let&#x2019;s try to work on a more realistic dataset. I&#x2019;ve prepared a sample of fictitious JSON documents of customer bank account information. Each document has the following schema:</p>
+<p>{
+    &quot;account_number&quot;: 0,
+    &quot;balance&quot;: 16623,
+    &quot;firstname&quot;: &quot;Bradshaw&quot;,
+    &quot;lastname&quot;: &quot;Mckenzie&quot;,
+    &quot;age&quot;: 29,
+    &quot;gender&quot;: &quot;F&quot;,
+    &quot;address&quot;: &quot;244 Columbus Place&quot;,
+    &quot;employer&quot;: &quot;Euron&quot;,
+    &quot;email&quot;: &quot;bradshawmckenzie@euron.com&quot;,
+    &quot;city&quot;: &quot;Hobucken&quot;,
+    &quot;state&quot;: &quot;CO&quot;
+}
+For the curious, I generated this data from www.json-generator.com/ so please ignore the actual values and semantics of the data as these are all randomly generated.</p>
+<p>Loading the Sample Datasetedit</p>
+<p>You can download the sample dataset (accounts.json) from here. Extract it to our current directory and let&#x2019;s load it into our cluster as follows:</p>
+<p>curl -XPOST &apos;localhost:9200/bank/account/_bulk?pretty&apos; --data-binary &quot;@accounts.json&quot;
+curl &apos;localhost:9200/_cat/indices?v&apos;
+And the response:</p>
+<p>curl &apos;localhost:9200/_cat/indices?v&apos;
+health index pri rep docs.count docs.deleted store.size pri.store.size
+yellow bank    5   1       1000            0    424.4kb        424.4kb
+Which means that we just successfully bulk indexed 1000 documents into the bank index (under the account type).</p>
+<p>The Search APIedit</p>
+<p>Now let&#x2019;s start with some simple searches. There are two basic ways to run searches: one is by sending search parameters through the REST request URI and the other by sending them through the REST request body. The request body method allows you to be more expressive and also to define your searches in a more readable JSON format. We&#x2019;ll try one example of the request URI method but for the remainder of this tutorial, we will exclusively be using the request body method.</p>
+<p>The REST API for search is accessible from the _search endpoint. This example returns all documents in the bank index:</p>
+<p>curl &apos;localhost:9200/bank/_search?q=<em>&amp;pretty&apos;
+Let&#x2019;s first dissect the search call. We are searching (_search endpoint) in the bank index, and the q=</em> parameter instructs Elasticsearch to match all documents in the index. The pretty parameter, again, just tells Elasticsearch to return pretty-printed JSON results.</p>
+<p>And the response (partially shown):</p>
+<p>curl &apos;localhost:9200/bank/_search?q=*&amp;pretty&apos;
+{
+  &quot;took&quot; : 63,
+  &quot;timed_out&quot; : false,
+  &quot;_shards&quot; : {
+    &quot;total&quot; : 5,
+    &quot;successful&quot; : 5,
+    &quot;failed&quot; : 0
+  },
+  &quot;hits&quot; : {
+    &quot;total&quot; : 1000,
+    &quot;max_score&quot; : 1.0,
+    &quot;hits&quot; : [ {
+      &quot;_index&quot; : &quot;bank&quot;,
+      &quot;_type&quot; : &quot;account&quot;,
+      &quot;_id&quot; : &quot;1&quot;,
+      &quot;_score&quot; : 1.0, &quot;_source&quot; : {&quot;account_number&quot;:1,&quot;balance&quot;:39225,&quot;firstname&quot;:&quot;Amber&quot;,&quot;lastname&quot;:&quot;Duke&quot;,&quot;age&quot;:32,&quot;gender&quot;:&quot;M&quot;,&quot;address&quot;:&quot;880 Holmes Lane&quot;,&quot;employer&quot;:&quot;Pyrami&quot;,&quot;email&quot;:&quot;amberduke@pyrami.com&quot;,&quot;city&quot;:&quot;Brogan&quot;,&quot;state&quot;:&quot;IL&quot;}
+    }, {
+      &quot;_index&quot; : &quot;bank&quot;,
+      &quot;_type&quot; : &quot;account&quot;,
+      &quot;_id&quot; : &quot;6&quot;,
+      &quot;_score&quot; : 1.0, &quot;_source&quot; : {&quot;account_number&quot;:6,&quot;balance&quot;:5686,&quot;firstname&quot;:&quot;Hattie&quot;,&quot;lastname&quot;:&quot;Bond&quot;,&quot;age&quot;:36,&quot;gender&quot;:&quot;M&quot;,&quot;address&quot;:&quot;671 Bristol Street&quot;,&quot;employer&quot;:&quot;Netagy&quot;,&quot;email&quot;:&quot;hattiebond@netagy.com&quot;,&quot;city&quot;:&quot;Dante&quot;,&quot;state&quot;:&quot;TN&quot;}
+    }, {
+      &quot;_index&quot; : &quot;bank&quot;,
+      &quot;_type&quot; : &quot;account&quot;,
+As for the response, we see the following parts:</p>
+<p>took &#x2013; time in milliseconds for Elasticsearch to execute the search
+timed_out &#x2013; tells us if the search timed out or not
+_shards &#x2013; tells us how many shards were searched, as well as a count of the successful/failed searched shards
+hits &#x2013; search results
+hits.total &#x2013; total number of documents matching our search criteria
+hits.hits &#x2013; actual array of search results (defaults to first 10 documents)
+_score and max_score - ignore these fields for now
+Here is the same exact search above using the alternative request body method:</p>
+<p>curl -XPOST &apos;localhost:9200/bank/_search?pretty&apos; -d &apos;
+{
+  &quot;query&quot;: { &quot;match_all&quot;: {} }
+}&apos;
+The difference here is that instead of passing q=* in the URI, we POST a JSON-style query request body to the _search API. We&#x2019;ll discuss this JSON query in the next section.</p>
+<p>And the response (partially shown):</p>
+<p>curl -XPOST &apos;localhost:9200/bank/_search?pretty&apos; -d &apos;
+{
+  &quot;query&quot;: { &quot;match_all&quot;: {} }
+}&apos;
+{
+  &quot;took&quot; : 26,
+  &quot;timed_out&quot; : false,
+  &quot;_shards&quot; : {
+    &quot;total&quot; : 5,
+    &quot;successful&quot; : 5,
+    &quot;failed&quot; : 0
+  },
+  &quot;hits&quot; : {
+    &quot;total&quot; : 1000,
+    &quot;max_score&quot; : 1.0,
+    &quot;hits&quot; : [ {
+      &quot;_index&quot; : &quot;bank&quot;,
+      &quot;_type&quot; : &quot;account&quot;,
+      &quot;_id&quot; : &quot;1&quot;,
+      &quot;_score&quot; : 1.0, &quot;_source&quot; : {&quot;account_number&quot;:1,&quot;balance&quot;:39225,&quot;firstname&quot;:&quot;Amber&quot;,&quot;lastname&quot;:&quot;Duke&quot;,&quot;age&quot;:32,&quot;gender&quot;:&quot;M&quot;,&quot;address&quot;:&quot;880 Holmes Lane&quot;,&quot;employer&quot;:&quot;Pyrami&quot;,&quot;email&quot;:&quot;amberduke@pyrami.com&quot;,&quot;city&quot;:&quot;Brogan&quot;,&quot;state&quot;:&quot;IL&quot;}
+    }, {
+      &quot;_index&quot; : &quot;bank&quot;,
+      &quot;_type&quot; : &quot;account&quot;,
+      &quot;_id&quot; : &quot;6&quot;,
+      &quot;_score&quot; : 1.0, &quot;_source&quot; : {&quot;account_number&quot;:6,&quot;balance&quot;:5686,&quot;firstname&quot;:&quot;Hattie&quot;,&quot;lastname&quot;:&quot;Bond&quot;,&quot;age&quot;:36,&quot;gender&quot;:&quot;M&quot;,&quot;address&quot;:&quot;671 Bristol Street&quot;,&quot;employer&quot;:&quot;Netagy&quot;,&quot;email&quot;:&quot;hattiebond@netagy.com&quot;,&quot;city&quot;:&quot;Dante&quot;,&quot;state&quot;:&quot;TN&quot;}
+    }, {
+      &quot;_index&quot; : &quot;bank&quot;,
+      &quot;_type&quot; : &quot;account&quot;,
+      &quot;_id&quot; : &quot;13&quot;,
+It is important to understand that once you get your search results back, Elasticsearch is completely done with the request and does not maintain any kind of server-side resources or open cursors into your results. This is in stark contrast to many other platforms such as SQL wherein you may initially get a partial subset of your query results up-front and then you have to continuously go back to the server if you want to fetch (or page through) the rest of the results using some kind of stateful server-side cursor.</p>
+<p>Introducing the Query Languageedit</p>
+<p>Elasticsearch Reference:
+Getting Started
+Basic Concepts
+Installation
+Exploring Your Cluster
+Modifying Your Data
+Exploring Your Data
+The Search API
+Introducing the Query Language
+Executing Searches
+Executing Filters
+Executing Aggregations
+Conclusion
+Setup
+Breaking changes
+API Conventions
+Document APIs
+Search APIs
+Aggregations
+Indices APIs
+cat APIs
+Cluster APIs
+Query DSL
+Mapping
+Analysis
+Modules
+Index Modules
+Testing
+Glossary of terms
+Release Notes
+Elasticsearch provides a JSON-style domain-specific language that you can use to execute queries. This is referred to as the Query DSL. The query language is quite comprehensive and can be intimidating at first glance but the best way to actually learn it is to start with a few basic examples.</p>
+<p>Going back to our last example, we executed this query:</p>
+<p>{
+  &quot;query&quot;: { &quot;match_all&quot;: {} }
+}
+Dissecting the above, the query part tells us what our query definition is and the match_all part is simply the type of query that we want to run. The match_all query is simply a search for all documents in the specified index.</p>
+<p>In addition to the query parameter, we also can pass other parameters to influence the search results. For example, the following does a match_all and returns only the first document:</p>
+<p>curl -XPOST &apos;localhost:9200/bank/_search?pretty&apos; -d &apos;
+{
+  &quot;query&quot;: { &quot;match_all&quot;: {} },
+  &quot;size&quot;: 1
+}&apos;
+Note that if size is not specified, it defaults to 10.</p>
+<p>This example does a match_all and returns documents 11 through 20:</p>
+<p>curl -XPOST &apos;localhost:9200/bank/_search?pretty&apos; -d &apos;
+{
+  &quot;query&quot;: { &quot;match_all&quot;: {} },
+  &quot;from&quot;: 10,
+  &quot;size&quot;: 10
+}&apos;
+The from parameter (0-based) specifies which document index to start from and the size parameter specifies how many documents to return starting at the from parameter. This feature is useful when implementing paging of search results. Note that if from is not specified, it defaults to 0.</p>
+<p>This example does a match_all and sorts the results by account balance in descending order and returns the top 10 (default size) documents.</p>
+<p>curl -XPOST &apos;localhost:9200/bank/_search?pretty&apos; -d &apos;
+{
+  &quot;query&quot;: { &quot;match_all&quot;: {} },
+  &quot;sort&quot;: { &quot;balance&quot;: { &quot;order&quot;: &quot;desc&quot; } }
+}&apos;</p>
+<p>Executing Searchesedit</p>
+<p>Elasticsearch Reference:
+Getting Started
+Basic Concepts
+Installation
+Exploring Your Cluster
+Modifying Your Data
+Exploring Your Data
+The Search API
+Introducing the Query Language
+Executing Searches
+Executing Filters
+Executing Aggregations
+Conclusion
+Setup
+Breaking changes
+API Conventions
+Document APIs
+Search APIs
+Aggregations
+Indices APIs
+cat APIs
+Cluster APIs
+Query DSL
+Mapping
+Analysis
+Modules
+Index Modules
+Testing
+Glossary of terms
+Now that we have seen a few of the basic search parameters, let&#x2019;s dig in some more into the Query DSL. Let&#x2019;s first take a look at the returned document fields. By default, the full JSON document is returned as part of all searches. This is referred to as the source (_source field in the search hits). If we don&#x2019;t want the entire source document returned, we have the ability to request only a few fields from within source to be returned.</p>
+<p>This example shows how to return two fields, account_number and balance (inside of _source), from the search:</p>
+<p>curl -XPOST &apos;localhost:9200/bank/_search?pretty&apos; -d &apos;
+{
+  &quot;query&quot;: { &quot;match_all&quot;: {} },
+  &quot;_source&quot;: [&quot;account_number&quot;, &quot;balance&quot;]
+}&apos;
+Note that the above example simply reduces the _source field. It will still only return one field named _source but within it, only the fields account_number and balance are included.</p>
+<p>If you come from a SQL background, the above is somewhat similar in concept to the SQL SELECT FROM field list.</p>
+<p>Now let&#x2019;s move on to the query part. Previously, we&#x2019;ve seen how the match_all query is used to match all documents. Let&#x2019;s now introduce a new query called the match query, which can be thought of as a basic fielded search query (i.e. a search done against a specific field or set of fields).</p>
+<p>This example returns the account numbered 20:</p>
+<p>curl -XPOST &apos;localhost:9200/bank/_search?pretty&apos; -d &apos;
+{
+  &quot;query&quot;: { &quot;match&quot;: { &quot;account_number&quot;: 20 } }
+}&apos;
+This example returns all accounts containing the term &quot;mill&quot; in the address:</p>
+<p>curl -XPOST &apos;localhost:9200/bank/_search?pretty&apos; -d &apos;
+{
+  &quot;query&quot;: { &quot;match&quot;: { &quot;address&quot;: &quot;mill&quot; } }
+}&apos;
+This example returns all accounts containing the term &quot;mill&quot; or &quot;lane&quot; in the address:</p>
+<p>curl -XPOST &apos;localhost:9200/bank/_search?pretty&apos; -d &apos;
+{
+  &quot;query&quot;: { &quot;match&quot;: { &quot;address&quot;: &quot;mill lane&quot; } }
+}&apos;
+This example is a variant of match (match_phrase) that returns all accounts containing the phrase &quot;mill lane&quot; in the address:</p>
+<p>curl -XPOST &apos;localhost:9200/bank/_search?pretty&apos; -d &apos;
+{
+  &quot;query&quot;: { &quot;match_phrase&quot;: { &quot;address&quot;: &quot;mill lane&quot; } }
+}&apos;
+Let&#x2019;s now introduce the bool(ean) query. The bool query allows us to compose smaller queries into bigger queries using boolean logic.</p>
+<p>This example composes two match queries and returns all accounts containing &quot;mill&quot; and &quot;lane&quot; in the address:</p>
+<p>curl -XPOST &apos;localhost:9200/bank/_search?pretty&apos; -d &apos;
+{
+  &quot;query&quot;: {
+    &quot;bool&quot;: {
+      &quot;must&quot;: [
+        { &quot;match&quot;: { &quot;address&quot;: &quot;mill&quot; } },
+        { &quot;match&quot;: { &quot;address&quot;: &quot;lane&quot; } }
+      ]
+    }
+  }
+}&apos;
+In the above example, the bool must clause specifies all the queries that must be true for a document to be considered a match.</p>
+<p>In contrast, this example composes two match queries and returns all accounts containing &quot;mill&quot; or &quot;lane&quot; in the address:</p>
+<p>curl -XPOST &apos;localhost:9200/bank/_search?pretty&apos; -d &apos;
+{
+  &quot;query&quot;: {
+    &quot;bool&quot;: {
+      &quot;should&quot;: [
+        { &quot;match&quot;: { &quot;address&quot;: &quot;mill&quot; } },
+        { &quot;match&quot;: { &quot;address&quot;: &quot;lane&quot; } }
+      ]
+    }
+  }
+}&apos;
+In the above example, the bool should clause specifies a list of queries either of which must be true for a document to be considered a match.</p>
+<p>This example composes two match queries and returns all accounts that contain neither &quot;mill&quot; nor &quot;lane&quot; in the address:</p>
+<p>curl -XPOST &apos;localhost:9200/bank/_search?pretty&apos; -d &apos;
+{
+  &quot;query&quot;: {
+    &quot;bool&quot;: {
+      &quot;must_not&quot;: [
+        { &quot;match&quot;: { &quot;address&quot;: &quot;mill&quot; } },
+        { &quot;match&quot;: { &quot;address&quot;: &quot;lane&quot; } }
+      ]
+    }
+  }
+}&apos;
+In the above example, the bool must_not clause specifies a list of queries none of which must be true for a document to be considered a match.</p>
+<p>We can combine must, should, and must_not clauses simultaneously inside a bool query. Furthermore, we can compose bool queries inside any of these bool clauses to mimic any complex multi-level boolean logic.</p>
+<p>This example returns all accounts of anybody who is 40 years old but don&#x2019;t live in ID(aho):</p>
+<p>curl -XPOST &apos;localhost:9200/bank/_search?pretty&apos; -d &apos;
+{
+  &quot;query&quot;: {
+    &quot;bool&quot;: {
+      &quot;must&quot;: [
+        { &quot;match&quot;: { &quot;age&quot;: &quot;40&quot; } }
+      ],
+      &quot;must_not&quot;: [
+        { &quot;match&quot;: { &quot;state&quot;: &quot;ID&quot; } }
+      ]
+    }
+  }
+}&apos;</p>
+<p>Executing Filtersedit</p>
+<p>In the previous section, we skipped over a little detail called the document score (_score field in the search results). The score is a numeric value that is a relative measure of how well the document matches the search query that we specified. The higher the score, the more relevant the document is, the lower the score, the less relevant the document is.</p>
+<p>But queries do not always need to produce scores, in particular when they are only used for &quot;filtering&quot; the document set. Elasticsearch detects these situations and automatically optimizes query execution in order not to compute useless scores.</p>
+<p>The bool query that we introduced in the previous section also supports filter clauses which allow to use a query to restrict the documents that will be matched by other clauses, without changing how scores are computed. As an example, let&#x2019;s introduce the range query, which allows us to filter documents by a range of values. This is generally used for numeric or date filtering.</p>
+<p>This example uses a bool query to return all accounts with balances between 20000 and 30000, inclusive. In other words, we want to find accounts with a balance that is greater than or equal to 20000 and less than or equal to 30000.</p>
+<p>curl -XPOST &apos;localhost:9200/bank/_search?pretty&apos; -d &apos;
+{
+  &quot;query&quot;: {
+    &quot;bool&quot;: {
+      &quot;must&quot;: { &quot;match_all&quot;: {} },
+      &quot;filter&quot;: {
+        &quot;range&quot;: {
+          &quot;balance&quot;: {
+            &quot;gte&quot;: 20000,
+            &quot;lte&quot;: 30000
+          }
+        }
+      }
+    }
+  }
+}&apos;
+Dissecting the above, the bool query contains a match_all query (the query part) and a range query (the filter part). We can substitute any other queries into the query and the filter parts. In the above case, the range query makes perfect sense since documents falling into the range all match &quot;equally&quot;, i.e., no document is more relevant than another.</p>
+<p>In addition to the match_all, match, bool, and range queries, there are a lot of other query types that are available and we won&#x2019;t go into them here. Since we already have a basic understanding of how they work, it shouldn&#x2019;t be too difficult to apply this knowledge in learning and experimenting with the other query types.</p>
+<p>Executing Aggregationsedit</p>
+<p>Elasticsearch Reference:
+Getting Started
+Basic Concepts
+Installation
+Exploring Your Cluster
+Modifying Your Data
+Exploring Your Data
+The Search API
+Introducing the Query Language
+Executing Searches
+Executing Filters
+Executing Aggregations
+Conclusion
+Setup
+Breaking changes
+API Conventions
+Document APIs
+Search APIs
+Aggregations
+Indices APIs
+cat APIs
+Cluster APIs
+Query DSL
+Mapping
+Analysis
+Modules
+Index Modules
+Testing
+Glossary of terms
+Aggregations provide the ability to group and extract statistics from your data. The easiest way to think about aggregations is by roughly equating it to the SQL GROUP BY and the SQL aggregate functions. In Elasticsearch, you have the ability to execute searches returning hits and at the same time return aggregated results separate from the hits all in one response. This is very powerful and efficient in the sense that you can run queries and multiple aggregations and get the results back of both (or either) operations in one shot avoiding network roundtrips using a concise and simplified API.</p>
+<p>To start with, this example groups all the accounts by state, and then returns the top 10 (default) states sorted by count descending (also default):</p>
+<p>curl -XPOST &apos;localhost:9200/bank/_search?pretty&apos; -d &apos;
+{
+  &quot;size&quot;: 0,
+  &quot;aggs&quot;: {
+    &quot;group_by_state&quot;: {
+      &quot;terms&quot;: {
+        &quot;field&quot;: &quot;state&quot;
+      }
+    }
+  }
+}&apos;
+In SQL, the above aggregation is similar in concept to:</p>
+<p>SELECT state, COUNT(<em>) FROM bank GROUP BY state ORDER BY COUNT(</em>) DESC
+And the response (partially shown):</p>
+<p>  &quot;hits&quot; : {
+    &quot;total&quot; : 1000,
+    &quot;max_score&quot; : 0.0,
+    &quot;hits&quot; : [ ]
+  },
+  &quot;aggregations&quot; : {
+    &quot;group_by_state&quot; : {
+      &quot;buckets&quot; : [ {
+        &quot;key&quot; : &quot;al&quot;,
+        &quot;doc_count&quot; : 21
+      }, {
+        &quot;key&quot; : &quot;tx&quot;,
+        &quot;doc_count&quot; : 17
+      }, {
+        &quot;key&quot; : &quot;id&quot;,
+        &quot;doc_count&quot; : 15
+      }, {
+        &quot;key&quot; : &quot;ma&quot;,
+        &quot;doc_count&quot; : 15
+      }, {
+        &quot;key&quot; : &quot;md&quot;,
+        &quot;doc_count&quot; : 15
+      }, {
+        &quot;key&quot; : &quot;pa&quot;,
+        &quot;doc_count&quot; : 15
+      }, {
+        &quot;key&quot; : &quot;dc&quot;,
+        &quot;doc_count&quot; : 14
+      }, {
+        &quot;key&quot; : &quot;me&quot;,
+        &quot;doc_count&quot; : 14
+      }, {
+        &quot;key&quot; : &quot;mo&quot;,
+        &quot;doc_count&quot; : 14
+      }, {
+        &quot;key&quot; : &quot;nd&quot;,
+        &quot;doc_count&quot; : 14
+      } ]
+    }
+  }
+}
+We can see that there are 21 accounts in AL(abama), followed by 17 accounts in TX, followed by 15 accounts in ID(aho), and so forth.</p>
+<p>Note that we set size=0 to not show search hits because we only want to see the aggregation results in the response.</p>
+<p>Building on the previous aggregation, this example calculates the average account balance by state (again only for the top 10 states sorted by count in descending order):</p>
+<p>curl -XPOST &apos;localhost:9200/bank/_search?pretty&apos; -d &apos;
+{
+  &quot;size&quot;: 0,
+  &quot;aggs&quot;: {
+    &quot;group_by_state&quot;: {
+      &quot;terms&quot;: {
+        &quot;field&quot;: &quot;state&quot;
+      },
+      &quot;aggs&quot;: {
+        &quot;average_balance&quot;: {
+          &quot;avg&quot;: {
+            &quot;field&quot;: &quot;balance&quot;
+          }
+        }
+      }
+    }
+  }
+}&apos;
+Notice how we nested the average_balance aggregation inside the group_by_state aggregation. This is a common pattern for all the aggregations. You can nest aggregations inside aggregations arbitrarily to extract pivoted summarizations that you require from your data.</p>
+<p>Building on the previous aggregation, let&#x2019;s now sort on the average balance in descending order:</p>
+<p>curl -XPOST &apos;localhost:9200/bank/_search?pretty&apos; -d &apos;
+{
+  &quot;size&quot;: 0,
+  &quot;aggs&quot;: {
+    &quot;group_by_state&quot;: {
+      &quot;terms&quot;: {
+        &quot;field&quot;: &quot;state&quot;,
+        &quot;order&quot;: {
+          &quot;average_balance&quot;: &quot;desc&quot;
+        }
+      },
+      &quot;aggs&quot;: {
+        &quot;average_balance&quot;: {
+          &quot;avg&quot;: {
+            &quot;field&quot;: &quot;balance&quot;
+          }
+        }
+      }
+    }
+  }
+}&apos;
+This example demonstrates how we can group by age brackets (ages 20-29, 30-39, and 40-49), then by gender, and then finally get the average account balance, per age bracket, per gender:</p>
+<p>curl -XPOST &apos;localhost:9200/bank/_search?pretty&apos; -d &apos;
+{
+  &quot;size&quot;: 0,
+  &quot;aggs&quot;: {
+    &quot;group_by_age&quot;: {
+      &quot;range&quot;: {
+        &quot;field&quot;: &quot;age&quot;,
+        &quot;ranges&quot;: [
+          {
+            &quot;from&quot;: 20,
+            &quot;to&quot;: 30
+          },
+          {
+            &quot;from&quot;: 30,
+            &quot;to&quot;: 40
+          },
+          {
+            &quot;from&quot;: 40,
+            &quot;to&quot;: 50
+          }
+        ]
+      },
+      &quot;aggs&quot;: {
+        &quot;group_by_gender&quot;: {
+          &quot;terms&quot;: {
+            &quot;field&quot;: &quot;gender&quot;
+          },
+          &quot;aggs&quot;: {
+            &quot;average_balance&quot;: {
+              &quot;avg&quot;: {
+                &quot;field&quot;: &quot;balance&quot;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}&apos;
+There are a many other aggregations capabilities that we won&#x2019;t go into detail here. The aggregations reference guide is a great starting point if you want to do further experimentation.</p>
+<p>Conclusionedit</p>
+<p>Elasticsearch is both a simple and complex product. We&#x2019;ve so far learned the basics of what it is, how to look inside of it, and how to work with it using some of the REST APIs. I hope that this tutorial has given you a better understanding of what Elasticsearch is and more importantly, inspired you to further experiment with the rest of its great features!</p>
 
                     
                     </section>
