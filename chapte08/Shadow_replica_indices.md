@@ -1,1 +1,0 @@
-# Shadow replica indices

@@ -1,1 +1,0 @@
-# Open / Close Index API

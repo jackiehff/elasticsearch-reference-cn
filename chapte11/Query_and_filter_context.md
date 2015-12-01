@@ -1,1 +1,0 @@
-# Query and filter context

@@ -85,5 +85,3 @@ Text (or full text) is ordinary unstructured text, such as this paragraph. By de
 A type is like a table in a relational database. Each type has a list of fields that can be specified for documents of that type. The mapping defines how each field in the document is analyzed.
 
 索引类型类似于关系型数据库中的表。 每个类型包含一组用来表示文档的字段。 映射定义了文档中的每个字段如何被分词。
-
-

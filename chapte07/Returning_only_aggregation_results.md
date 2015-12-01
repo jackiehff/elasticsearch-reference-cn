@@ -1,1 +1,0 @@
-# Returning only aggregation results
