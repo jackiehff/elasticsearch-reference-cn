@@ -1,174 +1,155 @@
 
 [[index-modules]]
-= Index Modules
+= 索引模块
 
 [partintro]
---
 
-Index Modules are modules created per index and control all aspects related to
-an index.
+索引模块是用来组织和管理与一个索引相关的所有方面的模块。
 
 [float]
 [[index-modules-settings]]
-== Index Settings
+== 索引设置
 
-Index level settings can be set per-index.  Settings may be:
+索引级别的设置可以基于每个索引进行设置， 可以设置的内容如下：
 
 _static_::
 
-They can only be set at index creation time or on a
-<<indices-open-close,closed index>>.
+这个设置仅仅在索引创建时设置，或者基于 <<indices-open-close,closed index>> 设置.
 
 _dynamic_::
 
-They can be changed on a live index using the
-<<indices-update-settings,update-index-settings>> API.
+动态设置可以在一个正在正常运行的索引上使用
+<<indices-update-settings,update-index-settings>> API 进行设置.
 
-WARNING: Changing static or dynamic index settings on a closed index could
-result in incorrect settings that are impossible to rectify without deleting
-and recreating the index.
+警告: 改变一个已关闭索引的静态或者动态设置有可能导致错误发生，并且这种错误不可恢复，除非删除并重新创建一个索引。
 
 [float]
-=== Static index settings
+=== 静态索引设置
 
-Below is a list of all _static_ index settings that are not associated with any
-specific index module:
+下面是针对 _static_ 索引设置的完整列表，这些设置与任何特定索引模块无关：
 
 `index.number_of_shards`::
 
-    The number of primary shards that an index should have.  Defaults to 5.
-    This setting can only be set at index creation time.  It cannot be
-    changed on a closed index.
+    一个索引中主分片的数量， 默认是5个。 这个设置可以在索引创建时设置， 已关闭索引的主分片数量
+    不能被改变。
 
 `index.shard.check_on_startup`::
 +
 --
-experimental[] Whether or not shards should be checked for corruption before opening. When
-corruption is detected, it will prevent the shard from being opened. Accepts:
+experimental[] 在索引分片打开时是否检查索引已损坏，如果检测到索引损坏，这个分片将不会被打开。接受参数：
 
 `false`::
 
-    (default) Don't check for corruption when opening a shard.
+    (默认) 分片打开时不检查是否损坏。
 
 `checksum`::
 
-    Check for physical corruption.
+  检查物理文件是否损坏
 
 `true`::
 
-    Check for both physical and logical corruption. This is much more
-    expensive in terms of CPU and memory usage.
+    既检查物理损坏也检查逻辑损坏， 这是很耗CPU和内存的检查操作。
 
 `fix`::
 
-    Check for both physical and logical corruption.  Segments that were reported
-    as corrupted will be automatically removed. This option *may result in data loss*.
-    Use with extreme caution!
+    既检查物理损坏也检查逻辑损坏， 损坏的索引段将被自动移除。 这个选项 *可能导致数据丢失*， 使用时需要格外小心。
 
-Checking shards may take a lot of time on large indices.
+针对大索引的检查可能会花费很长时间。
 --
 
 [[index-codec]] `index.codec`::
 
-    experimental[] The +default+ value compresses stored data with LZ4
-    compression, but this can be set to +best_compression+
-    which uses https://en.wikipedia.org/wiki/DEFLATE[DEFLATE] for a higher
-    compression ratio, at the expense of slower stored fields performance.
+    experimental[] 该参数默认值为 +default+ ，此时采用LZ4压缩算法进行压缩，
+    但这可以设置成 +best_compression+，该算法使用 https://en.wikipedia.org/wiki/DEFLATE[DEFLATE]
+    从而达到更高压缩比，代价就是存储速度变慢。
 
 [float]
 [[dynamic-index-settings]]
-=== Dynamic index settings
+=== 动态索引设置
 
-Below is a list of all _dynamic_ index settings that are not associated with any
-specific index module:
+下面是针对 _dynamic_ 索引设置的完整列表，这些设置与任何特定索引模块无关：
 
 
 `index.number_of_replicas`::
 
-    The number of replicas each primary shard has.  Defaults to 1.
+    索引分片副本数量，默认为1.
 
 `index.auto_expand_replicas`::
 
-    Auto-expand the number of replicas based on the number of available nodes.
-    Set to a dash delimited lower and upper bound (e.g. `0-5`) or use `all`
-    for the upper bound (e.g. `0-all`).  Defaults to `false` (i.e. disabled).
+    基于可用节点数量自动扩展副本数量。
+    指定副本的上下限，中间用 `-` 分隔(如: `0-5` )，或者使用 `all` 作为上限（如： `0-all`）。
+    该选项默认值为 `false`(即 禁用该功能)
 
 `index.refresh_interval`::
 
-    How often to perform a refresh operation, which makes recent changes to the
-    index visible to search.  Defaults to `1s`.  Can be set to `-1` to disable
-    refresh.
+    多久执行一次 `refresh` 操作，这个操作可以让索引中的更新反映到搜索结果中。 默认是 `1s`, 如果
+    设置成 `-1` 则禁用更新。
 
 `index.blocks.read_only`::
 
-    Set to `true` to make the index and index metadata read only, `false` to
-    allow writes and metadata changes.
+    设成 `true` 则索引和索引元数据变为只读， 设成 `false` 则允许索引和元数据修改。
 
 `index.blocks.read`::
 
-    Set to `true` to disable read operations against the index.
+    设置为 `true` 则禁止该索引的读操作。
 
 `index.blocks.write`::
 
-    Set to `true` to disable write operations against the index.
+    设置为 `true` 则禁止该索引的写操作。
 
 `index.blocks.metadata`::
 
-    Set to `true` to disable index metadata reads and writes.
+    设置为 `true` 则禁止对索引元数据的读写操作。
 
 `index.ttl.disable_purge`::
 
-    experimental[] Disables the purge of <<mapping-ttl-field,expired docs>> on
-    the current index.
+    experimental[] 禁止对索引中 <<mapping-ttl-field,过期文档>> 的清除操作。
 
 [[index.recovery.initial_shards]]`index.recovery.initial_shards`::
 +
 --
-A primary shard is only recovered only if there are enough nodes available to
-allocate sufficient replicas to form a quorum. It can be set to:
+仅当集群中具有足够多的节点可供分配索引分片的副本以使得主分片和所有副本能满足超过半数的要求时，主分片才会被恢复成可用状态。
 
-    * `quorum` (default)
-    * `quorum-1` (or `half`)
+    * `quorum` (默认值)
+    * `quorum-1` (或 `half`)
     * `full`
     * `full-1`.
-    * Number values are also supported, e.g. `1`.
+    * 数值也是支持的, 如 `1`.
 --
 
 
 [float]
-=== Settings in other index modules
+=== 索引模块其他设置
 
-Other index settings are available in index modules:
+索引模块其他设置如下:
 
 <<analysis,Analysis>>::
 
-    Settings to define analyzers, tokenizers, token filters and character
-    filters.
+    用来设置分词器，tokenizers, token filters 和 character filters。
 
 <<index-modules-allocation,Index shard allocation>>::
 
-    Control over where, when, and how shards are allocated to nodes.
+    用来控制索引分片如何适时恰当的分配给集群中得节点。
 
 <<index-modules-mapper,Mapping>>::
 
-    Enable or disable dynamic mapping for an index.
+    开启或禁用索引的动态映射。
 
 <<index-modules-similarity,Similarities>>::
 
-    Configure custom similarity settings to customize how search results are
-    scored.
+    配置自定义相似度以调节搜索结果的排序。
 
 <<index-modules-slowlog,Slowlog>>::
 
-    Control over how slow queries and fetch requests are logged.
+    定义慢查询或者获取请求如何被记录下来。
 
 <<index-modules-store,Store>>::
 
-    Configure the type of filesystem used to access shard data.
+    配置索引分片数据的存储方式。
 
 <<index-modules-translog,Translog>>::
 
-    Control over the transaction log and background flush operations.
+    用来控制事务日志和后台刷新操作策略。
 
 --
 
@@ -185,5 +166,3 @@ include::index-modules/slowlog.asciidoc[]
 include::index-modules/store.asciidoc[]
 
 include::index-modules/translog.asciidoc[]
-
-

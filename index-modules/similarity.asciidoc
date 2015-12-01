@@ -1,22 +1,18 @@
 [[index-modules-similarity]]
-== Similarity module
+== 相似度模块
 
-A similarity (scoring / ranking model) defines how matching documents
-are scored. Similarity is per field, meaning that via the mapping one
-can define a different similarity per field.
+相似度（评分/排序模块）定义了如何对匹配到的文档进行评分。 相似度是针对一个字段的，也就是说
+通过映射我们可以对每个字段定义不同的相似度算法。
 
-Configuring a custom similarity is considered a expert feature and the
-builtin similarities are most likely sufficient as is described in
-<<similarity>>.
+配置自定义的相似度算法是一个高级功能，如 <<similarity>> 所描述的，内置的相似度算法对大部分
+情况基本上已经够用了。
 
 [float]
 [[configuration]]
-=== Configuring a similarity
+=== 配置相似度
 
-Most existing or custom Similarities have configuration options which
-can be configured via the index settings as shown below. The index
-options can be provided when creating an index or updating index
-settings.
+大部分存在的或者自定义的相似度算法都可以通过索引设置象下面这样来配置， 配置选项可以在创建索引时提供，
+也可以在更新索引设置时指定。
 
 [source,js]
 --------------------------------------------------
@@ -31,8 +27,8 @@ settings.
 }
 --------------------------------------------------
 
-Here we configure the DFRSimilarity so it can be referenced as
-`my_similarity` in mappings as is illustrate in the below example:
+在这里我们定义了一个 DFRSimilarity， 然后就可以通过它的引用 `my_similarity`
+在映射文件中使用了，就像下面例子中一样：
 
 [source,js]
 --------------------------------------------------
@@ -45,106 +41,116 @@ Here we configure the DFRSimilarity so it can be referenced as
 --------------------------------------------------
 
 [float]
-=== Available similarities
+=== 可用相似度算法
 
 [float]
 [[default-similarity]]
-==== Default similarity
+==== 默认相似度
 
-The default similarity that is based on the TF/IDF model. This
-similarity has the following option:
+默认相似度是基于 TF/IDF 模型的，它由下面一些配置选项：
 
 `discount_overlaps`::
-    Determines whether overlap tokens (Tokens with
-    0 position increment) are ignored when computing norm. By default this
-    is true, meaning overlap tokens do not count when computing norms.
+    确定重叠的词元 (position值为0的词元) 是否在计算norm时被忽略。默认为 true, 意味着计算norm
+    时不考虑重叠词元。
 
-Type name: `default`
+相似度 type: `default`
 
 [float]
 [[bm25]]
-==== BM25 similarity
+==== BM25 相似度
 
 Another TF/IDF based similarity that has built-in tf normalization and
 is supposed to work better for short fields (like names). See
 http://en.wikipedia.org/wiki/Okapi_BM25[Okapi_BM25] for more details.
 This similarity has the following options:
 
+另一个基于 TF/IDF 模型的相似度算法，该算法内置的 tf 规范化算法可以对短的字段有更好的支持。
+更多细节见 http://en.wikipedia.org/wiki/Okapi_BM25[Okapi_BM25]。该算法具有下面的
+参数：
+
 [horizontal]
 `k1`::
     Controls non-linear term frequency normalization
     (saturation).
+    控制非线性词项频率的规范化因子（饱和度）。
 
 `b`::
     Controls to what degree document length normalizes tf values.
+    控制文档长度在计算 tf 值时的权重度。
 
 `discount_overlaps`::
     Determines whether overlap tokens (Tokens with
     0 position increment) are ignored when computing norm. By default this
     is true, meaning overlap tokens do not count when computing norms.
+    确定重叠的词元 (position值为0的词元) 是否在计算norm时被忽略。默认为 true, 意味着计算norm
+    时不考虑重叠词元。
 
-Type name: `BM25`
+
+相似度类型名称: `BM25`
 
 [float]
 [[drf]]
-==== DFR similarity
+==== DFR 相似度
 
 Similarity that implements the
 http://lucene.apache.org/core/5_2_1/core/org/apache/lucene/search/similarities/DFRSimilarity.html[divergence
 from randomness] framework. This similarity has the following options:
+该相似度实现了
+http://lucene.apache.org/core/5_2_1/core/org/apache/lucene/search/similarities/DFRSimilarity.html[divergence
+from randomness] 框架。 具有如下选项：
 
 [horizontal]
 `basic_model`::
-    Possible values: `be`, `d`, `g`, `if`, `in`, `ine` and `p`.
+    可能取值: `be`, `d`, `g`, `if`, `in`, `ine` and `p`.
 
 `after_effect`::
-    Possible values: `no`, `b` and `l`.
+    可能取值: `no`, `b` and `l`.
 
 `normalization`::
-    Possible values: `no`, `h1`, `h2`, `h3` and `z`.
+    可能取值: `no`, `h1`, `h2`, `h3` and `z`.
 
-All options but the first option need a normalization value.
+除了第一个参数外，所有参数都需要一个规范化的值。
 
-Type name: `DFR`
+相似度类型名称: `DFR`
 
 [float]
 [[ib]]
-==== IB similarity.
+==== IB 相似度.
 
 http://lucene.apache.org/core/5_2_1/core/org/apache/lucene/search/similarities/IBSimilarity.html[Information
-based model] . This similarity has the following options:
+based model] . 该算法具有下面的参数：
 
 [horizontal]
-`distribution`::  Possible values: `ll` and `spl`.
-`lambda`::        Possible values: `df` and `ttf`.
-`normalization`:: Same as in `DFR` similarity.
+`distribution`::  可能取值: `ll` and `spl`.
+`lambda`::        可能取值: `df` and `ttf`.
+`normalization`:: 同 `DFR` 相似度.
 
-Type name: `IB`
+相似度类型名称:  `IB`
 
 [float]
 [[lm_dirichlet]]
 ==== LM Dirichlet similarity.
 
 http://lucene.apache.org/core/5_2_1/core/org/apache/lucene/search/similarities/LMDirichletSimilarity.html[LM
-Dirichlet similarity] . This similarity has the following options:
+Dirichlet similarity] 。 该算法具有下面的参数：
 
 [horizontal]
-`mu`::  Default to `2000`.
+`mu`::  默认为 `2000`.
 
-Type name: `LMDirichlet`
+相似度类型名称: `LMDirichlet`
 
 [float]
 [[lm_jelinek_mercer]]
-==== LM Jelinek Mercer similarity.
+==== LM Jelinek Mercer 相似度.
 
 http://lucene.apache.org/core/5_2_1/core/org/apache/lucene/search/similarities/LMJelinekMercerSimilarity.html[LM
-Jelinek Mercer similarity] . This similarity has the following options:
+Jelinek Mercer similarity] 。 该算法具有下面的参数：
 
 [horizontal]
-`lambda`::  The optimal value depends on both the collection and the query. The optimal value is around `0.1`
-for title queries and `0.7` for long queries. Default to `0.1`.
+`lambda`::  取决于查询和文档的理想值。对标题的查询理想值大约为 `0.1`
+而长字段查询大约为 `0.7`。默认为 `0.1`.
 
-Type name: `LMJelinekMercer`
+相似度类型名称: `LMJelinekMercer`
 
 [float]
 [[default-base]]
@@ -156,8 +162,11 @@ are not per-field. Consequently, for expert users wanting to change the
 implementation used for these two methods, while not changing the
 `default`, it is possible to configure a similarity with the name
 `base`. This similarity will then be used for the two methods.
+默认情况下， Elasticsearch 会使用配置为 `default` 的相似度， 但是该相似度算法中的方法
+ `queryNorm()` 和 `coord()` 并不是基于字段的。 因此，高级用户如果想自定义这两个方法，
+ 不是改变 `default`, 而是通过配置一个名为 `base` 的相似度。这个相似度算法会被用在前面两个方法中。
 
-You can change the default similarity for all fields by putting the following setting into `elasticsearch.yml`:
+你可以为通过在 `elasticsearch.yml` 中配置下面的设置来给所有字段改变默认相似度算法。
 
 [source,js]
 --------------------------------------------------

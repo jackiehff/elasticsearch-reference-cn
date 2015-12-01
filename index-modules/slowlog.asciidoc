@@ -1,15 +1,13 @@
 [[index-modules-slowlog]]
-== Slow Log
+== 慢日志
 
 [float]
 [[search-slow-log]]
-=== Search Slow Log
+=== 搜索慢日志
 
-Shard level slow search log allows to log slow search (query and fetch
-phases) into a dedicated log file.
+分片级别的慢搜索日志可以将慢搜索（查询和获取阶段）通过日志的方式记录在专门的文件中。
 
-Thresholds can be set for both the query phase of the execution, and
-fetch phase, here is a sample:
+查询或者获取阶段的阈值都分别可以定义，下面是一个例子：
 
 [source,yaml]
 --------------------------------------------------
@@ -24,23 +22,17 @@ index.search.slowlog.threshold.fetch.debug: 500ms
 index.search.slowlog.threshold.fetch.trace: 200ms
 --------------------------------------------------
 
-All of the above settings are _dynamic_ and can be set per-index.
+所有上面的设置都是 _dynamic_ 并且可以针对每个索引设置。
 
-By default, none are enabled (set to `-1`). Levels (`warn`, `info`,
-`debug`, `trace`) allow to control under which logging level the log
-will be logged. Not all are required to be configured (for example, only
-`warn` threshold can be set). The benefit of several levels is the
-ability to quickly "grep" for specific thresholds breached.
+默认情况下， 慢日志没有开启（设成 `-1`）。 级别（ `warn`, `info`,
+`debug`, `trace`）用来控制日志的输出级别，并不是所有的级别都是必须的（如，可以只设置 `warn`
+级别的日志）， 使用多个级别的好处是可以快速的通过 “grep” 查询对应级别的日志。
 
-The logging is done on the shard level scope, meaning the execution of a
-search request within a specific shard. It does not encompass the whole
-search request, which can be broadcast to several shards in order to
-execute. Some of the benefits of shard level logging is the association
-of the actual execution on the specific machine, compared with request
-level.
+日志是基于分片这个级别的， 也就是说记录的是一个搜索请求在指定分片上得执行情况。一个搜索请求会被
+广播到多个分片上去执行，而慢日志并不包含这个请求的整个生命周期。这样做的好处是，可以将日志和所执行
+该请求的机器对应起来。
 
-The logging file is configured by default using the following
-configuration (found in `logging.yml`):
+日志文件默认使用下面的配置（在 `logging.yml`中）：
 
 [source,yaml]
 --------------------------------------------------
@@ -55,12 +47,10 @@ index_search_slow_log_file:
 
 [float]
 [[index-slow-log]]
-=== Index Slow log
+=== 索引慢日志
 
-The indexing slow log, similar in functionality to the search slow
-log. The log file is ends with `_index_indexing_slowlog.log`. Log and
-the thresholds are configured in the elasticsearch.yml file in the same
-way as the search slowlog. Index slowlog sample:
+索引慢日志功能上和搜索慢日志类似。 索引慢日志文件以 `_index_indexing_slowlog.log`结尾，
+日志和阈值的配置和搜索慢日志一样在 elasticsearch.yml中配置。索引慢日志例子：
 
 [source,yaml]
 --------------------------------------------------
@@ -72,15 +62,13 @@ index.indexing.slowlog.level: info
 index.indexing.slowlog.source: 1000
 --------------------------------------------------
 
-All of the above settings are _dynamic_ and can be set per-index.
+所有上面的设置都是 _dynamic_ 并且可以针对每个索引设置。
 
-By default Elasticsearch will log the first 1000 characters of the _source in
-the slowlog. You can change that with `index.indexing.slowlog.source`. Setting
-it to `false` or `0` will skip logging the source entirely an setting it to
-`true` will log the entire source regardless of size.
+Elasticsearch默认会记录 _source 中的1000个字符在慢日志文件中，你可以通过
+ `index.indexing.slowlog.source` 改变此值， 设成 `false` 或 `0` 将不会记录source的内容，
+ 如果设成 `true` 则会完整记录整个source字段的值，而不管大小事多少。
 
-The index slow log file is configured by default in the `logging.yml`
-file:
+索引慢日志文件默认使用下面的配置（在 `logging.yml`中）：
 
 [source,yaml]
 --------------------------------------------------
