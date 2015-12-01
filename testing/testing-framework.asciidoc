@@ -1,26 +1,24 @@
 [[testing-framework]]
-== Java Testing Framework
+== Java 测试框架
 
 [[testing-intro]]
 
-Testing is a crucial part of your application, and as information retrieval itself is already a complex topic, there should not be any additional complexity in setting up a testing infrastructure, which uses elasticsearch. This is the main reason why we decided to release an additional file to the release, which allows you to use the same testing infrastructure we do in the elasticsearch core. The testing framework allows you to setup clusters with multiple nodes in order to check if your code covers everything needed to run in a cluster. The framework prevents you from writing complex code yourself to start, stop or manage several test nodes in a cluster. In addition there is another very important feature called randomized testing, which you are getting for free as it is part of the elasticsearch infrastructure.
-
+测试是应用程序中关键的一环， 特别是对elasticsearch属于信息检索这样的一个本身就很复杂的领域，
+就更不应该在搭建测试基础设施上增加复杂性了。这就是我们在发布版本中添加一个额外的文件，让你可以使用和elasticsearch核心模块同意的测试框架的一个主要原因。 这个测试框架让你可以搭建一个多节点的集群，从而可以检查代码是否覆盖了集群环境运行情况下得各种情况。这个框架不需要你写很复杂的代码来启动，停止或者管理集群中的一些测试节点。更进一步，发布版本中还包含一个重要功能，叫做随机测试，因为这是elasticsearch基础设施的一部分，因此你可以免费使用。
 
 
 [[why-randomized-testing]]
-=== why randomized testing?
+=== 为什么需要随机测试？
 
-The key concept of randomized testing is not to use the same input values for every testcase, but still be able to reproduce it in case of a failure. This allows to test with vastly different input variables in order to make sure, that your implementation is actually independent from your provided test data.
-
-All of the tests are run using a custom junit runner, the `RandomizedRunner` provided by the randomized-testing project. If you are interested in the implementation being used, check out the http://labs.carrotsearch.com/randomizedtesting.html[RandomizedTesting webpage].
-
+随机测试的核心概念是不在每个测试用例中使用相同的输入值，但在错误发生时依然可以重现问题。这样举可以使用各种不同的输入变量来进行测试，从而确保你的实现与你提供的测试数据是独立的。
+所有测试都使用一个自定义junit runner， 叫做 `RandomizedRunner`， 该runner由随机测试项目提供。 如果你对实现细节感兴趣， 请参考 http://labs.carrotsearch.com/randomizedtesting.html[随机测试网页].
 
 [[using-elasticsearch-test-classes]]
-=== Using the elasticsearch test classes
+=== 使用 elasticsearch 测试类
 
-First, you need to include the testing dependency in your project, along with the elasticsearch dependency you have already added. If you use maven and its `pom.xml` file, it looks like this
-
+首先，你需要在添加elasticsearch依赖包的同时添加测试框架的依赖包到项目中。 如果你使用maven来管理项目，那么 pom.xml 文件看上去就像下面这样
 [[source,xml]]
+
 --------------------------------------------------
 <dependencies>
   <dependency>
@@ -39,77 +37,69 @@ First, you need to include the testing dependency in your project, along with th
 </dependencies>
 --------------------------------------------------
 
-Replace the elasticsearch version and the lucene version with the corresponding elasticsearch version and its accompanying lucene release.
+将 elasticsearch 版本和 lucene 版本替换成你的 elasticsearch 版本和其对应的 lucene 版本。
+你可以在你自己的测试类中继承我们提供的部分类，这些父类提供了以下功能：
 
-We provide a few classes that you can inherit from in your own test classes which provide:
-
-* pre-defined loggers
-* randomized testing infrastructure
-* a number of helper methods
+* 预定义的 loggers
+* 随机测试基础框架
+* 一些帮助方法
 
 
 [[unit-tests]]
-=== unit tests
+=== 单元测试
 
-If your test is a well isolated unit test which doesn't need a running elasticsearch cluster, you can use the `ESTestCase`. If you are testing lucene features, use `ESTestCase` and if you are testing concrete token streams, use the `ESTokenStreamTestCase` class. Those specific classes execute additional checks which ensure that no resources leaks are happening, after the test has run.
-
-
+如果你的单元测试用例隔离性很好，不需要运行在elasticsearch集群之上， 你可以使用 `ESTestCase`。 如果你需要测试 lucene 的功能， 使用 `ESTestCase`， 如果你需要测试具体的 token streams, 请使用 `ESTokenStreamTestCase` 这个类。 还有一些特别的测试类用来执行额外的检查以确保在单元测试运行后没用资源泄露。
 [[integration-tests]]
-=== integration tests
+=== 整合测试
 
-These kind of tests require firing up a whole cluster of nodes, before the tests can actually be run. Compared to unit tests they are obviously way more time consuming, but the test infrastructure tries to minimize the time cost by only restarting the whole cluster, if this is configured explicitly.
-
-The class your tests have to inherit from is `ESIntegTestCase`. By inheriting from this class, you will no longer need to start elasticsearch nodes manually in your test, although you might need to ensure that at least a certain number of nodes are up. The integration test behaviour can be configured heavily by specifying different system properties on test runs. See the `TESTING.asciidoc` documentation in the https://github.com/elastic/elasticsearch/blob/master/TESTING.asciidoc[source repository] for more information.
-
+这类测试在运行之前，需要启动整个集群。 相对单元测试来说，整合测试显然更耗时，但是测试框架只在显式配置了每个用例需要重启集群时才会重启整个集群，通过这种方法来尽量减少耗时。
+你的类需要继承的是 `ESIntegTestCase`。通过继承这个类， 你再也不用在测试用例中手动启动集群节点，然而你需要确保至少部分节点已经启动了。整合测试的行为可以通过配置不同的系统变量来定制。 更多信息参见 `TESTING.asciidoc` 文档 https://github.com/elastic/elasticsearch/blob/master/TESTING.asciidoc[source repository]。
 
 [[number-of-shards]]
-==== number of shards
+==== 分片数
 
-The number of shards used for indices created during integration tests is randomized between `1` and `10` unless overwritten upon index creation via index settings.
-The rule of thumb is not to specify the number of shards unless needed, so that each test will use a different one all the time. Alternatively you can override the `numberOfShards()` method. The same applies to the `numberOfReplicas()` method.
-
+除非在创建索引时通过索引设置改写分片数，整合测试中索引创建时的分片数是1 ~ 10 之间的随机数。
+基本原则是除非特别需要，一般情况下不要设置分片数，这样每个测试用例将使用不同的分片数。 另外，你可以重写 `numberOfShards()` 方法和 `numberOfReplicas()`方法。
 
 [[helper-methods]]
-==== generic helper methods
+==== 常用 helper 方法
 
-There are a couple of helper methods in `ESIntegTestCase`, which will make your tests shorter and more concise.
-
+`ESIntegTestCase` 类中有一些帮助方法，使用这些方法可以是你的整合测试用例更简短和具体。
 [horizontal]
-`refresh()`::           Refreshes all indices in a cluster
-`ensureGreen()`::       Ensures a green health cluster state, waiting for relocations. Waits the default timeout of 30 seconds before failing.
-`ensureYellow()`::      Ensures a yellow health cluster state, also waits for 30 seconds before failing.
-`createIndex(name)`::   Creates an index with the specified name
-`flush()`::             Flushes all indices in a cluster
-`flushAndRefresh()`::   Combines `flush()` and `refresh()` calls
-`optimize()`::          Waits for all relocations and optimized all indices in the cluster to one segment.
-`indexExists(name)`::   Checks if given index exists
-`admin()`::             Returns an `AdminClient` for administrative tasks
-`clusterService()`::    Returns the cluster service java class
-`cluster()`::           Returns the test cluster class, which is explained in the next paragraphs
+`refresh()`::           更新集群中所有的索引
+`ensureGreen()`::       在等待重新分配分片分布时， 确保集群状态变绿， 等待时间默认是30秒
+`ensureYellow()`::      确保集群状态变为黄色， 默认等待时间也是 30 秒
+`createIndex(name)`::   用给定的名称创建一个索引
+`flush()`::             刷新集群中得所有索引
+`flushAndRefresh()`::   组合 `flush()`和 `refresh()` 两个调用到一起。
+`optimize()`::          等待所有的重新分片并且优化集群中的所有索引到一个索引段
+`indexExists(name)`::   检查索引名称是否存在
+`admin()`::             针对某些管理任务，返回一个 `AdminClient` 对象
+`clusterService()`::    返回集群服务这个 java 对象
+`cluster()`::           返回测试集群类，这个概念将在下一节讲解
 
 
 [[test-cluster-methods]]
-==== test cluster methods
+==== 测试集群方法
 
-The `InternalTestCluster` class is the heart of the cluster functionality in a randomized test and allows you to configure a specific setting or replay certain types of outages to check, how your custom code reacts.
+在随机测试中， `InternalTestCluster` 类是核心， 它可以让你配置一个特定的设置，或者重放某些错误异常，来查看你的自定义代码如何响应
 
 [horizontal]
-`ensureAtLeastNumNodes(n)`::        Ensure at least the specified number of nodes is running in the cluster
-`ensureAtMostNumNodes(n)`::         Ensure at most the specified number of nodes is running in the cluster
-`getInstance()`::                   Get a guice instantiated instance of a class from a random node
-`getInstanceFromNode()`::           Get a guice instantiated instance of a class from a specified node
-`stopRandomNode()`::                Stop a random node in your cluster to mimic an outage
-`stopCurrentMasterNode()`::         Stop the current master node to force a new election
-`stopRandomNonMaster()`::           Stop a random non master node to mimic an outage
-`buildNode()`::                     Create a new elasticsearch node
-`startNode(settings)`::             Create and start a new elasticsearch node
+`ensureAtLeastNumNodes(n)`::        至少需要集群中指定个节点已经正常启动
+`ensureAtMostNumNodes(n)`::         最多需要集群中指定数量的节点已经启动
+`getInstance()`::                   从随机节点中获取一个 guice 实现实例
+`getInstanceFromNode()`::           从指定节点中获取guice实现实例
+`stopRandomNode()`::                停止一个随机节点，来模拟集群中出现的一个问题
+`stopCurrentMasterNode()`::         停止当前的主节点，从而强制产生新的主节点选举流程
+`stopRandomNonMaster()`::           停止一个非主节点的节点，来模拟错误
+`buildNode()`::                     新建一个 elasticsearch 节点
+`startNode(settings)`::             新建并启动一个 elasticsearch 节点
 
 
 [[changing-node-settings]]
-==== Changing node settings
+==== 更改节点配置
 
-If you want to ensure a certain configuration for the nodes, which are started as part of the `EsIntegTestCase`, you can override the `nodeSettings()` method
-
+如果你需要特别设置节点的某些配置，这也是 `EsIntegTestCase` 所支持的，你只要重写 `nodeSettings()` 方法就可以了。
 [source,java]
 -----------------------------------------
 public class Mytests extends ESIntegTestCase {
@@ -126,25 +116,23 @@ public class Mytests extends ESIntegTestCase {
 
 
 [[accessing-clients]]
-==== Accessing clients
+==== 操作客户端
 
-In order to execute any actions, you have to use a client. You can use the `ESIntegTestCase.client()` method to get back a random client. This client can be a `TransportClient` or a `NodeClient` - and usually you do not need to care as long as the action gets executed. There are several more methods for client selection inside of the `InternalTestCluster` class, which can be accessed using the `ESIntegTestCase.internalCluster()` method.
-
+为了执行某些操作，你需要使用一个客户端。你可以通过 `ESIntegTestCase.client()` 来随机返回一个客户端。 这个客户端是 `ThansportClient` 或 `NodeClient` 中的一个，通常在执行操作的时候，你不会在意具体是哪种类型的客户端。关于客户端的选择， `InternalTestCluster` 这个类里有更多的选择， 你可以通过 `ESIntegTestCase.InternalTestCluster` 这个方法来获得该类。
 [horizontal]
-`iterator()`::                  An iterator over all available clients
-`masterClient()`::              Returns a client which is connected to the master node
-`nonMasterClient()`::           Returns a client which is not connected to the master node
-`clientNodeClient()`::          Returns a client, which is running on a client node
-`client(String nodeName)`::     Returns a client to a given node
-`smartClient()`::               Returns a smart client
+`iterator()`::                  返回所有可用的客户端的迭代器
+`masterClient()`::              返回一个连接到主节点的客户端
+`nonMasterClient()`::           返回一个连接到非主节点的客户端
+`clientNodeClient()`::          返回一个连接到客户端节点的客户端
+`client(String nodeName)`::     返回一个连接到指定节点的客户端
+`smartClient()`::               返回一个智能客户端
 
 
 [[scoping]]
-==== Scoping
+==== 范围
 
-By default the tests are run with unique cluster per test suite. Of course all indices and templates are deleted between each test. However, sometimes you need to start a new cluster for each test - for example, if you load a certain plugin, but you do not want to load it for every test.
-
-You can use the `@ClusterScope` annotation at class level to configure this behaviour
+默认情况下，一个集群只会分配给一个测试套件中的单元测试来运行， 并且所有的索引和模板都会在每个单元测试完成后被删除。但是，假如你再测试时希望加载某个插件，你希望每个单元测试启动一个新集群，但不希望每次都加载这个插件。
+这个时候，你就可以在类级别上使用 `@ClusterScope` 注解来配置这种行为。
 
 [source,java]
 -----------------------------------------
@@ -154,14 +142,12 @@ public class CustomSuggesterSearchTests extends ESIntegTestCase {
 }
 -----------------------------------------
 
-The above sample configures the test to use a new cluster for each test method. The default scope is `SUITE` (one cluster for all test methods in the test). The `numNodes` settings allows you to only start a certain number of nodes, which can speed up test execution, as starting a new node is a costly and time consuming operation and might not be needed for this test.
-
+以上的例子会在每个测试方法时启动一个新集群。 默认的范围是 `SUITE` （该测试类中得所有方法使用一个集群）。 参数 `numNodes` 的设置让你可以控制节点个数，这样可以加速测试执行过程，这是因为一个新节点的启动是一个耗时的操作，并且这个测试中并不一定会需要它。
 
 [[changing-node-configuration]]
-==== Changing plugins via configuration
+==== 通过配置更改插件
 
-As elasticsearch is using JUnit 4, using the `@Before` and `@After` annotations is not a problem. However you should keep in mind, that this does not have any effect in your cluster setup, as the cluster is already up and running when those methods are run. So in case you want to configure settings - like loading a plugin on node startup - before the node is actually running, you should overwrite the `nodeSettings()` method from the `ElasticsearchIntegrationTest` class and change the cluster scope to `SUITE`.
-
+由于elasticsearch使用了 JUnit 4， 因此用 `@Before` 和 `@After` 并没有什么问题。但是你需要记住一个事情，那就是这对你的集群建立并没有任何影响， 因为集群在方法运行时早已经启动并且运行了。因此当你希望在节点运行之前设置一些节点的配置---比如节点启动时加载一个插件， 你应该重写类 `ElasticsearchIntegrationTest` 的方法 `nodeSettings()`，并将集群的范围改为 `SUITE`。
 [source,java]
 -----------------------------------------
 @Override
@@ -173,80 +159,75 @@ protected Settings nodeSettings(int nodeOrdinal) {
 -----------------------------------------
 
 [[randomized-testing]]
-=== Randomized testing
+=== 随机测试
 
-The code snippets you saw so far did not show any trace of randomized testing features, as they are carefully hidden under the hood. However when you are writing your own tests, you should make use of these features as well. Before starting with that, you should know, how to repeat a failed test with the same setup, how it failed. Luckily this is quite easy, as the whole mvn call is logged together with failed tests, which means you can simply copy and paste that line and run the test.
-
+目前为止，你看到的代码片段并没有体现出随机测试的任何特性，那是因为这些细节被小心的被隐藏在底层了。然而，在你写自己的测试用例时，你也应该使用这些特性。在开始之前，你需要知道，如何重现一个失败的测试用例，它是如何失败的。幸运的是，这特别简单，因为整个mvn调用信息和失败的测试用例一起被记录了下来，这样你就可以简单的复制粘贴那一行，并重新执行该测试就好了。
 
 [[generating-random-data]]
-==== Generating random data
+==== 随机数据生成
 
-The next step is to convert your test using static test data into a test using randomized test data. The kind of data you could randomize varies a lot with the functionality you are testing against. Take a look at the following examples (note, that this list could go on for pages, as a distributed system has many, many moving parts):
+接下来就是将你的测试用例从使用静态测试数据转变为使用随机测试数据。 你需要随机化的数据随着你的测试功能的不同可能有比较大的差异。看下面的例子（注意，下面的列表中得内容可能会改变，因为分布式系统经常会有很多很多的变化）：
 
-* Searching for data using arbitrary UTF8 signs
-* Changing your mapping configuration, index and field names with each run
-* Changing your response sizes/configurable limits with each run
-* Changing the number of shards/replicas when creating an index
+* 搜索那些包含任意UTF8字符的数据
+* 在每个用例中改变映射配置，索引和字段名称
+* 在每个用例中改变你的请求返回的数据量或者改变配置的最大限制记录数
+* 在创建索引时改变主分片或从分片的大小
 
-So, how can you create random data. The most important thing to know is, that you never should instantiate your own `Random` instance, but use the one provided in the `RandomizedTest`, from which all elasticsearch dependent test classes inherit from.
-
+那么，如何生成随机数据呢。你需要知道的最重要的一点是， 你不应该自己实例化 `Random` 实例，而应该使用 `RandomizedTest` 所提供的实例， 所有elasticsearch测试类都是从这个类继承而来的。
 [horizontal]
-`getRandom()`::         Returns the random instance, which can recreated when calling the test with specific parameters
-`randomBoolean()`::     Returns a random boolean
-`randomByte()`::        Returns a random byte
-`randomShort()`::       Returns a random short
-`randomInt()`::         Returns a random integer
-`randomLong()`::        Returns a random long
-`randomFloat()`::       Returns a random float
-`randomDouble()`::      Returns a random double
+`getRandom()`::         返回一个random的实例，这个实例也可以通过传入特别的参数来重新创建一个新的。
+`randomBoolean()`::     返回一个随机 boolean 对象
+`randomByte()`::        返回一个随机 byte 对象
+`randomShort()`::       返回一个随机 short 对象
+`randomInt()`::         返回一个随机 integer 对象
+`randomLong()`::        返回一个随机 long 对象
+`randomFloat()`::       返回一个随机 float 对象
+`randomDouble()`::      返回一个随机 double 对象
 
-`randomInt(max)`::      Returns a random integer between 0 and max
-`between()`::           Returns a random between the supplied range
-`atLeast()`::           Returns a random integer of at least the specified integer
-`atMost()`::            Returns a random integer of at most the specified integer
+`randomInt(max)`::      返回一个0到 max 之间的随机 integer 对象
+`between()`::           返回一个指定范围内的随机值
+`atLeast()`::           返回一个不小于某个数的随机 integer 对象
+`atMost()`::            返回一个不超过某个数的随机 integer 对象
 
-`randomLocale()`::      Returns a random locale
-`randomTimeZone()`::    Returns a random timezone
+`randomLocale()`::      返回一个随机 locale 对象
+`randomTimeZone()`::    返回一个随机 timezone 对象
 
-`randomFrom()`::        Returns a random element from a list/array
+`randomFrom()`::        从一个 list/array 中随机返回一个元素
 
-In addition, there are a couple of helper methods, allowing you to create random ASCII and Unicode strings, see methods beginning with `randomAscii`, `randomUnicode`, and `randomRealisticUnicode` in the random test class. The latter one tries to create more realistic unicode string by not being arbitrary random.
-
-If you want to debug a specific problem with a specific random seed, you can use the `@Seed` annotation to configure a specific seed for a test. If you want to run a test more than once, instead of starting the whole test suite over and over again, you can use the `@Repeat` annotation with an arbitrary value. Each iteration than gets run with a different seed.
-
+另外，在这个随机测试类中，还包含一些帮助方法，可以用它们生成随机 ASCII 和 Unicode 字符串， 见方法名以 `randomAscii`, `randomUnicode`, 和 `randomRealisticUnicode` 开头的那些方法。
+如果你在调试一个特别的问题时，需要用到一个特别的随机种子， 可以使用 `@Seed` 这个注解来达到在测试用例中配置一个特定种子的目的。 如果你希望运行一个测试用例多次，不需要一次又一次的重启该测试套件，你可以直接使用 `@Repeat` 注解就可以了，该注解可以设置重复任意次数， 每次迭代使用一个不同的随机种子。
 
 [[assertions]]
-=== Assertions
+=== 断言
 
 As many elasticsearch tests are checking for a similar output, like the amount of hits or the first hit or special highlighting, a couple of predefined assertions have been created. Those have been put into the `ElasticsearchAssertions` class. There is also a specific geo assertions in `ElasticsearchGeoAssertions`.
+由于在 elasticsearch 中经常需要检查一些相似的输出，比如匹配到的文档数量，第一个匹配文档，或者是特殊高亮片段，因此预置了一些断言。 这些断言被放在 `ElasticsearchAssertions` 类中。 同时， 特别针对 geo 相关处理的断言也可以在 `ElasticsearchGeoAssertions` 中找到。
+[horizontal]
+`assertHitCount()`::        检查搜索或者 count 请求匹配到的文档数量
+`assertAcked()`::           确保一个请求被主节点接受了
+`assertSearchHits()`::      断言一个请求返回中包含特定的id列表
+`assertMatchCount()`::      对于percolation请求，断言匹配数
+`assertFirstHit()`::        断言第一个文档，命中了特定的匹配规则
+`assertSecondHit()`::       断言第二个文档，命中了特定的匹配规则
+`assertThirdHit()`::        断言第三个文档，命中了特定的匹配规则
+`assertSearchHit()`::       断言返回中指定文档，命中了特定的匹配规则
+`assertNoFailures()`::      断言在返回中不包含分片失败的信息
+`assertFailures()`::        断言在返回中包含有分片失败的信息
+`assertHighlight()`::       断言有指定的高亮片段被匹配到
+`assertSuggestion()`::      断言包含指定的搜索建议
+`assertSuggestionSize()`::  断言包含指定的搜索建议数
+`assertThrows()`::          断言某个特定的异常被抛出
+
+通用匹配器
 
 [horizontal]
-`assertHitCount()`::        Checks hit count of a search or count request
-`assertAcked()`::           Ensure the a request has been acknowledged by the master
-`assertSearchHits()`::      Asserts a search response contains specific ids
-`assertMatchCount()`::      Asserts a matching count from a percolation response
-`assertFirstHit()`::        Asserts the first hit hits the specified matcher
-`assertSecondHit()`::       Asserts the second hit hits the specified matcher
-`assertThirdHit()`::        Asserts the third hits hits the specified matcher
-`assertSearchHit()`::       Assert a certain element in a search response hits the specified matcher
-`assertNoFailures()`::      Asserts that no shard failures have occurred in the response
-`assertFailures()`::        Asserts that shard failures have happened during a search request
-`assertHighlight()`::       Assert specific highlights matched
-`assertSuggestion()`::      Assert for specific suggestions
-`assertSuggestionSize()`::  Assert for specific suggestion count
-`assertThrows()`::          Assert a specific exception has been thrown
+`hasId()`::     检查匹配到的文档id的匹配器
+`hasType()`::   检查匹配到的文档类型的匹配器
+`hasIndex()`::  检查匹配到的文档所属索引的匹配器
+`hasScore()`::  检查匹配到的文档得分的匹配器
+`hasStatus()`:: 检查返回中是否包含特定 `RestStatus` 的匹配器
 
-Common matchers
-
-[horizontal]
-`hasId()`::     Matcher to check for a search hit id
-`hasType()`::   Matcher to check for a search hit type
-`hasIndex()`::  Matcher to check for a search hit index
-`hasScore()`::  Matcher to check for a certain score of a hit
-`hasStatus()`:: Matcher to check for a certain `RestStatus` of a response
-
-Usually, you would combine assertions and matchers in your test like this
-
+通常， 你需要像下面这样组合使用断言和匹配器
 [source,java]
 ----------------------------
 SearchResponse seearchResponse = client().prepareSearch() ...;
@@ -254,5 +235,3 @@ assertHitCount(searchResponse, 4);
 assertFirstHit(searchResponse, hasId("4"));
 assertSearchHits(searchResponse, "1", "2", "3", "4");
 ----------------------------
-
-

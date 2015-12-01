@@ -1,8 +1,6 @@
 [[index-modules-mapper]]
-== Mapper
+== 映射
 
-The mapper module acts as a registry for the type mapping definitions
-added to an index either when creating it or by using the put mapping
-api. It also handles the dynamic mapping support for types that have no
-explicit mappings pre defined. For more information about mapping
-definitions, check out the <<mapping,mapping section>>.
+映射模块是一个对文档类型映射定义的注册器，映射定义可以在索引创建时添加，也可以通过 put mapping
+api添加。 该模块同时对没有预先定义映射的类型做动态映射处理。 关于映射定义的更多信息，请参考
+ <<mapping,mapping>> 这一节。

@@ -1,27 +1,24 @@
 [[index-modules-store]]
 == Store
 
-The store module allows you to control how index data is stored and accessed on disk.
+存储模块让你可以控制如何存储和访问磁盘上的索引数据。
 
 [float]
 [[file-system]]
-=== File system storage types
+=== 文件系统存储类型
 
-There are different file system implementations or _storage types_. The best
-one for the operating environment will be automatically chosen: `mmapfs` on
-Windows 64bit, `simplefs` on Windows 32bit, and `default` (hybrid `niofs` and
-`mmapfs`) for the rest.
+系统提供了几种不同的文件系统实现或者叫 _storage types_。 针对不同的操作系统，系统会自动选择
+最合适的实现方式： Windows 64位操作系统会选择 `mmapfs` , Windows 32 位操作系统则选择
+`simplefs`， 其他系统则选择 `default` ( `niofs` 和 `mmapfs`的混合模式)
 
-This can be overridden for all indices by adding this to the
-`config/elasticsearch.yml` file:
+可以通过配置文件 `config/elasticsearch.yml` 改变所有索引的实现方式：
 
 [source,yaml]
 ---------------------------------
 index.store.type: niofs
 ---------------------------------
 
-It is a _static_ setting that can be set on a per-index basis at index
-creation time:
+下面是一个 _statuc_ 配置，可以在索引创建时对每个索引进行设置。
 
 [source,js]
 ---------------------------------
@@ -33,40 +30,30 @@ PUT /my_index
 }
 ---------------------------------
 
-experimental[This is an expert-only setting and may be removed in the future]
+experimental[这是一个高级设置，有可能在后续版本被移除]
 
-The following sections lists all the different storage types supported.
+下面几节列出了所有支持的存储类别：
 
 [[simplefs]]`simplefs`::
 
-The Simple FS type is a straightforward implementation of file system
-storage (maps to Lucene `SimpleFsDirectory`) using a random access file.
-This implementation has poor concurrent performance (multiple threads
-will bottleneck). It is usually better to use the `niofs` when you need
-index persistence.
+简单 FS 类型是一个使用随机访问文件直接实现的文件系统存储（对应 Lucene `SimpleFsDirectory`）.
+这个实现性能不好（多线程环境下会成为瓶颈），通常在需要索引持久化时使用 `niofs`。
 
 [[niofs]]`niofs`::
 
-The NIO FS type stores the shard index on the file system (maps to
-Lucene `NIOFSDirectory`) using NIO. It allows multiple threads to read
-from the same file concurrently. It is not recommended on Windows
-because of a bug in the SUN Java implementation.
+IO文件存储类型使用NIO方式存储索引文件（对应Lucene `NIOFSDirectory`）。 它允许多个线程同时
+读取同一个文件，但由于SUN Java实现中得一个bug，在Windows下并不推荐使用。
 
 [[mmapfs]]`mmapfs`::
 
-The MMap FS type stores the shard index on the file system (maps to
-Lucene `MMapDirectory`) by mapping a file into memory (mmap). Memory
-mapping uses up a portion of the virtual memory address space in your
-process equal to the size of the file being mapped. Before using this
-class, be sure you have allowed plenty of
-<<vm-max-map-count,virtual address space>>.
+MMap FS 类型通过将一个文件映射到内存中的方式(mmap)来存放索引文件
+（对应Lucene `MMapDirectory`）。内存映射会使用进程中得虚拟地址空间，该地址空间大小最多会
+和索引大小相等，因此在使用该方法时，请确保有足够的
+<<vm-max-map-count,虚拟地址空间>>。
 
 [[default_fs]]`default_fs`::
 
-The `default` type is a hybrid of NIO FS and MMapFS, which chooses the best
-file system for each type of file. Currently only the Lucene term dictionary
-and doc values files are memory mapped to reduce the impact on the operating
-system. All other files are opened using Lucene `NIOFSDirectory`. Address
-space settings (<<vm-max-map-count>>) might also apply if your term
-dictionaries are large.
-
+默认类型是一个NIO FS和MMapFS的混合体，它针对不同类型的文件，选择不同的文件系统存储。 目前，
+只有Lucene词典文件和doc values文件是通过MMap来存储的，这样可以减少对操作系统的影响。所有其他文件
+通过Lucene `NIOFSDirectory`来打开。 如果你的词典文件很大， 地址空间的配置项
+( <<vm-max-map-count>> )依然有效。

@@ -1,12 +1,9 @@
 [[index-modules-analysis]]
-== Analysis
+== 分词
 
-The index analysis module acts as a configurable registry of _analyzers_
-that can be used in order to convert a string field into individual terms
-which are:
+索引分词模块是一个可配置的 _分词器_ 注册器，用来将字符串分词成多个词项，从而可以：
 
-* added to the inverted index in order to make the document searchable
-* used by high level queries such as the <<query-dsl-match-query,`match` query>>
-  to generate search terms.
+* 添加到倒排索引中使得文档可以被搜索到。
+* 可以被上层的查询比如  <<query-dsl-match-query,`match` query>> 用来生成搜索词串。
 
-See <<analysis>> for configuration details.
+配置细节见 <<analysis>>。
