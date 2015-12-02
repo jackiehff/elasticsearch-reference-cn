@@ -1,17 +1,13 @@
 [[allocation-filtering]]
-=== Shard Allocation Filtering
+=== 分片分配过滤
 
-While <<index-modules-allocation>> provides *per-index* settings to control the
-allocation of shards to nodes, cluster-level shard allocation filtering allows
-you to allow or disallow the allocation of shards from *any* index to
-particular nodes.
+在 <<index-modules-allocation>> 中提供了基于 *索引* 的配置选项来控制分片在节点间的分配，
+集群级别的分片分配过滤让你可以开启或者禁止任何索引上的分片分配到给定的节点上去。
 
-The typical use case for cluster-wide shard allocation filtering is when you
-want to decommision a node, and you would like to move the shards from that
-node to other nodes in the cluster before shutting it down.
+集群级别的分片分配过滤的典型使用场景是当你需要退役一个节点时，你需要在关闭这个节点之前，将其上的
+分片从这个节点移到其他节点上去。
 
-For instance, we could decomission a node using its IP address as follows:
-
+比如，我们可以通过如下设置IP地址的方式退役一个节点：
 [source,js]
 --------------------------------------------------
 PUT /_cluster/settings
@@ -23,40 +19,34 @@ PUT /_cluster/settings
 --------------------------------------------------
 // AUTOSENSE
 
-NOTE: Shards will only be relocated if it is possible to do so without
-breaking another routing constraint, such as never allocating a primary and
-replica shard to the same node.
+NOTE: 仅当分配规则是可行的，即不破坏其他分配规则时，分片才会被分配，比如：从不分配主分片和分片
+副本给同一个节点。
 
-Cluster-wide shard allocation filtering works in the same way as index-level
-shard allocation filtering (see <<index-modules-allocation>> for details).
-
-The available _dynamic_ cluster settings are as follows, where `{attribute}`
-refers to an arbitrary node attribute.:
+集群级别的分片分配过滤的工作方式与索引级别的分片分配过滤是一样的（细节见
+ <<index-modules-allocation>> ）。
+可用的 _dynamic_ 设置如下，其中  `{attribute}` 指的是任意一个节点属性：
 
 `cluster.routing.allocation.include.{attribute}`::
 
-    Assign the index to a node whose `{attribute}` has at least one of the
-    comma-separated values.
+    将索引分配给一个节点，该节点的 `{attribute}` 至少包含以半角逗号分隔值中的一项。
+
 
 `cluster.routing.allocation.require.{attribute}`::
 
-    Assign the index to a node whose `{attribute}` has _all_ of the
-    comma-separated values.
+    将索引分配给一个节点，该节点的 `{attribute}` 必须包含以半角逗号分隔值中的全部项。
 
 `cluster.routing.allocation.exclude.{attribute}`::
 
-    Assign the index to a node whose `{attribute}` has _none_ of the
-    comma-separated values.
+    将索引分配给一个节点，该节点的 `{attribute}` 必须不包含以半角逗号分隔值中的项。
 
-These special attributes are also supported:
+特别属性也是支持的：
 
 [horizontal]
-`_name`::   Match nodes by node name
-`_ip`::     Match nodes by IP address (the IP address associated with the hostname)
-`_host`::   Match nodes by hostname
+`_name`::   通过节点名称匹配节点
+`_ip`::     通过IP地址匹配 (与主机关联的IP地址）
+`_host`::   通过主机名匹配节点。
 
-All attribute values can be specified with wildcards, eg:
-
+所有属性值支持通配符。如
 [source,js]
 ------------------------
 PUT _cluster/settings
@@ -67,4 +57,3 @@ PUT _cluster/settings
 }
 ------------------------
 // AUTOSENSE
-
