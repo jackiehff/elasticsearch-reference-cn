@@ -1,40 +1,34 @@
 [[delayed-allocation]]
-=== Delaying allocation when a node leaves
+=== 节点失效后延迟分配
 
-When a node leaves the cluster for whatever reason, intentional or otherwise,
-the master reacts by:
+当一个节点不管是有意还是无意的原因脱离集群后，主节点有如下反应：
 
-* Promoting a replica shard to primary to replace any primaries that were on the node.
-* Allocating replica shards to replace the missing replicas (assuming there are enough nodes).
-* Rebalancing shards evenly across the remaining nodes.
+* 提升一个索引分片副本为主分片来替代该节点上的任何主分片。
+* 重新分配索引分片副本以替代那些消失的索引分片副本。
+* 在剩下的节点中重新平衡分片。
 
-These actions are intended to protect the cluster against data loss by
-ensuring that every shard is fully replicated as soon as possible.
+这些动作是希望通过让每个分片尽快得到备份以保护集群不丢失数据。
 
-Even though we throttle concurrent recoveries both at the
-<<recovery,node level>> and at the <<shards-allocation,cluster level>>, this
-``shard-shuffle'' can still put a lot of extra load on the cluster which
-may not be necessary if the missing node is likely to return soon. Imagine
-this scenario:
+即使我们可以调节 <<recovery,节点级别>> 和 <<shards-allocation,集群级别>> 的并发恢复策略，
+这种 “分片重排” 任然可能给集群带来额外的压力，这在离群节点会马上重新加入的情况下更是不必要的。
+考虑如下场景：
 
-* Node 5 loses network connectivity.
-* The master promotes a replica shard to primary for each primary that was on Node 5.
-* The master allocates new replicas to other nodes in the cluster.
-* Each new replica makes an entire copy of the primary shard across the network.
-* More shards are moved to different nodes to rebalance the cluster.
-* Node 5 returns after a few minutes.
-* The master rebalances the cluster by allocating shards to Node 5.
+* 节点 5 因为网络原因离开集群。
+* 主节点对节点 5 上的每个主分片安排了一个新的主分片。
+* 主节点分配新的分片副本给集群中其他节点。
+* 每个分片副本所在节点通过网络总主分片上复制了一整份该分片的数据到本机。
+* 更多的分片被移动到不同的节点以平衡集群。
+* 节点 5 过了几分钟重新加入集群中。
+* 主节点给节点 5分配分片以重新平衡节点。
 
-If the master had just waited for a few minutes, then the missing shards could
-have been re-allocated to Node 5 with the minimum of network traffic.  This
-process would be even quicker for idle shards (shards not receiving indexing
-requests) which have been automatically <<indices-synced-flush,sync-flushed>>.
+如果主节点等待几分钟的话，那些丢失的分片就可以被重新分配给节点 5， 这将消耗最小的网络带宽。 这个
+过程对那些正在做自动 <<indices-synced-flush,sync-flushed>>操作的 idle 分片
+（不接收索引请求的分片）会更快。
 
-The allocation of replica shards which become unassigned because a node has
-left can be delayed with the `index.unassigned.node_left.delayed_timeout`
-dynamic setting, which defaults to `1m`.
+未被分配的索引分片副本的重分配可以通过这个参数 `index.unassigned.node_left.delayed_timeout`
+来动态设置，默认为 `1m`。
 
-This setting can be updated on a live index (or on all indices):
+这个配置可以对一个正在运行的索引 （或所有索引）进行设置。
 
 [source,js]
 ------------------------------
@@ -47,46 +41,38 @@ PUT /_all/_settings
 ------------------------------
 // AUTOSENSE
 
-With delayed allocation enabled, the above scenario changes to look like this:
+通过开启延迟分配，以上场景看上去会是这样的：
 
-* Node 5 loses network connectivity.
-* The master promotes a replica shard to primary for each primary that was on Node 5.
-* The master logs a message that allocation of unassigned shards has been delayed, and for how long.
-* The cluster remains yellow because there are unassigned replica shards.
-* Node 5 returns after a few minutes, before the `timeout` expires.
-* The missing replicas are re-allocated to Node 5 (and sync-flushed shards recover almost immediately).
+* 节点 5 因为网络原因离开集群。
+* 主节点对节点 5上的主分片安排一个新的主分片。
+* 主节点记录一条消息表明有未分配的分片被延迟分配了，和延迟的时间。
+* 集群状态保持在黄色，因为还有未分配的分片副本。
+* 节点 5 几分钟后重新加入集群，没有超过 `timeout` 时间。
+* 丢失的分片重新被分配给节点 5 （分片几乎立即恢复）。
 
-NOTE: This setting will not affect the promotion of replicas to primaries, nor
-will it affect the assignment of replicas that have not been assigned
-previously.
+NOTE: 这个设置不会对主分片的重新选择产生影响，也不会对错误发生之前为分配的分片副本的分配产生影响。
 
-==== Cancellation of shard relocation
+==== 取消分片重分配
 
-If delayed allocation times out, the master assigns the missing shards to
-another node which will start recovery.  If the missing node rejoins the
-cluster, and its shards still have the same sync-id as the primary, shard
-relocation will be cancelled and the synced shard will be used for recovery
-instead.
+如果延迟重分配超时了，主节点会将丢失的分片分配给其他节点，这会导致分片恢复。 如果离开的节点重新
+加入集群， 该节点上的分片和主分片上具有同样的 sync-id, 分片重分配会被取消，节点上已被同步的分
+片会被用来做恢复。
 
-For this reason, the default `timeout` is set to just one minute: even if shard
-relocation begins, cancelling recovery in favour of the synced shard is cheap.
+由于这个原因， 默认的 `timeout` 只被设置为1分钟：即使分片重分配开始了，取消同步过的分片的恢复
+也是简单的。
 
-==== Monitoring delayed unassigned shards
+==== 监控未分配分片的延迟重分配
 
-The number of shards whose allocation has been delayed by this timeout setting
-can be viewed with the <<cluster-health,cluster health API>>:
-
+那些被延迟重分配的分片数量可以通过这个 <<cluster-health,cluster health API>>查看：
 [source,js]
 ------------------------------
 GET _cluster/health <1>
 ------------------------------
-<1> This request will return a `delayed_unassigned_shards` value.
+<1> 这个请求会返回一个 `delayed_unassigned_shards` 的值。
 
-==== Removing a node permanently
+==== 永久移除一个节点
 
-If a node is not going to return and you would like Elasticsearch to allocate
-the missing shards immediately, just update the timeout to zero:
-
+如果一个节点不会再加入集群，且你希望Elasticsearch立即重新分配丢失的分片，可以将 timeout设为0：
 
 [source,js]
 ------------------------------
@@ -99,4 +85,4 @@ PUT /_all/_settings
 ------------------------------
 // AUTOSENSE
 
-You can reset the timeout as soon as the missing shards have started to recover.
+一旦丢失分片开始了恢复，你可以将timeout重置为原来的值

@@ -1,27 +1,22 @@
 [[shard-allocation-filtering]]
 === Shard Allocation Filtering
 
-Shard allocation filtering allows you to specify which nodes are allowed
-to host the shards of a particular index.
+索引分片的分配过滤器让你可以指定哪个节点可以用来服务特定索引中得分片。
 
-NOTE: The per-index shard allocation filters explained below work in
-conjunction with the cluster-wide allocation filters explained in
-<<shards-allocation>>.
+NOTE: 下面所解释的索引级别的分片分配过滤器可以和集群级别的分配过滤器
+<<shards-allocation>> 一起协同工作。
 
-It is possible to assign arbitrary metadata attributes to each node at
-startup.  For instance, nodes could be assigned a `rack` and a `group`
-attribute as follows:
+可以在节点启动时设置一些元数据属性。比如，节点可以象如下一样分片一个 `rack` 和 `group`属性：
 
 [source,sh]
 ------------------------
 bin/elasticsearch --node.rack rack1 --node.size big  <1>
 ------------------------
-<1> These attribute settings can also be specfied in the `elasticsearch.yml` config file.
+<1> 这些属性值也可以在 `elasticsearch.yml`中指定。
 
-These metadata attributes can be used with the
-`index.routing.allocation.*` settings to allocate an index to a particular
-group of nodes.  For instance, we can move the index `test` to either `big` or
-`medium` nodes as follows:
+这些元数据属性可以使用配置项
+`index.routing.allocation.*` 来分配一个索引给特定组的节点。比如，我们可以通过以下配置将索引 `test` 移
+到 `big` 或 `medium` 节点中。
 
 [source,js]
 ------------------------
@@ -32,8 +27,7 @@ PUT test/_settings
 ------------------------
 // AUTOSENSE
 
-Alternatively, we can move the index `test` away from the `small` nodes with
-an `exclude` rule:
+同样的，我们也可以通过 `exclude` 将索引 `test` 从 `small` 这个组中移除掉：
 
 [source,js]
 ------------------------
@@ -44,9 +38,8 @@ PUT test/_settings
 ------------------------
 // AUTOSENSE
 
-Multiple rules can be specified, in which case all conditions must be
-satisfied.  For instance, we could move the index `test` to `big` nodes in
-`rack1` with the following:
+可以设置多个规则，这意味着所有规则条件必须同时满足。 例如， 我们可以将索引 `test` 移到
+`big` 组，并且是 `rack1` 这个rack。
 
 [source,js]
 ------------------------
@@ -58,34 +51,30 @@ PUT test/_settings
 ------------------------
 // AUTOSENSE
 
-NOTE: If some conditions cannot be satisfied then shards will not be moved.
+NOTE: 如果某些条件不满足，则分片不会被移动。
 
-The following settings are _dynamic_, allowing live indices to be moved from
-one set of nodes to another:
+下面这些设置是 _dynamic_，可以让正在运行的索引从一组节点移到另一组去：
 
 `index.routing.allocation.include.{attribute}`::
 
-    Assign the index to a node whose `{attribute}` has at least one of the
-    comma-separated values.
+    将索引分配给属性值 `{attribute}` 包含一个配置的以半角逗号分隔的值中的一个节点上。
 
 `index.routing.allocation.require.{attribute}`::
 
-    Assign the index to a node whose `{attribute}` has _all_ of the
-    comma-separated values.
+    将索引分配给属性值 `{attribute}` 包含全部配置的以半角逗号分隔的值中的一个节点上。
 
 `index.routing.allocation.exclude.{attribute}`::
 
-    Assign the index to a node whose `{attribute}` has _none_ of the
-    comma-separated values.
+    将索引分配给属性值 `{attribute}` 不包含配置的以半角逗号分隔的值中的一个节点上。
 
-These special attributes are also supported:
+下面的这些特别属性也是支持的：
 
 [horizontal]
-`_name`::   Match nodes by node name
-`_ip`::     Match nodes by IP address (the IP address associated with the hostname)
-`_host`::   Match nodes by hostname
+`_name`::   通过节点名称匹配节点
+`_ip`::     通过IP地址匹配节点（与主机名关联的IP地址）
+`_host`::   通过主机名匹配节点
 
-All attribute values can be specified with wildcards, eg:
+所有属性值可以通过通配符设置，如：
 
 [source,js]
 ------------------------

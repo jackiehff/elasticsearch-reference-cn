@@ -1,18 +1,17 @@
 [[recovery-prioritization]]
-=== Index recovery prioritization
+=== 索引恢复优先级
 
 Unallocated shards are recovered in order of priority, whenever possible.
 Indices are sorted into priority order as follows:
+可能的情况下未分配分片是按照优先级顺序恢复的，索引的优先级排序按如下策略进行：
 
-* the optional `index.priority` setting (higher before lower)
-* the index creation date (higher before lower)
-* the index name (higher before lower)
+* 可选的参数 `index.priority` (数值大则优先级高)
+* 索引创建时间  (数值大则优先级高)
+* 索引名称 (数值大则优先级高)
 
-This means that, by default, newer indices will be recovered before older indices.
+这意味着，新索引会比老索引先恢复。
 
-Use the per-index dynamically updateable `index.priority` setting to customise
-the index prioritization order.  For instance:
-
+如果要用索引级别的动态参数 `index.priority`来自定义优先级顺序，例如：
 [source,json]
 ------------------------------
 PUT index_1
@@ -35,15 +34,15 @@ PUT index_4
 ------------------------------
 // AUTOSENSE
 
-In the above example:
+以上例子中：
 
-* `index_3` will be recovered first because it has the highest `index.priority`.
-* `index_4` will be recovered next because it has the next highest priority.
-* `index_2` will be recovered next because it was created more recently.
-* `index_1` will be recovered last.
+* `index_3` 将首先被恢复，因为它具有最高优先级 `index.priority`.
+* `index_4` 接着被恢复，因为它具有第二高优先级。
+* `index_2` 由于是最近被创建的所以接下来被恢复。
+* `index_1` 将最后被恢复。
 
-This setting accepts an integer, and can be updated on a live index with the
-<<indices-update-settings,update index settings API>>:
+这个配置项接受一个整数参数，可以对正在运行的索引通过
+<<indices-update-settings,update index settings API>>进行更新操作：
 
 [source,json]
 ------------------------------
