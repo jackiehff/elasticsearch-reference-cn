@@ -1,1 +1,0 @@
-# Multi Term Query Rewrite

@@ -1049,10 +1049,12 @@ curl -XPOST 'localhost:9200/bank/_search?pretty' -d '
 }'
 --------------------------------------------------
 
-Dissecting the above, the bool query contains a `match_all` query (the query part) and a `range` query (the filter part).
-We can substitute any other queries into the query and the filter parts. In the above case, the range query makes perfect sense since documents falling into the range all match "equally", i.e., no document is more relevant than another.
+仔细分析一下上面的示例, bool查询包含一个 `match_all` 查询 (query部分) 和一个 `range` 查询 (filter部分).
+我们可以将query和filter部分替换成其它任何查询. 在上面的例子中, 由于所有文档落入这个范围的几率都是平等的，所以
+range 查询非常有意义, 例如, 没有文档比另一个更具相关性.
 
-除了`match_all`, `match`, `bool` 以及 `range` 查询以外, there are a lot of other query types that are available and we won't go into them here. Since we already have a basic understanding of how they work, it shouldn't be too difficult to apply this knowledge in learning and experimenting with the other query types.
+除了`match_all`, `match`, `bool` 以及 `range` 查询以外, 还有其它很多的查询类型我们这里就不再详细描述了.
+既然对于它们是如何工作的我们已经有了一个基本的了解, 相信将这些知识应用到学习和实践其它查询类型上应该不会太难.
 
 === 执行聚合
 
@@ -1081,7 +1083,7 @@ curl -XPOST 'localhost:9200/bank/_search?pretty' -d '
 }'
 --------------------------------------------------
 
-In SQL, the above aggregation is similar in concept to:
+在SQL中, 上面的聚合在概念上类似于:
 
 [source,sh]
 --------------------------------------------------
@@ -1139,7 +1141,7 @@ We can see that there are 21 accounts in AL(abama), followed by 17 accounts in T
 
 Note that we set `size=0` to not show search hits because we only want to see the aggregation results in the response.
 
-Building on the previous aggregation, this example calculates the average account balance by state (again only for the top 10 states sorted by count in descending order):
+在前面聚合操作的基础上, 下面的示例按照state计算了账户平均余额 (同样的只取按数量倒序排序后的前10个state):
 
 [source,sh]
 --------------------------------------------------
@@ -1165,7 +1167,7 @@ curl -XPOST 'localhost:9200/bank/_search?pretty' -d '
 
 Notice how we nested the `average_balance` aggregation inside the `group_by_state` aggregation. This is a common pattern for all the aggregations. You can nest aggregations inside aggregations arbitrarily to extract pivoted summarizations that you require from your data.
 
-Building on the previous aggregation, let's now sort on the average balance in descending order:
+在前面聚合操作的基础上, let's now sort on the average balance in descending order:
 
 [source,sh]
 --------------------------------------------------
