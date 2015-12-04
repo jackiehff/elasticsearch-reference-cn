@@ -1,9 +1,7 @@
 [[recovery-prioritization]]
 === 索引恢复优先级
 
-Unallocated shards are recovered in order of priority, whenever possible.
-Indices are sorted into priority order as follows:
-可能的情况下未分配分片是按照优先级顺序恢复的，索引的优先级排序按如下策略进行：
+如果有可能，未分配分片是按照优先级顺序恢复的，索引的优先级排序按如下策略进行：
 
 * 可选的参数 `index.priority` (数值大则优先级高)
 * 索引创建时间  (数值大则优先级高)

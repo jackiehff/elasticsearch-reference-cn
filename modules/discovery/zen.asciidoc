@@ -1,72 +1,57 @@
 [[modules-discovery-zen]]
-=== Zen Discovery
+=== Zen 发现
 
-The zen discovery is the built in discovery module for elasticsearch and
-the default. It provides unicast discovery, but can be extended to
-support cloud environments and other forms of discovery.
+Zen发现是elasticsearch内置的默认发现模块。 它提供了单播发现，但可以扩展以支持云环境和其他
+形式的发现。
 
-The zen discovery is integrated with other modules, for example, all
-communication between nodes is done using the
-<<modules-transport,transport>> module.
+Zen与其他模块结合在一起使用，比如，所有节点间通信是通过 <<modules-transport,transport>>
+模块完成的。
 
-It is separated into several sub modules, which are explained below:
+它被分成几个子模块，分别在下面解释：
 
 [float]
 [[ping]]
 ==== Ping
 
-This is the process where a node uses the discovery mechanisms to find
-other nodes.
+这是一个节点在发现机制中用来发现其他节点的过程。
 
 [float]
 [[unicast]]
-===== Unicast
+===== 单播
 
-The unicast discovery requires a list of hosts to use that will act
-as gossip routers. It provides the following settings with the
-`discovery.zen.ping.unicast` prefix:
+单播发现需要一组主机名来作为 gossip 路由， 提供了如下以 `discovery.zen.ping.unicast`为
+前缀的配置。
 
 [cols="<,<",options="header",]
 |=======================================================================
-|Setting |Description
-|`hosts` |Either an array setting or a comma delimited setting. Each
-value is either in the form of `host:port`, or in the form of
-`host:port1-port2`. Note that IPv6 hosts must be bracketed. Defaults to
-`127.0.0.1, [::1]`
+|配置 |描述
+|`hosts` |支持一个数组或者逗号分隔的字符串。每个值是如 `host:port` 的形式, 或者
+`host:port1-port2`的形式。注意如果是IPv6的主机，需要用中括号包起来。
+默认为 `127.0.0.1, [::1]`
 |=======================================================================
 
-The unicast discovery uses the
-<<modules-transport,transport>> module to
-perform the discovery.
+单播发现使用 <<modules-transport,transport>> 模块来执行发现过程。
 
 [float]
 [[master-election]]
-==== Master Election
+==== 主节点选举
 
-As part of the ping process a master of the cluster is either
-elected or joined to. This is done automatically. The
-`discovery.zen.ping_timeout` (which defaults to `3s`) allows for the
-tweaking of election time to handle cases of slow or congested networks
-(higher values assure less chance of failure). Once a node joins, it
-will send a join request to the master (`discovery.zen.join_timeout`)
-with a timeout defaulting at 20 times the ping timeout.
+ping这个操作作为主节点中的一部分，要么是在主节点选举或者有节点加入时需要用到，这是自动完成的。
+`discovery.zen.ping_timeout`（默认为 `3s`） 允许适当调节选举时间以应对网络慢或者拥塞（该值
+越高，选举主节点失败几率就越小）。 当节点加入时，节点会发送一个加入请求给主节点，并带有超时时间
+( `discovery.zen.join_timeout`)， 并在超时发送后重试20次。
 
-When the master node stops or has encountered a problem, the cluster nodes
-start pinging again and will elect a new master. This pinging round also
-serves as a protection against (partial) network failures where node may unjustly
-think that the master has failed. In this case the node will simply hear from
-other nodes about the currently active master.
+当主节点停止工作或者遇到问题后，集群中得节点会开始互相ping，并选举一个新的主节点。这个ping的过程
+还可以作为一种保护机制，以防止因为网络故障导致该节点错误认为是主节点发生故障。这种情况下，该节点
+会接收到其他节点返回的当前主节点的消息。
 
-If `discovery.zen.master_election.filter_client` is `true`, pings from client nodes (nodes where `node.client` is
-`true`, or both `node.data` and `node.master` are `false`) are ignored during master election; the default value is
-`true`. If `discovery.zen.master_election.filter_data` is `true`, pings from non-master-eligible data nodes (nodes
-where `node.data` is `true` and `node.master` is `false`) are ignored during master election; the default value is
-`false`. Pings from master-eligible nodes are always observed during master election.
+如果 `discovery.zen.master_election.filter_client` 设置为 `true`, 客户端节点的ping的结果
+将会咋主节点选举时被忽略。 如果 `discovery.zen.master_election.filter_data` 是 `true`，
+非可成为主节点的数据节点上的ping的结果会被忽略，默认为 `false`。在主节点选举时， 主节点候选节点中得ping
+结果总会被处理。
 
-Nodes can be excluded from becoming a master by setting `node.master` to
-`false`. Note, once a node is a client node (`node.client` set to
-`true`), it will not be allowed to become a master (`node.master` is
-automatically set to `false`).
+如果将 `node.master`设置为 `false`,则该节点不会被选为主节点。 注意，如果一个节点时客户端节点
+（ `node.client` 为 `true`），该节点不会被选为主节点（ `node.master`被自动设置为 `false`)。
 
 The `discovery.zen.minimum_master_nodes` sets the minimum
 number of master eligible nodes that need to join a newly elected master in order for an election to
@@ -131,7 +116,7 @@ The `discovery.zen.no_master_block` setting has two valid options:
 `all`:: All operations on the node--i.e. both read & writes--will be rejected. This also applies for api cluster state
 read or write operations, like the get index settings, put mapping and cluster state api.
 `write`:: (default) Write operations will be rejected. Read operations will succeed, based on the last known cluster configuration.
-This may result in partial reads of stale data as this node may be isolated from the rest of the cluster. 
+This may result in partial reads of stale data as this node may be isolated from the rest of the cluster.
 
 The `discovery.zen.no_master_block` setting doesn't apply to nodes based apis (for example cluster stats, node info and
 node stats apis) which will not be blocked and try to execute on any node possible.
