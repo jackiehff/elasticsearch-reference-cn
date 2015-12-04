@@ -4,31 +4,17 @@
 [partintro]
 --
 
-Elasticsearch is a highly scalable open-source full-text search and analytics engine. It allows you to store, search, and analyze big volumes of data quickly and in near real time. It is generally used as the underlying engine/technology that powers applications that have complex search features and requirements.
-
 Elasticsearch是一个具有高可扩展性的开源的全文搜索和分析引擎. 它允许你快速且准实时地存储、搜索以及分析大规模数据.它通常用作底层的搜索引擎或技术来促使应用程序能够支持复杂的搜索功能和需求。
-
-Here are a few sample use-cases that Elasticsearch could be used for:
 
 下面是几个Elasticsearch可以应用到的示例用例:
 
-* You run an online web store where you allow your customers to search for products that you sell. In this case, you can use Elasticsearch to store your entire product catalog and inventory and provide search and autocomplete suggestions for them.
-
 * 你运行着一个可以允许顾客搜索你所售卖商品的网上商店。在这种情况下, 你可以使用Elasticsearch来存储整个的产品类目以及库存信息并且为顾客提供搜索和自动完成推荐功能。
-
-* You want to collect log or transaction data and you want to analyze and mine this data to look for trends, statistics, summarizations, or anomalies. In this case, you can use Logstash (part of the Elasticsearch/Logstash/Kibana stack) to collect, aggregate, and parse your data, and then have Logstash feed this data into Elasticsearch. Once the data is in Elasticsearch, you can run searches and aggregations to mine any information that is of interest to you.
 
 * 你想要收集日志或者交易数据并且想要分析和挖掘这些数据来用于寻找趋势、统计、汇总或者异常. 在这种情况下, 你可以使用Logstash(Elasticsearch/Logstash/Kibana栈的一部分)来收集、聚合以及解析你的数据, 接着让Logstash将这些数据插入到Elasticsearch中.一旦数据存在于Elasticsearch中, 你就可以运行搜索和聚合来挖掘你感兴趣的信息。
 
-* You run a price alerting platform which allows price-savvy customers to specify a rule like "I am interested in buying a specific electronic gadget and I want to be notified if the price of gadget falls below $X from any vendor within the next month". In this case you can scrape vendor prices, push them into Elasticsearch and use its reverse-search (Percolator) capability to match price movements against customer queries and eventually push the alerts out to the customer once matches are found.
-
 * 你运行一个允许为价格敏感的顾客指定一个像"我想买一款电子产品并且到下个月之内如果有商家售卖的这款电子产品的价格降到X美元以下我都想收到通知"这样的规则的价格提醒平台. 在这种情况下你可以爬取商家的价格, 然后将它们推送到Elasticsearch中，接着使用Elasticsearch的反向搜索(Percolator) 功能来匹配针对顾客查询的价格变动，最后一旦发现有匹配的价格则推送提醒给顾客。
 
-* You have analytics/business-intelligence needs and want to quickly investigate, analyze, visualize, and ask ad-hoc questions on a lot of data (think millions or billions of records). In this case, you can use Elasticsearch to store your data and then use Kibana (part of the Elasticsearch/Logstash/Kibana stack) to build custom dashboards that can visualize aspects of your data that are important to you. Additionally, you can use the Elasticsearch aggregations functionality to perform complex business intelligence queries against your data.
-
 * 你有数据分析或商业智能方面的需求并且想要快速地在大量的数据(想象一下数百万或数十亿条记录)上进行研究、分析、可视化以及找寻特定问题的答案(ask ad-hoc questions?).在这种情况下, 你可以使用Elasticsearch来存储数据，然后使用Kibana (Elasticsearch/Logstash/Kibana栈的一部分) 构建自定义仪表盘，它可以可视化展现对你来说比较重要的数据的各个方面. 另外, 你可以使用Elasticsearch的聚合功能来对数据执行复杂的商业智能查询。
-
-For the rest of this tutorial, I will guide you through the process of getting Elasticsearch up and running, taking a peek inside it, and performing basic operations like indexing, searching, and modifying your data. At the end of this tutorial, you should have a good idea of what Elasticsearch is, how it works, and hopefully be inspired to see how you can use it to either build sophisticated search applications or to mine intelligence from your data.
 
 本教程接下来的部分，我会指导你经历Elasticsearch的安装和运行、简单窥探Elasticsearch内部原理以及 执行像索引、搜索和修改数据等基本的一些操作这些过程. 在本教程结束的时候,你应该对Elasticsearch是什么以及它是如何工作的有一个很好的了解, 并且希望能够启发你知道如何使用它来构建复杂的搜索应用程序或是从你的数据中挖掘商业智能。
 
@@ -36,48 +22,29 @@ For the rest of this tutorial, I will guide you through the process of getting E
 
 == 基本概念
 
-There are a few concepts that are core to Elasticsearch. Understanding these concepts from the outset will tremendously help ease the learning process.
-
 Elasticsearch有几个比较核心的概念，从一开始就理解这些概念将会极大地帮助简化我们学习Elasticsearch的过程.
 
 [float]
 === 准实时 (NRT)
-
-Elasticsearch is a near real time search platform. What this means is there is a slight latency (normally one second) from the time you index a document until the time it becomes searchable.
 
 Elasticsearch是一个准实时的搜索平台，这意味着从你为文档建立索引到文档可以被检索这之间会有轻微的延迟 (通常是1秒)。
 
 [float]
 === 集群
 
-A cluster is a collection of one or more nodes (servers) that together holds your entire data and provides federated indexing and search capabilities across all nodes. A cluster is identified by a unique name which by default is "elasticsearch". This name is important because a node can only be part of a cluster if the node is set up to join the cluster by its name.
-
 集群是一个或多个节点（服务器）的集合，它持有你所有的数据并且在所有节点间提供联合索引和搜索的功能. 集群使用一个唯一的名称作为标识，默认是"elasticsearch".这个名称非常重要，因为一个节点只能是一个集群的一部分，如果这个节点创建时是通过集群的名称加入到集群中.
 
-Make sure that you don't reuse the same cluster names in different
-environments, otherwise you might end up with nodes joining the wrong cluster.
-For instance you could use `logging-dev`, `logging-stage`, and `logging-prod`
-for the development, staging, and production clusters.
-
 请确保你没有在不同的环境中复用相同的集群名称，否则你可能会以节点加入到错的集群中而告终。例如你可以使用logging-dev、logging-stage以及logging-prod分别命名开发环境集群、预发布环境集群以及生产环境集群。
-
-Note that it is valid and perfectly fine to have a cluster with only a single node in it. Furthermore, you may also have multiple independent clusters each with its own unique cluster name.
 
 注意，只有单个节点的集群也可以有效并且非常良好的运作。另外，你也可以拥有多个独立的集群，每一个都有唯一的集群名称。
 
 [float]
 === 节点 (Node)
 
-A node is a single server that is part of your cluster, stores your data, and participates in the cluster's indexing and search capabilities. Just like a cluster, a node is identified by a name which by default is a random Marvel character name that is assigned to the node at startup. You can define any node name you want if you do not want the default.  This name is important for administration purposes where you want to identify which servers in your network correspond to which nodes in your Elasticsearch cluster.
-
 一个节点是一个单一的服务器, 它是集群的一部分, 它存储你的数据并参与集群的索引和搜索功能. 和集群一样, 节点也是由一个名称唯一标识, 在节点启动的时候会默认分配一个随机的Marvel字符串名称。
 如果不想使用默认的节点名称你可以定义任何的节点名称.为了便于管理, 当你想要标识网络中的哪台服务器对应的是集群中的哪个节点时, 这个名称非常重要.
 
-A node can be configured to join a specific cluster by the cluster name. By default, each node is set up to join a cluster named `elasticsearch` which means that if you start up a number of nodes on your network and--assuming they can discover each other--they will all automatically form and join a single cluster named `elasticsearch`.
-
 节点可以通过配置集群名称加入到一个特定的集群. 每个节点建立时会默认加入到一个名为 `elasticsearch` 的集群中, 这意味着如果你在你的网络环境中启动多个节点并且--假设它们可以发现彼此—它们都会自动的形成并加入到名为 `elasticsearch` 的单一集群 .
-
-In a single cluster, you can have as many nodes as you want. Furthermore, if there are no other Elasticsearch nodes currently running on your network, starting a single node will by default form a new single-node cluster named `elasticsearch`.
 
 在单一集群中, 你想定义多少节点都可以。而且，如果在你当前的网络环境中没有其它Elasticsearch节点在运行, 启动单个节点默认会形成一个名为elasticsearch的单节点集群。
 
@@ -85,109 +52,59 @@ In a single cluster, you can have as many nodes as you want. Furthermore, if the
 [float]
 === 索引 (index)
 
-An index is a collection of documents that have somewhat similar characteristics. For example, you can have an index for customer data, another index for a product catalog, and yet another index for order data. An index is identified by a name (that must be all lowercase) and this name is used to refer to the index when performing indexing, search, update, and delete operations against the documents in it.
-
 索引是具有某些类似特征的文档的一个集合. 例如, 你可以为顾客数据创建一个索引, 为产品类目创建另一个索引，还可以为订单数据创建另一个索引. 索引使用名称(字母必须全部小写)来标识，并且当在索引里的文档上执行索引、搜索、更新以及删除操作时这个名称用于引用这个索引。
-
-In a single cluster, you can define as many indexes as you want.
 
 在一个单一集群中, 你想定义多少索引都可以。
 
 [float]
 === 类型 (Type)
 
-Within an index, you can define one or more types. A type is a logical category/partition of your index whose semantics is completely up to you. In general, a type is defined for documents that have a set of common fields. For example, let's assume you run a blogging platform and store all your data in a single index. In this index, you may define a type for user data, another type for blog data, and yet another type for comments data.
-
 在索引中，你可以定义一个或多个类型。类型是索引的逻辑分类或分区，并且它的语义完全取决于你.类型通常是为有公共属性集合的文档定义的. 例如, 假设你运行一个博客平台并且将你所有的数据存储在单个索引中. 在这个索引中, 你可以为用户数据定义一种类型, 为博客数据定义另一种类型，并且还为评论数据定义另一种类型。
 
 [float]
 === 文档 (Document)
 
-A document is a basic unit of information that can be indexed. For example, you can have a document for a single customer, another document for a single product, and yet another for a single order. This document is expressed in http://json.org/[JSON] (JavaScript Object Notation) which is an ubiquitous internet data interchange format.
-
 文档是可以被索引的基本信息单元。例如你可以为单个顾客创建一个文档，为单个产品创建另一个文档，并且还可以为单个订单创建另外一个文档。文档使用JSON(JavaScript Object Notation)格式表示，它是一种普遍存在的网络数据交换格式。
-
-Within an index/type, you can store as many documents as you want. Note that although a document physically resides in an index, a document actually must be indexed/assigned to a type inside an index.
 
 在一个索引或类型中，你想存储多少文档都可以。注意，尽管文档物理地存在于索引中，但它实际上必须被索引到或分配给索引中的一个类型。
 
 [float]
 === 分片和复制 (Shards & Replicas)
 
-An index can potentially store a large amount of data that can exceed the hardware limits of a single node. For example,
-a single index of a billion documents taking up 1TB of disk space may not fit on the disk of a single node or may be too
-slow to serve search requests from a single node alone.
-
 一个索引中存储的大量数据很可能会超出单一节点的硬件限制. 例如, 一个拥有十亿个文档的单一索引将会占用1TB的磁盘空间, 它可能不适合放在磁盘上的单一节点或者
 从单一节点独自的处理搜索请求过于缓慢.
 
-To solve this problem, Elasticsearch provides the ability to subdivide your index into multiple pieces called shards.
-When you create an index, you can simply define the number of shards that you want. Each shard is in itself a fully-functional
-and independent "index" that can be hosted on any node in the cluster.
-
 为了解决这个问题, Elasticsearch提供了将索引细分成多个称为分片的功能.当你创建索引时可以简单地指定你想要的分片数量. 每个分片自身就是一个功能完善且独立的 "索引", 可以将其托管在集群中的任意节点上.
-
-Sharding is important for two primary reasons:
 
 分片之所以很重要有以下两个主要原因:
 
 * 它允许你水平地切分或扩展你的容量
 
-* It allows you to horizontally split/scale your content volume
-
-* It allows you to distribute and parallelize operations across shards (potentially on multiple nodes) thus increasing performance/throughput
-
 * 它允许你跨分片(可能在多个节点上)分发和并行化操作, 从而提升性能和吞吐量
 
-
-The mechanics of how a shard is distributed and also how its documents are aggregated back into search requests are completely managed by
-Elasticsearch and is transparent to you as the user.
-
 分片是如何分布的以及它的文档是如何被聚合以支持搜索请求等这些技术细节完全由Elasticsearch来管理并且对于作为用户的你来说是透明的.
-
-In a network/cloud environment where failures can be expected anytime, it is very useful and highly recommended to have a failover mechanism
-in case a shard/node somehow goes offline or disappears for whatever reason. To this end, Elasticsearch allows you to make one or more copies
-of your index's shards into what are called replica shards, or replicas for short.
 
 在一个随时可能发生故障的网络或云环境, 故障转移机制是非常有用的且强烈推荐使用的, 它可以避免一个分片或节点莫名其妙地脱机或是消失而导致无法响应搜索请求. 出于这个目的,
 Elasticsearch允许你创建一个或多个索引的分片的副本, 它们被称作复制分片, 或简称为副本.
 
-Replication is important for two primary reasons:
-
 复制之所以很重要有以下两个主要原因:
 
-* It provides high availability in case a shard/node fails. For this reason, it is important to note that a replica shard is never allocated on the same node as the original/primary shard that it was copied from.
-
 * 在一个分片或节点发生故障的情况下它可以提供高可用性. 基于这个原因, 需要注意到的是复制分片永远不会和它拷贝的原始分片或主分片分配在同一个节点上.
-
-* It allows you to scale out your search volume/throughput since searches can be executed on all replicas in parallel.
 
 * 由于可以并行的在所有副本上执行搜索，它允许你水平的扩展你的搜索容量和吞吐量.
 
 
-To summarize, each index can be split into multiple shards. An index can also be replicated zero (meaning no replicas) or more times. Once replicated, each index will have primary shards (the original shards that were replicated from) and replica shards (the copies of the primary shards).
-The number of shards and replicas can be defined per index at the time the index is created. After the index is created, you may change the number of replicas dynamically anytime but you cannot change the number shards after-the-fact.
-
 简而言之, 每个索引都可以分割成多个分片. 一个索引也可以被复制0 (意思没有副本) 次或多次.一旦被复制, 每个索引将会有主分片(最开始被复制的那个分片) 和 复制分片 (主分片的副本).
 每个索引的分片和副本的数量可以在创建索引的时候定义. 索引创建之后, 你可以随时动态地修改副本的数量，但是你不能事后修改分片的数量.
 
-By default, each index in Elasticsearch is allocated 5 primary shards and 1 replica which means that if you have at least two nodes in your cluster, your index will have 5 primary shards and another 5 replica shards (1 complete replica) for a total of 10 shards per index.
-
 Elasticsearch中每个索引默认分配了5个主分片和1个副本, 这意味着如果你的集群中至少有两个节点的话, 你的索引将会有5个主分片和另外5个复制分片 (1个完整副本) , 总共就是每个索引10个分片.
-
-NOTE: Each Elasticsearch shard is a Lucene index.  There is a maximum number of documents you can have in a single Lucene index.  As of https://issues.apache.org/jira/browse/LUCENE-5843[`LUCENE-5843`], the limit is `2,147,483,519` (= Integer.MAX_VALUE - 128) documents.
-You can monitor shard sizes using the <<cat-shards,`_cat/shards`>> api.
 
 NOTE: 每个Elasticsearch分片都是一个Lucene索引. 单个Lucene索引中允许拥有的文档数量有一个最大值. 在 https://issues.apache.org/jira/browse/LUCENE-5843[`LUCENE-5843`] 这里面有提到, 这个限制是 `2,147,483,519` (= Integer.MAX_VALUE - 128) 个文档.
 你可以使用 <<cat-shards,`_cat/shards`>> api监控分片数量.
 
-With that out of the way, let's get started with the fun part...
-
 掌握了这些核心概念以后, 让我开始进入有趣的部分...
 
 == 安装
-
-Elasticsearch requires at least Java 7. Specifically as of this writing, it is recommended that you use the Oracle JDK version {jdk}. Java installation varies from platform to platform so we won't go into those details here. Oracle's recommended installation documentation can be found on http://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html[Oracle's website]. Suffice to say, before you install Elasticsearch, please check your Java version first by running (and then install/upgrade accordingly if needed):
 
 安装Elasticsearch要求JDK的版本至少是Java 7. 特别是在编写本教程时，推荐使用 Oracle JDK 1.8.0_25版本. 由于Java在不同平台上的安装过程都不一样，所以这里我们不再详细描述JDK的安装细节. 可以在 http://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html[Oracle网站]上找到Oracle官方推荐的安装文档。简单的说, 在安装Elasticsearch之前, 请运行如下命令检查你安装的Java版本(如果需要的话就相应地安装或升级):
 
@@ -197,11 +114,7 @@ java -version
 echo $JAVA_HOME
 --------------------------------------------------
 
-Once we have Java set up, we can then download and run Elasticsearch. The binaries are available from http://www.elastic.co/downloads[`www.elastic.co/downloads`] along with all the releases that have been made in the past. For each release, you have a choice among a `zip` or `tar` archive, or a `DEB` or `RPM` package. For simplicity, let's use the tar file.
-
 一旦Java安装完成, 我们就可以下载和运行Elasticsearch了. 可以在 http://www.elastic.co/downloads[`www.elastic.co/downloads`] 上下载所有版本的二进制安装文件. 对于每个发布版本, 你都可以在 zip 或 tar 归档文件, 或者  DEB 或 RPM 包之间选择. 为了简单起见，我们就使用tar文件。
-
-Let's download the Elasticsearch {version} tar as follows (Windows users should download the zip package):
 
 可以使用如下方式下载Elasticsearch 2.0.0 tar包 (Windows用户需要下载zip包):
 
@@ -210,16 +123,12 @@ Let's download the Elasticsearch {version} tar as follows (Windows users should 
 curl -L -O https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/{version}/elasticsearch-{version}.tar.gz
 --------------------------------------------------
 
-Then extract it as follows (Windows users should unzip the zip package):
-
 然后使用如下命令解压 (Windows系统解压zip包):
 
 ["source","sh",subs="attributes,callouts"]
 --------------------------------------------------
 tar -xvf elasticsearch-{version}.tar.gz
 --------------------------------------------------
-
-It will then create a bunch of files and folders in your current directory. We then go into the bin directory as follows:
 
 它会在当前目录下创建一堆的文件和文件夹. 接着我们进入到bin目录下:
 
@@ -228,16 +137,12 @@ It will then create a bunch of files and folders in your current directory. We t
 cd elasticsearch-{version}/bin
 --------------------------------------------------
 
-And now we are ready to start our node and single cluster (Windows users should run the elasticsearch.bat file):
-
 现在我们就可以启动节点和单个集群 (Windows用户需要运行 elasticsearch.bat 文件):
 
 [source,sh]
 --------------------------------------------------
 ./elasticsearch
 --------------------------------------------------
-
-If everything goes well, you should see a bunch of messages that look like below:
 
 如果一切顺利的话, 你会看到类似下面的一堆信息:
 
@@ -257,11 +162,7 @@ If everything goes well, you should see a bunch of messages that look like below
 [2014-03-13 13:42:23,630][INFO ][node           ] [New Goblin] started
 --------------------------------------------------
 
-Without going too much into detail, we can see that our node named "New Goblin" (which will be a different Marvel character in your case) has started and elected itself as a master in a single cluster. Don't worry yet at the moment what master means. The main thing that is important here is that we have started one node within one cluster.
-
 无需深入了解, 我们可以看到名为 "New Goblin" (在你的例子中将是不同的漫画人物) 的节点已经成功启动并选举她自己为单一集群中的master. 暂时还不用担心master是什么意思. 这里最重要的是我们已经在一个集群中启动了一个节点.
-
-As mentioned previously, we can override either the cluster or node name. This can be done from the command line when starting Elasticsearch as follows:
 
 之前提到过我们可以修改集群或者节点的名字. 这可以通过启动Elasticsearch的时候在命令行输入以下命令完成:
 
@@ -270,8 +171,6 @@ As mentioned previously, we can override either the cluster or node name. This c
 ./elasticsearch --cluster.name my_cluster_name --node.name my_node_name
 --------------------------------------------------
 
-Also note the line marked http with information about the HTTP address (`192.168.8.112`) and port (`9200`) that our node is reachable from. By default, Elasticsearch uses port `9200` to provide access to its REST API. This port is configurable if necessary.
-
 同时注意标记为http的行带有访问节点的HTTP地址(192.168.8.112)和端口 (9200)信息. Elasticsearch默认使用9200 端口来为其REST API提供访问. 如果需要的话这个端口是可配置的。
 
 == 探索集群
@@ -279,33 +178,19 @@ Also note the line marked http with information about the HTTP address (`192.168
 [float]
 === REST API
 
-Now that we have our node (and cluster) up and running, the next step is to understand how to communicate with it. Fortunately, Elasticsearch provides a very comprehensive and powerful REST API that you can use to interact with your cluster. Among the few things that can be done with the API are as follows:
-
 现在我们已经启动并运行了节点(和集群), 下一步就是理解如何与它进行通信。幸运的是, Elasticsearch提供了一套非常全面和强大的REST API, 你可以使用它来和你的集群进行交互。使用API可以做的少数几件事情如下:
-
-* Check your cluster, node, and index health, status, and statistics
 
 * 检查集群、节点和索引的健康状况、状态以及统计信息
 
-* Administer your cluster, node, and index data and metadata
-
 * 管理集群、节点以及索引数据和元数据
 
-* Perform CRUD (Create, Read, Update, and Delete) and search operations against your indexes
-
 * 针对索引执行CRUD(Create, Read, Update和Delete)以及搜索操作
-
-* Execute advanced search operations such as paging, sorting, filtering, scripting, aggregations, and many others
 
 * 执行像分页、排序、筛选、脚本、聚合以及更多其它高级搜索操作
 
 === 集群健康
 
-Let's start with a basic health check, which we can use to see how our cluster is doing. We'll be using curl to do this but you can use any tool that allows you to make HTTP/REST calls. Let's assume that we are still on the same node where we started Elasticsearch on and open another command shell window.
-
 让我们开始一个基本的健康检查, 这样我们可以了解集群的工作情况. 我们将会使用curl命令来做这件事情, 你也可以使用任何可以允许你发起HTTP或REST调用的工具. 假设我们仍然在启动Elasticsearch的相同节点上, 打开另一个shell命令窗口.
-
-To check the cluster health, we will be using the <<cat,`_cat` API>>. Remember previously that our node HTTP endpoint is available at port `9200`:
 
 为了检查集群的健康状况, 我们将会使用 <<cat,`_cat` API>>. 记住之前我们节点的HTTP端点的访问端口是 `9200`:
 
@@ -322,18 +207,15 @@ epoch      timestamp cluster       status node.total node.data shards pri relo i
 1394735289 14:28:09  elasticsearch green           1         1      0   0    0    0        0
 --------------------------------------------------
 
-We can see that our cluster named "elasticsearch" is up with a green status.
-
 我们可以看到名为"elasticsearch"集群的启动状态是green.
 
 每当请求检查集群健康状况时, 我们会得到green、yellow或者red。green意思是一切正常(集群功能是完善的), yellow 意思是所有的数据都可以访问了但是某些副本
 还未被分配(集群功能是完善的), red的意思是不管出于什么原因某些数据都无法访问. 请注意, 即使集群的状态是red, 它仍然有部分功能正常 (例如它会继续处理可访问的分片的搜索请求)，
 但是由于你已经在丢失数据所以你想要尽可能快地修复它.
 
-Note that since we are using the default cluster name (elasticsearch) and since Elasticsearch uses unicast network discovery by default to find other nodes on the same machine, it is possible that you could accidentally start up more than one node on your computer and have them all join a single cluster. In this scenario, you may see more than 1 node in the above response.
-
 从上面的返回结果中我们还可以看到总共只有1个节点并且由于节点中还没有数据所以没有分片.请注意由于我们正在使用默认的集群名称 (elasticsearch) 并且
-由于Elasticsearch默认使用单播网络发现机制来寻找同一机器上的其它节点, 所以有可能你不小心在计算机上启动了多个节点并且让它们都加入到一个集群中. 在这个场景中, 在上面的返回结果中你可能会发现多个节点.
+由于Elasticsearch默认使用单播网络发现机制来寻找同一机器上的其它节点, 所以有可能你不小心在计算机上启动了多个节点并且让它们都加入到一个集群中.
+在这个场景中, 你可能会在上面的返回结果中发现多个节点.
 
 我们可以使用如下方式获取集群中的节点列表:
 
@@ -591,7 +473,7 @@ curl -XPOST 'localhost:9200/customer/external/1/_update?pretty' -d '
 }'
 --------------------------------------------------
 
-也可以通过使用简单的脚本来执行更新操作. 注意在 `1.4.3` 版本中像下面的动态脚本默认是禁用的, 想了解更多细节可以查看 <<modules-scripting,scripting docs>>.
+也可以通过使用简单的脚本来执行更新操作. 注意在 `1.4.3` 版本中像下面的动态脚本默认是禁用的, 想了解更多细节可以查看 <<modules-scripting, 脚本文档>>.
 下面的示例使用脚本来将age增加5:
 
 [source,sh]
@@ -808,9 +690,8 @@ curl -XPOST 'localhost:9200/bank/_search?pretty' -d '
 
 理解这一点很重要，即一旦得到你的搜索结果, Elasticsearch就完全地完成了搜索请求，并且不会维护任何类型的服务器端资源
 或是打开游标到你的结果中(open cursors into your results?).
-This is in stark contrast to many other platforms such as SQL wherein you may initially get a partial
-subset of your query results up-front and then you have to continuously go back to the server if you want to
-fetch (or page through) the rest of the results using some kind of stateful server-side cursor.
+这和许多其它平台完全相反，比如在SQL中你可能最开始在前面得到你查询结果的部分子集，如果你想要获取 (或分页查询) 剩余的数据
+那么你必须要使用某种有状态的服务器端游标来不断地请求服务器.
 
 === 查询语言介绍
 
@@ -869,10 +750,9 @@ curl -XPOST 'localhost:9200/bank/_search?pretty' -d '
 
 === 执行搜索
 
-现在我们已经Now that we have seen a few of the basic search parameters, let's dig in some more into the Query DSL.
-Let's first take a look at the returned document fields. By default, the full JSON document is returned as part
-of all searches. This is referred to as the source (`_source` field in the search hits). If we don't want the
-entire source document returned, we have the ability to request only a few fields from within source to be returned.
+现在我们已经了解了几个基本的搜索参数, 让我们深入探究一下Query DSL.
+我们首先看一下返回的文档字段. 整个的JSON文档默认作为所有搜索的一部分返回. 这被称为源文档 (搜索结果中的 `_source` 字段). 如果我们不想要
+返回整个的源文档, 我们可以请求只返回源文档中的几个字段.
 
 下面的示例展示了如何返回两个字段：`account_number`以及`balance` (在`_source`内), from the search:
 
@@ -887,9 +767,10 @@ curl -XPOST 'localhost:9200/bank/_search?pretty' -d '
 
 注意到上面的示例只是简单地减少了 `_source` 字段. 它仍然只会返回一个名为 `_source` 的字段，但是在它里面只包括 `account_number` 和 `balance` 字段.
 
-如果你学过SQL, the above is somewhat similar in concept to the `SQL SELECT FROM` field list.
+如果你学过SQL就知道上面的例子与 `SQL SELECT FROM` 字段列表 的概念有些类似.
 
-Now let's move on to the query part. Previously, we've seen how the `match_all` query is used to match all documents. Let's now introduce a new query called the <<query-dsl-match-query,`match` query>>, which can be thought of as a basic fielded search query (i.e. a search done against a specific field or set of fields).
+现在让我们转移到查询部分. 之前我们已经了解到 `match_all` 查询是如何用来匹配所有文档的.
+现在我们引入一种新的叫做 <<query-dsl-match-query,`match` 查询>> 的查询,它可以被认为是一个基本的分类搜索查询 (例如 一个针对某个特定字段或字段集合的搜索).
 
 下面的示例返回account_number为20的账户:
 
@@ -991,7 +872,7 @@ curl -XPOST 'localhost:9200/bank/_search?pretty' -d '
 在上面的示例中, `bool must_not` 子句指定了一个查询列表，其中所有都不为true文档才可以匹配上.
 
 我们可以在一个 `bool` 查询中同时组合 `must`, `should`以及 `must_not` 语句.
-Furthermore, we can compose `bool` queries inside any of these `bool` clauses to mimic any complex multi-level boolean logic.
+另外, 我们可以在任何这些 `bool` 子句中组合 `bool` 查询以模拟任何复杂的多层次的布尔逻辑.
 
 下面的示例返回年龄在40岁但是不住在ID(aho)的所有账户:
 
@@ -1014,20 +895,16 @@ curl -XPOST 'localhost:9200/bank/_search?pretty' -d '
 
 === 执行过滤器
 
-In the previous section, we skipped over a little detail called the document score (`_score` field in the search results).
-The score is a numeric value that is a relative measure of how well the document matches the search query that we
-specified. The higher the score, the more relevant the document is, the lower the score, the less relevant the document is.
+在之前的章节中, 我们跳过了被称为文档分数 (搜索结果中的 `_score` 字段) 的这个小细节.
+这个分数是一个数值，它表示的是一个有关文档和我们指定的搜索查询匹配程度的相对测量值. 分数越高，文档的相关度越高, 分数越低, 文档的相关度也越低.
 
-But queries do not always need to produce scores, in particular when they are only used for "filtering" the document set.
-Elasticsearch detects these situations and automatically optimizes query execution in order not to compute useless scores.
+但是查询并不总是需要产生分数, 特别是当它们仅用于 "filtering" 文档集合.Elasticsearch会检测到这些情况并且自动地优化查询的执行以免进行无用的分数计算.
 
 在上一节我们介绍的<<query-dsl-bool-query,`bool` 查询>> 也支持 `filter` 子句，
-which allow to use a query to restrict the documents that will be matched by other clauses, without changing how
-scores are computed. As an example, let's introduce the <<query-dsl-range-query,`range` query>>, which allows us
-to filter documents by a range of values. This is generally used for numeric or date filtering.
+它允许我们使用一个查询来限制将被其它子句匹配到的文档数量, 而不用改变分数计算规则. 我们用一个例子来介绍一下 <<query-dsl-range-query,`range` 查询>>, 它允许我们根据值的范围来过滤
+文档. 它通常用于数字或日期过滤.
 
-This example uses a bool query to return all accounts with balances between 20000 and 30000, inclusive. In other words,
-we want to find accounts with a balance that is greater than or equal to 20000 and less than or equal to 30000.
+下面的示例使用一个 bool 查询来返回余额在20000到30000之间的所有账户, 包括20000和30000. 换句话说, 我们想要找到余额大于等于20000并且小于等于30000的账户.
 
 [source,sh]
 --------------------------------------------------
@@ -1058,15 +935,11 @@ range 查询非常有意义, 例如, 没有文档比另一个更具相关性.
 
 === 执行聚合
 
-Aggregations provide the ability to group and extract statistics from your data. The easiest way to think about
-aggregations is by roughly equating it to the SQL GROUP BY and the SQL aggregate functions. In Elasticsearch,
-you have the ability to execute searches returning hits and at the same time return aggregated results separate
-from the hits all in one response. This is very powerful and efficient in the sense that you can run queries
-and multiple aggregations and get the results back of both (or either) operations in one shot avoiding network
-roundtrips using a concise and simplified API.
+聚合提供了从你的数据中组合和分解统计数据的能力.理解聚合最简单的方式就是将其大概地等同于SQL GROUP BY 和 SQL 聚合函数.
+在Elasticsearch中, 你能够执行搜索并在一次响应中返回搜索结果同时返回和搜索结果分开的聚合的结果.你只使用一个简洁和简单的API
+就能执行查询和多个聚合操作并一次性得到这两个操作的返回结果以避免网络往返，这是非常强大和高效的.
 
-To start with, this example groups all the accounts by state, and then returns the top 10 (default) states sorted
-by count descending (also default):
+下面的示例首先按照state组合所有的账户, 然后返回按照count的降序(默认排序方式)排序后的前10个(默认值)state:
 
 [source,sh]
 --------------------------------------------------
@@ -1137,9 +1010,9 @@ SELECT state, COUNT(*) FROM bank GROUP BY state ORDER BY COUNT(*) DESC
 }
 --------------------------------------------------
 
-We can see that there are 21 accounts in AL(abama), followed by 17 accounts in TX, followed by 15 accounts in ID(aho), and so forth.
+我们可以看到在AL(abama)中有21个账户 , 接着是TX中有17个账户 , 接着是ID(aho)中有15个账户 , 如此等等.
 
-Note that we set `size=0` to not show search hits because we only want to see the aggregation results in the response.
+请注意我们通过设置 `size=0` 来隐藏搜索命中结果, 因为我们只想在返回结果中看到聚合操作结果.
 
 在前面聚合操作的基础上, 下面的示例按照state计算了账户平均余额 (同样的只取按数量倒序排序后的前10个state):
 
@@ -1165,9 +1038,10 @@ curl -XPOST 'localhost:9200/bank/_search?pretty' -d '
 }'
 --------------------------------------------------
 
-Notice how we nested the `average_balance` aggregation inside the `group_by_state` aggregation. This is a common pattern for all the aggregations. You can nest aggregations inside aggregations arbitrarily to extract pivoted summarizations that you require from your data.
+请注意我们是如何将 `average_balance` 聚合操作嵌入到 `group_by_state` 聚合操作中的.
+对于所有聚合操作来说这是一个通用模式. 你可以随意地在聚合操作中嵌入聚合操作来从你的数据中提取你所要的汇总信息.
 
-在前面聚合操作的基础上, let's now sort on the average balance in descending order:
+在前面聚合操作的基础上, 现在让我们按照降序来排序平均余额:
 
 [source,sh]
 --------------------------------------------------
@@ -1194,8 +1068,7 @@ curl -XPOST 'localhost:9200/bank/_search?pretty' -d '
 }'
 --------------------------------------------------
 
-This example demonstrates how we can group by age brackets (ages 20-29, 30-39, and 40-49),
-then by gender, and then finally get the average account balance, per age bracket, per gender:
+下面的示例展示了我们可以怎样按照年龄段来分组 (年龄段 20-29, 30-39以及40-49), 然后按照性别, 最后得到每个年龄段每种性别的平均账户余额:
 
 [source,sh]
 --------------------------------------------------
