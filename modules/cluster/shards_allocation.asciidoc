@@ -113,7 +113,7 @@ of each node closer together by more then the `balance.threshold`.
      Minimal optimization value of operations that should be performed (non
       negative float). Defaults to `1.0f`.  Raising this will cause the cluster
       to be less aggressive about optimizing the shard balance.
-    最小优化参数用来确定是否应该执行平衡操作（非负实数）。默认为0， 提高该值可以让系统不那么积极
+    最小优化参数用来确定是否应该执行平衡操作（非负实数）。默认为 `1.0f`， 提高该值可以让系统不那么积极
     的执行平衡优化操作。
 
 

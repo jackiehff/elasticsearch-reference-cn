@@ -1,56 +1,47 @@
 [[circuit-breaker]]
-=== Circuit Breaker
+=== 断路器
 
-Elasticsearch contains multiple circuit breakers used to prevent operations from
-causing an OutOfMemoryError. Each breaker specifies a limit for how much memory
-it can use. Additionally, there is a parent-level breaker that specifies the
-total amount of memory that can be used across all breakers.
+Elasticsearch包括多个断路器以避免OutOfMemoryError的发生，每个断路器指定了多少内存可以使用。
+另外，还有一个父断路器指定了所有断路器可以使用的总得内存量。
 
-These settings can be dynamically updated on a live cluster with the
-<<cluster-update-settings,cluster-update-settings>> API.
+这些设置可以通过 <<cluster-update-settings,cluster-update-settings>> API动态更新。
 
 [[parent-circuit-breaker]]
 [float]
-==== Parent circuit breaker
+==== 父断路器
 
-The parent-level breaker can be configured with the following setting:
+父断路器可以通过以下设置配置：
 
 `indices.breaker.total.limit`::
 
-    Starting limit for overall parent breaker, defaults to 70% of JVM heap.
+    全局父断路器的配置，默认为70%的JVM堆内存。
 
 [[fielddata-circuit-breaker]]
 [float]
-==== Field data circuit breaker
-The field data circuit breaker allows Elasticsearch to estimate the amount of
-memory a field will require to be loaded into memory. It can then prevent the
-field data loading by raising an exception. By default the limit is configured
-to 60% of the maximum JVM heap. It can be configured with the following
-parameters:
+==== Field data断路器
+
+字段数据断路器让Elasticsearch可以估计一个字段被加载到内存中的内存使用量，如果超过设定值，就会
+抛出异常以阻止字段数据的加载。默认情况下该值为总JVM内存的60%， 可以通过以下参数配置：
 
 `indices.breaker.fielddata.limit`::
 
-    Limit for fielddata breaker, defaults to 60% of JVM heap
+    字段数据断路器的内存限制量，默认为JVM内存的60%。
 
 `indices.breaker.fielddata.overhead`::
 
-    A constant that all field data estimations are multiplied with to determine a
-    final estimation. Defaults to 1.03
+    所有字段数据内存量估算时的常数，每个内存使用量的乘积再乘以这个数就是总的内存估算量。
 
 [[request-circuit-breaker]]
 [float]
-==== Request circuit breaker
+==== 请求断路器
 
-The request circuit breaker allows Elasticsearch to prevent per-request data
-structures (for example, memory used for calculating aggregations during a
-request) from exceeding a certain amount of memory.
+请求断路器让Elasticsearch在针对每个请求执行时超过一定内存后，阻止某些内存的消耗（如，在查询时
+聚合请求中得内存使用）
 
 `indices.breaker.request.limit`::
 
-    Limit for request breaker, defaults to 40% of JVM heap
+    请求断路器的内存限制，默认为JVM内存的40%
 
 `indices.breaker.request.overhead`::
 
-    A constant that all request estimations are multiplied with to determine a
-    final estimation. Defaults to 1
-
+    一个常数用来估算所有请求的内存量时的乘积因子，默认为1.

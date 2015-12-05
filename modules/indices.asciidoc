@@ -1,38 +1,37 @@
 [[modules-indices]]
 == Indices
 
-The indices module controls index-related settings that are globally managed
-for all indices, rather than being configurable at a per-index level.
+所有索引模块控制的是针对所有索引的索引配置，而不是对每个索引的单独配置。
 
-Available settings include:
+包含的配置项有：
 
 <<circuit-breaker,Circuit breaker>>::
 
-    Circuit breakers set limits on memory usage to avoid out of memory exceptions.
+    断路器限制了内存的使用量以避免内存溢出异常发生。
 
 <<modules-fielddata,Fielddata cache>>::
 
-    Set limits on the amount of heap used by the in-memory fielddata cache.
+    设置了内存中fielddata cache对堆的使用量。
 
 <<query-cache,Node query cache>>::
 
-    Configure the amount heap used to cache queries results.
+    设置了对查询结果缓存中堆的使用量。
 
 <<indexing-buffer,Indexing buffer>>::
 
-    Control the size of the buffer allocated to the indexing process.
+    控制了索引过程中缓冲区的大小。
 
 <<shard-request-cache,Shard request cache>>::
 
-    Control the behaviour of the shard-level request cache.
+    控制了分片级别的请求的缓存行为。
 
 <<recovery,Recovery>>::
 
-    Control the resource limits on the shard recovery process.
+    控制了分片恢复过程中对资源使用情况的限制。
 
 <<indices-ttl,TTL interval>>::
 
-    Control how expired documents are removed.
+    控制了多长时间的文档会被删除。
 
 include::indices/circuit_breaker.asciidoc[]
 
@@ -47,4 +46,3 @@ include::indices/request_cache.asciidoc[]
 include::indices/recovery.asciidoc[]
 
 include::indices/ttl_interval.asciidoc[]
-
