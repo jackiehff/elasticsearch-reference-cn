@@ -1,37 +1,39 @@
 [[setup-service]]
-== Running as a Service on Linux
+== 作为Linux系统服务运行
 
-In order to run elasticsearch as a service on your operating system, the provided packages try to make it as easy as possible for you to start and stop elasticsearch during reboot and upgrades.
+为了能够在操作系统中将 elasticsearch 作为系统服务运行, 官方提供的包试着尽可能让你简单地启动和停止 elasticsearch 在系统重启和升级期间.
 
 [float]
 === Linux
 
-Currently our build automatically creates a debian package and an RPM package, which is available on the download page. The package itself does not have any dependencies, but you have to make sure that you installed a JDK.
+目前我们的构建会自动的创建一个 debian 包 和一个 RPM 包, 它们可以在下载页面下载. 包本身并没有任何依赖, 但是你必须确保已经安装了 JDK.
 
-Each package features a configuration file, which allows you to set the following parameters
+每个包都有一个配置文件, 它允许你设置以下参数
 
 [horizontal]
-`ES_USER`::               The user to run as, defaults to `elasticsearch`
-`ES_GROUP`::              The group to run as, defaults to `elasticsearch`
-`ES_HEAP_SIZE`::          The heap size to start with
-`ES_HEAP_NEWSIZE`::       The size of the new generation heap
-`ES_DIRECT_SIZE`::        The maximum size of the direct memory
-`MAX_OPEN_FILES`::        Maximum number of open files, defaults to `65535`
-`MAX_LOCKED_MEMORY`::     Maximum locked memory size. Set to "unlimited" if you use the bootstrap.mlockall option in elasticsearch.yml. You must also set ES_HEAP_SIZE.
-`MAX_MAP_COUNT`::         Maximum number of memory map areas a process may have. If you use `mmapfs` as index store type, make sure this is set to a high value. For more information, check the https://github.com/torvalds/linux/blob/master/Documentation/sysctl/vm.txt[linux kernel documentation] about `max_map_count`. This is set via `sysctl` before starting elasticsearch. Defaults to `65535`
-`LOG_DIR`::               Log directory, defaults to `/var/log/elasticsearch`
-`DATA_DIR`::              Data directory, defaults to `/var/lib/elasticsearch`
-`CONF_DIR`::              Configuration file directory (which needs to include `elasticsearch.yml` and `logging.yml` files), defaults to `/etc/elasticsearch`
-`ES_JAVA_OPTS`::          Any additional java options you may want to apply. This may be useful, if you need to set the `node.name` property, but do not want to change the `elasticsearch.yml` configuration file, because it is distributed via a provisioning system like puppet or chef. Example: `ES_JAVA_OPTS="-Des.node.name=search-01"`
-`RESTART_ON_UPGRADE`::    Configure restart on package upgrade, defaults to `false`. This means you will have to restart your elasticsearch instance after installing a package manually. The reason for this is to ensure, that upgrades in a cluster do not result in a continuous shard reallocation resulting in high network traffic and reducing the response times of your cluster.
-`ES_GC_LOG_FILE` ::       The absolute log file path for creating a garbage collection logfile, which is done by the JVM. Note that this logfile can grow pretty quick and thus is disabled by default.
+`ES_USER`::               运行 Elasticsearch 的用户, 默认是 `elasticsearch`
+`ES_GROUP`::              运行 Elasticsearch 的用户组, 默认是 `elasticsearch`
+`ES_HEAP_SIZE`::          启动时的堆内存大小
+`ES_HEAP_NEWSIZE`::       新生代堆内存大小
+`ES_DIRECT_SIZE`::        直接存储器的最大值
+`MAX_OPEN_FILES`::        打开文件的最大数量, 默认是 `65535`
+`MAX_LOCKED_MEMORY`::     可锁定的最大内存值. 如果你在 elasticsearch.yml 文件中使用了 bootstrap.mlockall 选项, 将其设置为 "unlimited". 同时你必须要设置 ES_HEAP_SIZE.
+`MAX_MAP_COUNT`::         进程可拥有的内存映射区域最大数量. 如果你使用 `mmapfs` 作为索引存储类型, 请确保将其设置成一个很大的值. 想要了解更多信息, 查阅 https://github.com/torvalds/linux/blob/master/Documentation/sysctl/vm.txt[linux 内核文档] 关于 `max_map_count` 的部分. 它可以在 elasticsearch 启动前使用 `sysctl` 设置. 默认值是 `65535`
+`LOG_DIR`::               日志目录, 默认是 `/var/log/elasticsearch`
+`DATA_DIR`::              数据目录, 默认是 `/var/lib/elasticsearch`
+`CONF_DIR`::              配置文件目录 (which needs to include `elasticsearch.yml` and `logging.yml` files), defaults to `/etc/elasticsearch`
+`ES_JAVA_OPTS`::          你想应用的任何附加的Java选项. 如果你想要设置 `node.name` 属性, 但是又不想要改变 `elasticsearch.yml` 配置文件, 这个选项就很有用, 因为它是通过一个像 puppet 或 chef 的分布式系统来分发的. 示例: `ES_JAVA_OPTS="-Des.node.name=search-01"`
+`RESTART_ON_UPGRADE`::    配置在包升级时是否重启, 默认值是 `false`. 这意味着在安装一个包后你需要手工地重启 elasticsearch 实例 . 这样做的原因是确保集群中的升级不会导致持续的分片重新分配, 从而导致较高的网络流量并减少集群的响应次数.
+`ES_GC_LOG_FILE` ::       用于创建一个垃圾回收日志文件的绝对日志文件路径, 由 JVM 完成. 注意: 由于这个日志文件增长的非常快, 所以它默认是禁用的.
 
 [float]
 ==== Debian/Ubuntu
 
-The debian package ships with everything you need as it uses standard debian tools like update `update-rc.d` to define the runlevels it runs on. The init script is placed at `/etc/init.d/elasticsearch` as you would expect it. The configuration file is placed at `/etc/default/elasticsearch`.
+debian 包附带了你所需要的一切, 因为它使用了像更新 `update-rc.d` 这样标准的 debian 工具来定义它运行时的运行级别. 如你所料, 初始化脚本放置在 `/etc/init.d/elasticsearch`.
+配置文件放置在 `/etc/default/elasticsearch`.
 
-The debian package does not start up the service by default. The reason for this is to prevent the instance to accidentally join a cluster, without being configured appropriately. After installing using `dpkg -i` you can use the following commands to ensure, that elasticsearch starts when the system is booted and then start up elasticsearch:
+debian 包默认不会启动 Elasticsearch 服务. 这样做的原因主要是为了防止实例在没有正确配置的情况下不小心加入到一个集群中. 使用 `dpkg -i` 安装完成之后, 你可以使用
+下面的命令来确保 elasticsearch 在系统启动时启动, 接着启动 elasticsearch:
 
 [source,sh]
 --------------------------------------------------
@@ -39,12 +41,12 @@ sudo update-rc.d elasticsearch defaults 95 10
 sudo /etc/init.d/elasticsearch start
 --------------------------------------------------
 
-Users running Debian 8 or Ubuntu 14 or later may require configuration of systemd instead of `update-rc.d`. In those cases, please refer to the <<using-systemd>> section.
+运行 Debian 8 或 Ubuntu 14或后续版本的用户可能需要配置 systemd 而不是 `update-rc.d`.在这些情况下, 请参考 <<using-systemd>> 这节.
 
 [float]
-===== Installing the oracle JDK
+===== 安装 oracle JDK
 
-The usual recommendation is to run the Oracle JDK with elasticsearch. However Ubuntu and Debian only ship the OpenJDK due to license issues. You can easily install the oracle installer package though. In case you are missing the `add-apt-repository` command under Debian GNU/Linux, make sure have at least Debian Jessie and the package `python-software-properties` installed
+使用  elasticsearch 通常建议运行 Oracle JDK. 然而 Ubuntu 和 Debian 由于许可证问题只能运行 OpenJDK . 你可以很容易的安装 oracle 安装程序包. 为了避免你在 Debian GNU/Linux 下缺失 `add-apt-repository` 命令, 请确保你至少运行在 Debian Jessie 上并且已经安装了 `python-software-properties` 包
 
 [source,sh]
 --------------------------------------------------
@@ -54,16 +56,17 @@ sudo apt-get install oracle-java8-installer
 java -version
 --------------------------------------------------
 
-The last command should verify a successful installation of the Oracle JDK.
+最后一个命令可以验证 Oracle JDK 是否安装成功.
 
 
 [float]
-==== RPM based distributions
+==== 基于RPM的分发包
 
 [float]
-===== Using chkconfig
+===== 使用chkconfig
 
-Some RPM based distributions are using `chkconfig` to enable and disable services. The init script is located at `/etc/init.d/elasticsearch`, where as the configuration file is placed at `/etc/sysconfig/elasticsearch`. Like the debian package the RPM package is not started by default after installation, you have to do this manually by entering the following commands
+一些基于 RPM 的分发包是使用 `chkconfig` 来启用和禁用服务的. 初始化脚本放置在 `/etc/init.d/elasticsearch` 中, 而配置文件是放置在 `/etc/sysconfig/elasticsearch` 中.
+和 debian 包一样, RPM 包安装后不会默认启动服务, 你必须要通过输入以下命令手动地启动
 
 [source,sh]
 --------------------------------------------------
@@ -73,9 +76,11 @@ sudo service elasticsearch start
 
 [[using-systemd]]
 [float]
-==== Using systemd
+==== 使用systemd
 
-Distributions like Debian Jessie, Ubuntu 14, and many of the SUSE derivitives do not use the `chkconfig` tool to register services, but rather `systemd` and its command `/bin/systemctl` to start and stop services (at least in newer versions, otherwise use the `chkconfig` commands above). The configuration file is also placed at `/etc/sysconfig/elasticsearch` if the system is rpm based and `/etc/default/elasticsearch` if it is deb. After installing the RPM, you have to change the systemd configuration and then start up elasticsearch
+像Debian Jessie, Ubuntu 14以及许多 SUSE 衍生版本并不是使用 `chkconfig` 工具来注册服务, 而是 `systemd` 和 它的命令 `/bin/systemctl` 来启动和
+停止服务的 (至少在较新的版本中, 否则使用上面的 `chkconfig` 命令). 如果系统基于 rpm 那么配置文件同样放置在 `/etc/sysconfig/elasticsearch` 中, 如果基于 deb 则放置在
+ `/etc/default/elasticsearch` 中. 安装完 RPM 包之后, 你需要改变 systemd 配置然后启动 elasticsearch
 
 [source,sh]
 --------------------------------------------------
@@ -84,4 +89,5 @@ sudo /bin/systemctl enable elasticsearch.service
 sudo /bin/systemctl start elasticsearch.service
 --------------------------------------------------
 
-Also note that changing the `MAX_MAP_COUNT` setting in `/etc/sysconfig/elasticsearch` does not have any effect, you will have to change it in `/usr/lib/sysctl.d/elasticsearch.conf` in order to have it applied at startup.
+还要注意, 改变 `/etc/sysconfig/elasticsearch` 中的 `MAX_MAP_COUNT` 设置不会有任何作用, 要想在启动时应用它, 你要在 `/usr/lib/sysctl.d/elasticsearch.conf` 配置文件中
+改变它.
