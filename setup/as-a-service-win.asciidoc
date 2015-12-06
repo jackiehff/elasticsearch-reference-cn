@@ -1,12 +1,11 @@
 :backslash: \
 
 [[setup-service-win]]
-== Running as a Service on Windows
+== 作为Windows系统服务运行
 
-Windows users can configure Elasticsearch to run as a service to run in the background or start automatically
-at startup without any user interaction.
-This can be achieved through `service.bat` script under `bin/` folder which allows one to install,
-remove, manage or configure the service and potentially start and stop the service, all from the command-line.
+Windows用户可以将 Elasticsearch 配置成一个在后台运行的服务或者在系统启动时自动启动, 而不需要任何的用户交互.
+这可以通过 `bin/` 目录下的 `service.bat` 脚本来实现, 它可以安装, 移除, 管理或配置 Elasticsearch 服务, 还
+可以启动和停止 Elasticsearch 服务, 这些都可以从命令行运行.
 
 ["source","sh",subs="attributes,callouts"]
 --------------------------------------------------
@@ -15,28 +14,25 @@ c:\elasticsearch-{version}{backslash}bin>service
 Usage: service.bat install|remove|start|stop|manager [SERVICE_ID]
 --------------------------------------------------
 
-The script requires one parameter (the command to execute) followed by an optional one indicating the service
-id (useful when installing multiple Elasticsearch services).
+`service.bat` 脚本需要一个参数 (要执行的命令) , 后面跟着一个用于表明服务ID (当安装多个 Elasticsearch 服务时非常有用) 的可选参数.
 
-The commands available are:
+可用的命令有:
 
 [horizontal]
-`install`:: Install Elasticsearch as a service
+`install`:: 安装 Elasticsearch 服务
 
-`remove`:: Remove the installed Elasticsearch service (and stop the service if started)
+`remove`:: 移除安装的 Elasticsearch 服务 (并且停止服务如果服务已经启动的话)
 
-`start`:: Start the Elasticsearch service (if installed)
+`start`:: 启动 Elasticsearch 服务 (如果已经安装过的话)
 
-`stop`:: Stop the Elasticsearch service (if started)
+`stop`:: 停止 Elasticsearch 服务 (如果已经启动成功的话)
 
-`manager`:: Start a GUI for managing the installed service
+`manager`:: 启动 GUI 工具来管理已经安装的服务
 
-Note that the environment configuration options available during the installation are copied and will be used during
-the service lifecycle. This means any changes made to them after the installation will not be picked up unless
-the service is reinstalled.
+注意: 这些在安装期间可用的环境配置选项是被复制的, 并且在服务的整个生命周期都将被使用. 这就意味着对于它们的任何改变将不会起作用, 除非重新安装服务.
 
-Based on the architecture of the available JDK/JRE (set through `JAVA_HOME`), the appropriate 64-bit(x64) or 32-bit(x86)
-service will be installed. This information is made available during install:
+基于已安装的 JDK/JRE (通过 `JAVA_HOME` 设置) 的架构, 相应的将会安装64位(x64)或32位(x86)服务.
+这条信息可以在安装期间看到:
 
 ["source","sh",subs="attributes,callouts"]
 --------------------------------------------------
@@ -46,22 +42,19 @@ Using JAVA_HOME (64-bit):  "c:\jvm\jdk1.8"
 The service 'elasticsearch-service-x64' has been installed.
 --------------------------------------------------
 
-NOTE: While a JRE can be used for the Elasticsearch service, due to its use of a client VM (as oppose to a server JVM which
-offers better performance for long-running applications) its usage is discouraged and a warning will be issued.
+NOTE: 尽管 JRE 可以用于 Elasticsearch 服务, 由于它使用的是 client 模式的 VM (不像 server 模式的 JVM 可以为长期运行的应用程序提供更好的性能), 所以不建议使用它并且会发出警告.
 
 [float]
-=== Customizing service settings
+=== 自定义服务设置
 
-There are two ways to customize the service settings:
+有两种方式可以自定义服务设置:
 
-Manager GUI:: accessible through `manager` command, the GUI offers insight into the installed service including its status, startup type,
-JVM, start and stop settings among other things. Simply invoking `service.bat` from the command-line with the aforementioned option
-will open up the manager window:
+GUI 管理器:: 可以通过 `manager` 命令访问, GUI 管理器可以看到已安装的服务, 包括服务的状态, 启动类型, JVM, 启动和停止设置以及其他一些事项.
+简单地从命令行调用带有 `manager` 选项的 `service.bat` 将会打开管理窗口:
 
-image::images/service-manager-win.png["Windows Service Manager GUI",align="center"]
+image::images/service-manager-win.png["Windows GUI 服务管理器",align="center"]
 
-Customizing `service.bat`:: at its core, `service.bat` relies on http://commons.apache.org/proper/commons-daemon/[Apache Commons Daemon] project
-to install the services. For full flexibility such as customizing the user under which the service runs, one can modify the installation
-parameters to tweak all the parameters accordingly. Do note that this requires reinstalling the service for the new settings to be applied.
+自定义 `service.bat`:: `service.bat` 的核心依赖于 http://commons.apache.org/proper/commons-daemon/[Apache Commons Daemon] 项目来安装服务.
+为了充分的灵活性, 例如自定义服务运行的用户, 你可以修改安装参数来相应地调整所有的参数. 请注意: 想要使新的设置生效需要重装服务.
 
-NOTE: There is also a community supported customizable MSI installer available: https://github.com/salyh/elasticsearch-msi-installer (by Hendrik Saly).
+NOTE: 还有一个社区支持的可定制的 MSI 安装器: https://github.com/salyh/elasticsearch-msi-installer (由Hendrik Saly提供).
