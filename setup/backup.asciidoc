@@ -1,33 +1,26 @@
 [[backup]]
-=== Back Up Your Data!
+=== 备份你的数据!
 
-Always back up your data before performing an upgrade.  This will allow you to
-roll back in the event of a problem.  The upgrades sometimes include upgrades
-to the Lucene libraries used by Elasticsearch to access the index files, and
-after an index file has been updated to work with a new version of Lucene, it
-may not be accessible to the versions of Lucene present in earlier
-Elasticsearch releases.
+永远记得在升级之前备份数据, 这样在升级过程中遇到问题还可以回滚. 升级有时候包括升级 Elasticsearch 用于访问索引文件
+的 Lucene 库, 并且当索引文件更新之后工作于新版本的 Lucene, 在之前版本的 Elasticsearch 中将无法访问当前版本的 Lucene.
 
 [WARNING]
-.Always back up your data before upgrading
+.永远记得在升级之前备份数据
 =========================================
-You cannot roll back to an earlier version unless you have a backup of your data.
+除非你有数据的备份, 否则你永远都不能回滚到之前的版本.
 =========================================
 
-==== Backing up 1.0 and later
+==== 备份 1.0 以及之后的版本
 
-To back up a running 1.0 or later system, it is simplest to use the snapshot
-feature.  See the complete instructions for
-<<modules-snapshots,backup and restore with snapshots>>.
+要备份一个运行 1.0 或之后版本的系统, 最简单的就是使用快照功能. 请参阅完整的说明 <<modules-snapshots,使用快照进行备份和恢复>>.
 
-==== Backing up 0.90.x and earlier
+==== 备份 0.90.x 以及之前的版本
 
-To back up a running 0.90.x system:
+要备份一个运行 0.90.x 版本的系统:
 
-===== Step 1: Disable index flushing
+===== 第 1 步: 禁用索引刷新
 
-This will prevent indices from being flushed to disk while the backup is in
-process:
+它将防止备份过程中索引被刷新到磁盘上:
 
 [source,js]
 -----------------------------------
@@ -40,10 +33,9 @@ PUT /_all/_settings
 -----------------------------------
 // AUTOSENSE
 
-===== Step 2: Disable reallocation
+===== 第 2 步: 禁用重新分配
 
-This will prevent the cluster from moving data files from one node to another
-while the backup is in process:
+它将防止备份过程中集群将数据文件从一个节点移动到另一个节点:
 
 [source,js]
 -----------------------------------
@@ -56,16 +48,13 @@ PUT /_cluster/settings
 -----------------------------------
 // AUTOSENSE
 
-===== Step 3: Backup your data
+===== 第 3 步: 备份你的数据
 
-After reallocation and index flushing are disabled, initiate a backup of
-Elasticsearch's data path using your favorite backup method (tar, storage
-array snapshots, backup software).
+在重新分配和索引刷新被禁用后, 使用你最喜欢的备份方式 (tar, 存储阵列的快照, 备份软件) 来开启 Elasticsearch 数据路径的备份.
 
-===== Step 4: Reenable allocation and flushing
+===== 第 4 步: 重新启用分配和刷新
 
-When the backup is complete and data no longer needs to be read from the
-Elasticsearch data path, allocation and index flushing must be re-enabled:
+当备份完成并且不再需要从 Elasticsearch 数据路径读取数据的时候, 必须要重新启用分配和索引刷新:
 
 [source,js]
 -----------------------------------

@@ -1,18 +1,13 @@
 [[restart-upgrade]]
-=== Full cluster restart upgrade
+=== 整个集群重启升级
 
-Elasticsearch requires a full cluster restart when upgrading across major
-versions: from 0.x to 1.x or from 1.x to 2.x.  Rolling upgrades are not
-supported across major versions.
+当跨主版本升级时, 比如从 0.x 升级到 1.x 版本或 从 1.x 升级到 2.x 版本, Elasticsearch 需要整个集群重启. 滚动升级不支持跨主版本的升级.
 
-The process to perform an upgrade with a full cluster restart is as follows:
+执行整个集群重启升级的步骤如下:
 
-==== Step 1: Disable shard allocation
+==== 第1步: 禁用分片分配
 
-When you shut down a node, the allocation process will immediately try to
-replicate the shards that were on that node to other nodes in the cluster,
-causing a lot of wasted I/O.  This can be avoided by disabling allocation
-before shutting down a node:
+当你关闭节点的时候, 当前节点上的分配进程会立刻将分片复制到集群中另外的节点上, 这样就造成了大量的 I/O 浪费. 可以通过在节点关闭之前禁用分配来避免这种情况:
 
 [source,js]
 --------------------------------------------------
@@ -25,7 +20,7 @@ PUT /_cluster/settings
 --------------------------------------------------
 // AUTOSENSE
 
-If upgrading from 0.90.x to 1.x, then use these settings instead:
+如果从 0.90.x 升级到 1.x 版本, 使用下面这些设置:
 
 [source,js]
 --------------------------------------------------
@@ -39,10 +34,9 @@ PUT /_cluster/settings
 --------------------------------------------------
 // AUTOSENSE
 
-==== Step 2: Perform a synced flush
+==== 第 2 步: 执行同步刷新
 
-Shard recovery will be much faster if you stop indexing and issue a
-<<indices-synced-flush, synced-flush>> request:
+如果你停止索引并发起一次 <<indices-synced-flush, 同步刷新>> 请求, 分片恢复将会快很多:
 
 [source,sh]
 --------------------------------------------------
@@ -50,27 +44,21 @@ POST /_flush/synced
 --------------------------------------------------
 // AUTOSENSE
 
-A synced flush request is a ``best effort'' operation. It will fail if there
-are any pending indexing operations, but it is safe to reissue the request
-multiple times if necessary.
+同步刷新请求是 ``尽力而为'' 的操作, 如果有任何悬而未决的索引操作它将会失败, 但是如有必要多次
+发起这个请求是很安全的.
 
-==== Step 3: Shutdown and upgrade all nodes
+==== 第 3 步: 关闭并升级所有节点
 
-Stop all Elasticsearch services on all nodes in the cluster. Each node can be
-upgraded following the same procedure described in <<upgrade-node>>.
+在集群中的所有节点上停止所有 Elasticsearch 服务. 每个节点都可以参照 <<upgrade-node>> 中描述的
+相同的步骤来升级.
 
-==== Step 4: Start the cluster
+==== 第 4 步: 启动集群
 
-If you have dedicated master nodes -- nodes with `node.master` set to
-`true`(the default) and `node.data` set to `false` --  then it is a good idea
-to start them first.  Wait for them to form a cluster and to elect a master
-before proceeding with the data nodes. You can check progress by looking at the
-logs.
+如果你有专用的主节点 -- `node.master` 设置为 `true`(默认值) 以及 `node.data` 设置为 `false` 的节点 --  那么建议优先
+启动它们. 在继续数据节点之前先等待它们形成一个集群并选举出一个 master 节点. 可以通过查看日志来检查进度.
 
-As soon as the <<master-election,minimum number of master-eligible nodes>>
-have discovered each other, they will form a cluster and elect a master.  From
-that point on, the <<cat-health,`_cat/health`>> and <<cat-nodes,`_cat/nodes`>>
-APIs can be used to monitor nodes joining the cluster:
+一旦 <<master-election,有资格当选 master 的最小数量的节点>> 发现彼此, 它们会形成一个集群并选举一个 master.
+从那一刻起, <<cat-health,`_cat/health`>> 和 <<cat-nodes,`_cat/nodes`>> API 可以用来监控加入到集群中的节点:
 
 [source,sh]
 --------------------------------------------------
@@ -80,26 +68,19 @@ GET _cat/nodes
 --------------------------------------------------
 // AUTOSENSE
 
-Use these APIs to check that all nodes have successfully joined the cluster.
+使用这些 API 来检查所有节点是否成功地加入到集群中.
 
-==== Step 5: Wait for yellow
+==== 第 5 步: 等待集群健康状态变成 yellow
 
-As soon as each node has joined the cluster, it will start to recover any
-primary shards that are stored locally.  Initially, the
-<<cat-health,`_cat/health`>> request will report a `status` of `red`, meaning
-that not all primary shards have been allocated.
+一旦所有节点都加入到集群中, 它会开始恢复本地存储的任何主分片. 最初, <<cat-health,`_cat/health`>> 请求
+会报告 `status` 为 `red`, 这意味着还有主分片没有被分配.
 
-Once each node has recovered its local shards, the `status` will become
-`yellow`, meaning all primary shards have been recovered, but not all replica
-shards are allocated.  This is to be expected because allocation is still
-disabled.
+一旦每个节点发现它的本地分片, `status` 将会变成 `yellow`, 这意味着已经发现了所有主分片, 但还有复制分片没有被分配.
+这也是可以预料到的, 因为分配仍然被禁用.
 
-==== Step 6: Reenable allocation
+==== 第 6 步: 重新启用分配
 
-Delaying the allocation of replicas until all nodes have joined the cluster
-allows the master to allocate replicas to nodes which already have local shard
-copies.   At this point, with all the nodes in the cluster, it is safe to
-reenable shard allocation:
+等到所有节点加入到集群中再进行副本的分配可以允许 master 将副本分配到已经拥有本地分片副本的节点上. 此时所有节点都在集群中, 重新启用分片分配是安全的:
 
 [source,js]
 ------------------------------------------------------
@@ -112,7 +93,7 @@ PUT /_cluster/settings
 ------------------------------------------------------
 // AUTOSENSE
 
-If upgrading from 0.90.x to 1.x, then use these settings instead:
+如果从 0.90.x 升级到 1.x 版本, 使用下面这些设置:
 
 [source,js]
 --------------------------------------------------
@@ -126,13 +107,10 @@ PUT /_cluster/settings
 --------------------------------------------------
 // AUTOSENSE
 
-The cluster will now start allocating replica shards to all data nodes. At this
-point it is safe to resume indexing and searching, but your cluster will
-recover more quickly if you can delay indexing and searching until all shards
-have recovered.
+集群现在开始给所有数据节点分配复制分片. 此时重新开始索引和搜索是安全的, 但是如果你等到所有分片都恢复再
+索引和搜索, 集群将会更快的恢复.
 
-You can monitor progress with the <<cat-health,`_cat/health`>> and
-<<cat-recovery,`_cat/recovery`>> APIs:
+你可以使用 <<cat-health,`_cat/health`>> 和 <<cat-recovery,`_cat/recovery`>> API 来监控进度:
 
 [source,sh]
 --------------------------------------------------
@@ -142,6 +120,4 @@ GET _cat/recovery
 --------------------------------------------------
 // AUTOSENSE
 
-Once the `status` column in the `_cat/health` output has reached `green`, all
-primary and replica shards have been successfully allocated.
-
+一旦 `_cat/health` 输出结果中的 `status` 列的值变成 `green`, 所有的主分片和复制分片都已经成功地被分配.
