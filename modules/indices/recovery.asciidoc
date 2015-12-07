@@ -1,28 +1,27 @@
 [[recovery]]
-=== Indices Recovery
+=== 索引恢复
 
-The following _expert_ settings can be set to manage the recovery policy.
+下面的设置是专家级设置，可以用来管理索引恢复策略。
 
 `indices.recovery.concurrent_streams`::
-    Defaults to `3`.
+    默认为 `3`.
 
 `indices.recovery.concurrent_small_file_streams`::
-    Defaults to `2`.
+    默认为 `2`.
 
 `indices.recovery.file_chunk_size`::
-    Defaults to `512kb`.
+    默认为 `512kb`.
 
 `indices.recovery.translog_ops`::
-    Defaults to `1000`.
+    默认为 `1000`.
 
 `indices.recovery.translog_size`::
-    Defaults to `512kb`.
+    默认为 `512kb`.
 
 `indices.recovery.compress`::
-    Defaults to `true`.
+    默认为 `true`.
 
 `indices.recovery.max_bytes_per_sec`::
-    Defaults to `40mb`.
+    默认为 `40mb`.
 
-These settings can be dynamically updated on a live cluster with the
-<<cluster-update-settings,cluster-update-settings>> API:
+这些设置可以通过 <<cluster-update-settings,cluster-update-settings>> API动态改变。

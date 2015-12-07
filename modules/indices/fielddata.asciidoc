@@ -1,37 +1,27 @@
 [[modules-fielddata]]
 === Fielddata
 
-The field data cache is used mainly when sorting on or computing aggregations
-on a field. It loads all the field values to memory in order to provide fast
-document based access to those values. The field data cache can be
-expensive to build for a field, so its recommended to have enough memory
-to allocate it, and to keep it loaded.
+字段数据缓存主要用来基于某个字段的排序或者聚合运算，其将该字段的所有值加载到内存中以便快速获取
+某个文档的字段值。字段数据缓存是重量级操作，建议有足够内存时使用，并一直保持在内存中。
 
-The amount of memory used for the field
-data cache can be controlled using `indices.fielddata.cache.size`. Note:
-reloading  the field data which does not fit into your cache will be expensive
-and  perform poorly.
+字段数据缓存的内存使用量可以通过配置  `indices.fielddata.cache.size`指定。注：重新加载一个
+字段的数据进缓存中是一件耗时的事情，并且性能较差。
 
 `indices.fielddata.cache.size`::
 
-    The max size of the field data cache, eg `30%` of node heap space, or an
-    absolute value, eg `12GB`. Defaults to unbounded.  Also see
-    <<fielddata-circuit-breaker>>.
+    字段数据缓存的最大使用量，如节点对内存的 `30%`，或者一个绝对值，如 `12GB`。默认没有限制，
+    另见 <<fielddata-circuit-breaker>>。
 
 `indices.fielddata.cache.expire`::
 
-    experimental[] A time based setting that expires field data after a
-    certain time of inactivity. Defaults to `-1`. For example, can be set to
-    `5m` for a 5 minute expiry.
+    experimental[] 超过多长时间的闲置后，缓存失效的一个时间配置。默认为 `-1`, 如可以设为
+    `5m`,即5分钟过期。
 
-NOTE: These are static settings which must be configured on every data node in
-the cluster.
+NOTE: 这是一个静态设置，需要在集群中每个节点上配置。
 
 [float]
 [[fielddata-monitoring]]
-==== Monitoring field data
+==== 字段数据监控
 
-You can monitor memory usage for field data as well as the field data circuit
-breaker using
-<<cluster-nodes-stats,Nodes Stats API>>
-
+你可以通过 <<cluster-nodes-stats,Nodes Stats API>>监控字段数据内存使用情况，就像字段数据
+断路器一样。
