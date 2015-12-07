@@ -1,85 +1,81 @@
 [[setup-dir-layout]]
-== Directory Layout
+== 目录结构
 
-The directory layout of an installation is as follows:
+Elasticsearch安装目录结构如下:
 
 [cols="<h,<,<m,<m",options="header",]
 |=======================================================================
-| Type | Description | Default Location | Setting
-| home | Home of elasticsearch installation. | | path.home
+| 类型 | 描述 | 默认路径 | 配置
+| home | elasticsearch 安装目录. | | path.home
 
-| bin | Binary scripts including `elasticsearch` to start a node. | {path.home}/bin | | conf | Configuration files including `elasticsearch.yml` | {path.home}/config | path.conf
+| bin | 二进制脚本, 包括用来启动节点的 `elasticsearch` 等. | {path.home}/bin |
 
-| data | The location of the data files of each index / shard allocated
-on the node. Can hold multiple locations. | {path.home}/data| path.data
+| conf | 配置文件, 包括 `elasticsearch.yml` | {path.home}/config | path.conf
 
-| logs | Log files location. | {path.home}/logs | path.logs
+| data | 节点上分配的每个索引/分片的数据文件路径. 可以保存多个路径. | {path.home}/data| path.data
 
-| plugins | Plugin files location. Each plugin will be contained in a subdirectory. | {path.home}/plugins | path.plugins
+| logs | 日志文件路径. | {path.home}/logs | path.logs
 
-| repo | Shared file system repository locations. Can hold multiple locations. A file system repository can be placed in to any subdirectory of any directory specified here. | empty | path.repo
+| plugins | 插件文件路径. 每个插件都包含在一个子目录下. | {path.home}/plugins | path.plugins
+
+| repo | 共享文件系统仓库路径. 可以保存多个路径. 一个文件系统仓库可以放置在这里指定的任何目录的子目录下. | empty | path.repo
 
 |=======================================================================
 
-Multiple `data` paths may be specified, in order to spread data across
-multiple disks or locations, but all of the files from a single shard will be
-written to the same path. This can be configured as follows:
+为了在多个磁盘或路径之间传播数据可以指定多个 `data` 路径, 但是单个分片的所有文件要写到相同的路径. 可以像下面这样配置:
 
     ---------------------------------
     path.data: /mnt/first,/mnt/second
     ---------------------------------
 
- Or  in an array format:
+ 或者按数组格式:
 
     ----------------------------------------
     path.data: ["/mnt/first", "/mnt/second"]
     ----------------------------------------
 
-TIP:  To stripe shards across multiple disks, please use a RAID driver
-instead.
+TIP:  为了在多个磁盘间stripe分片, 请使用 RAID 驱动器driver.
 
 [float]
 [[default-paths]]
-=== Default Paths
+=== 默认路径
 
-Below are the default paths that elasticsearch will use, if not explicitly changed.
+下面是 elasticsearch 使用的默认路径, 如果没有显示地改变的话.
 
 [float]
-==== deb and rpm
+==== deb 和 rpm
 [cols="<h,<,<m,<m",options="header",]
 |=======================================================================
-| Type | Description | Location Debian/Ubuntu | Location RHEL/CentOS
-| home | Home of elasticsearch installation. | /usr/share/elasticsearch | /usr/share/elasticsearch
+| 类型 | 描述 | Debian/Ubuntu 路径 | RHEL/CentOS 路径
+| home | elasticsearch 安装目录. | /usr/share/elasticsearch | /usr/share/elasticsearch
 
-| bin | Binary scripts including `elasticsearch` to start a node. | /usr/share/elasticsearch/bin | /usr/share/elasticsearch/bin
+| bin | 二进制脚本, 包括用来启动节点的 `elasticsearch` 等. | /usr/share/elasticsearch/bin | /usr/share/elasticsearch/bin
 
-| conf | Configuration files `elasticsearch.yml` and `logging.yml`. | /etc/elasticsearch | /etc/elasticsearch
+| conf | 配置文件 `elasticsearch.yml` 和 `logging.yml`. | /etc/elasticsearch | /etc/elasticsearch
 
-| conf | Environment variables including heap size, file descriptors. | /etc/default/elasticsearch | /etc/sysconfig/elasticsearch
+| conf | 环境变量, 包括堆内存大小, 文件描述符等. | /etc/default/elasticsearch | /etc/sysconfig/elasticsearch
 
-| data | The location of the data files of each index / shard allocated
-on the node. | /var/lib/elasticsearch/data | /var/lib/elasticsearch
+| data | 节点上分配的每个索引/分片的数据文件路径. | /var/lib/elasticsearch/data | /var/lib/elasticsearch
 
-| logs | Log files location | /var/log/elasticsearch | /var/log/elasticsearch
+| logs | 日志文件路径 | /var/log/elasticsearch | /var/log/elasticsearch
 
-| plugins | Plugin files location. Each plugin will be contained in a subdirectory. | /usr/share/elasticsearch/plugins | /usr/share/elasticsearch/plugins
+| plugins | 插件文件路径. 每个插件都包含在一个子目录下. | /usr/share/elasticsearch/plugins | /usr/share/elasticsearch/plugins
 |=======================================================================
 
 [float]
-==== zip and tar.gz
+==== zip 和 tar.gz
 [cols="<h,<,<m",options="header",]
 |=======================================================================
-| Type | Description | Location
-| home | Home of elasticsearch installation | {extract.path}
+| 类型 | 描述 | 路径
+| home | elasticsearch 安装目录 | {extract.path}
 
-| bin | Binary scripts including `elasticsearch` to start a node | {extract.path}/bin
+| bin | 二进制脚本, 包括用来启动节点的 `elasticsearch` 等 | {extract.path}/bin
 
-| conf | Configuration files `elasticsearch.yml` and `logging.yml` | {extract.path}/config
+| conf | 配置文件 `elasticsearch.yml` 和 `logging.yml` | {extract.path}/config
 
-| data | The location of the data files of each index / shard allocated
-on the node | {extract.path}/data
+| data | 节点上分配的每个索引/分片的数据文件路径 | {extract.path}/data
 
-| logs | Log files location | {extract.path}/logs
+| logs | 日志文件路径 | {extract.path}/logs
 
-| plugins | Plugin files location. Each plugin will be contained in a subdirectory | {extract.path}/plugins
+| plugins | 插件文件路径. 每个插件都包含在一个子目录下 | {extract.path}/plugins
 |=======================================================================

@@ -1,42 +1,39 @@
 [[setup]]
-= Setup
+= 安装
 
 [partintro]
 --
-This section includes information on how to setup *elasticsearch* and
-get it running. If you haven't already, http://www.elastic.co/downloads[download] it, and
-then check the <<setup-installation,installation>> docs.
+本节包括如何安装和运行 *elasticsearch* 等内容. 如果你还没有安装过Elasticsearch, 那么首先
+ http://www.elastic.co/downloads[下载]它, 然后查阅 <<setup-installation,安装>> 文档.
 
-NOTE: Elasticsearch can also be installed from our repositories using `apt` or `yum`.
-See <<setup-repositories>>.
+NOTE: Elasticsearch也可以通过使用 `apt` 或者 `yum` 从我们的仓库安装.参见 <<setup-repositories,仓库>>.
 
 [[supported-platforms]]
 [float]
-== Supported platforms
+== 支持的平台
 
-The matrix of officially supported operating systems and JVMs is available here:
-link:/support/matrix[Support Matrix].  Elasticsearch is tested on the listed
-platforms, but it is possible that it will work on other platforms too.
+官方所支持的操作系统和JVM矩阵可以在这里找到:
+link:/support/matrix[平台支持矩阵].  Elasticsearch已经在列举出来的平台上测试过, 但是它也有可能工作于其它平台上.
 
 [[setup-installation]]
 [float]
-== Installation
+== 安装
 
-After link:/downloads/elasticsearch[downloading] the latest release and extracting it,
-*elasticsearch* can be started using:
+在 link:/downloads/elasticsearch[下载] 了Elasticsearch最新发布的版本并解压之后, 可以使用如下命令来启动
+*elasticsearch* :
 
 [source,sh]
 --------------------------------------------------
 $ bin/elasticsearch
 --------------------------------------------------
 
-On *nix systems, the command will start the process in the foreground.
+在类Unix系统上, 该命令会在前台启动Elasticsearch进程.
 
 [[setup-installation-daemon]]
 [float]
-=== Running as a daemon
+=== 作为守护进程运行
 
-To run it in the background, add the `-d` switch to it:
+如果想要在后台运行它, 可以增加 `-d` 选项:
 
 [source,sh]
 --------------------------------------------------
@@ -47,29 +44,24 @@ $ bin/elasticsearch -d
 [float]
 === PID
 
-The Elasticsearch process can write its PID to a specified file on startup,
-making it easy to shut down the process later on:
+Elasticsearch进程在启动的时候可以将其PID写到一个指定的文件中, 这样便于后面关闭这个进程:
 
 [source,sh]
 --------------------------------------------------
 $ bin/elasticsearch -d -p pid <1>
 $ kill `cat pid` <2>
 --------------------------------------------------
-<1> The PID is written to a file called `pid`.
-<2> The `kill` command sends a `TERM` signal to the PID stored in the `pid` file.
+<1> PID被写入到 `pid` 文件中.
+<2> `kill` 命令给存储在 `pid` 文件中的PID发送了一个 `TERM` 信号.
 
-NOTE: The startup scripts provided for <<setup-service,Linux>> and <<setup-service-win,Windows>>
-take care of starting and stopping the Elasticsearch process for you.
+NOTE: 为 <<setup-service,Linux>> 和 <<setup-service-win,Windows>>系统提供的启动脚本可以帮你处理Elasticsearch进程的启动和停止.
 
 .*NIX
 *************************************************************************
-There are added features when using the `elasticsearch` shell script.
-The first, which was explained earlier, is the ability to easily run the
-process either in the foreground or the background.
+当使用 `elasticsearch` 的 shell 脚本时有几个新增的特性.
+第一个我们之前已经描述过, 就是能够很简单的在前台或后台运行Elasticsearch进程.
 
-Another feature is the ability to pass `-D` or getopt long style
-configuration parameters directly to the script. When set, all override
-anything set using either `JAVA_OPTS` or `ES_JAVA_OPTS`. For example:
+另一个特性是能够直接给脚本传递 `-D` 或 getopt 长风格配置参数. 如果设置了, 都将覆盖使用 `JAVA_OPTS` 或 `ES_JAVA_OPTS` 设置的任何参数. 例如:
 
 [source,sh]
 --------------------------------------------------
@@ -79,20 +71,16 @@ $ bin/elasticsearch -Des.index.refresh_interval=5s --node.name=my-node
 
 [float]
 [[jvm-version]]
-== Java (JVM) version
+== Java (JVM) 版本
 
-Elasticsearch is built using Java, and requires at least
-http://www.oracle.com/technetwork/java/javase/downloads/index.html[Java 8] in
-order to run. Only Oracle's Java and the OpenJDK are supported. The same JVM
-version should be used on all Elasticsearch nodes and clients.
+Elasticsearch使用的是 Java 构建的, 并且如果想要运行它, 需要至少使用
+http://www.oracle.com/technetwork/java/javase/downloads/index.html[Java 8] . Elasticsearch 仅支持 Oracle Java 和 OpenJDK. 所有 Elasticsearch 节点和客户端
+应该使用相同的 JVM 版本.
 
-We recommend installing the *Java 8 update 20 or later*, or *Java 7 update 55
-or later*.  Previous versions of Java 7 are known to have bugs that can cause
-index corruption and data loss.  Elasticsearch will refuse to start if a
-known-bad version of Java is used.
+我们推荐安装 *Java 8 update 20 或 后续* 版本, 或者 *Java 7 update 55 或后续* 版本.
+Java 7之前的版本有已知的会导致索引损坏以及数据丢失的bug. 如果使用一个已知的不良版本的Java, Elasticsearch会拒绝启动.
 
-The version of Java to use can be configured by setting the `JAVA_HOME`
-environment variable.
+使用的Java版本可以通过设置 `JAVA_HOME` 环境变量来配置.
 
 --
 

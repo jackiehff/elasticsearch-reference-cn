@@ -1,35 +1,29 @@
 [[setup-upgrade]]
-== Upgrading
+== 升级
 
 [IMPORTANT]
 ===========================================
-Before upgrading Elasticsearch:
+在升级Elasticsearch之前:
 
-* Consult the <<breaking-changes,breaking changes>> docs.
-* Test upgrades in a dev environment before upgrading your production cluster.
-* Always back up your data before upgrading. You cannot roll back to an earlier
-  version unless you have a <<backup,backup>> of your data.
+* 查阅 <<breaking-changes,重要变更>> 文档.
+* 升级生产环境集群之前在开发环境测试一下升级.
+* 在升级之前永远记得要备份你的数据. 除非你有数据的 <<backup,备份>> , 否则你永远都不能回滚到之前的版本.
 ===========================================
 
-Elasticsearch can usually be upgraded using a rolling upgrade process,
-resulting in no interruption of service.  This section details how to perform
-both rolling upgrades and upgrades with full cluster restarts.
+Elasticsearch 通常可以使用滚动升级过程来进行升级, 这样不会导致服务中断. 本节将会详细介绍如何执行滚动升级
+和整个集群重启升级.
 
-To determine whether a rolling upgrade is supported for your release, please
-consult this table:
+请查阅下面这个表来判断你当前版本是否支持滚动:
 
 [cols="1<m,1<m,3",options="header",]
 |=======================================================================
-|Upgrade From   |Upgrade To     |Supported Upgrade Type
-|0.90.x         |1.x, 2.x       |<<restart-upgrade,Full cluster restart>>
-|< 0.90.7       |0.90.x         |<<restart-upgrade,Full cluster restart>>
-|>= 0.90.7      |0.90.x         |<<rolling-upgrades,Rolling upgrade>>
-|1.0.0 - 1.3.1  |1.x            |<<rolling-upgrades,Rolling upgrade>> (if <<recovery,`indices.recovery.compress`>> set to `false`)
-|>= 1.3.2       |1.x            |<<rolling-upgrades,Rolling upgrade>>
-|1.x            |2.x            |<<restart-upgrade,Full cluster restart>>
+|当前版本    |升级到的版本     |支持的升级类型
+|0.90.x     |2.x            |<<restart-upgrade,整个集群重启>>
+|1.x        |2.x            |<<restart-upgrade,整个集群重启>>
+|2.x        |2.y            |<<rolling-upgrades,滚动升级>> (其中 `y > x`)
 |=======================================================================
 
-TIP: Take plugins into consideration as well when upgrading. Most plugins will have to be upgraded alongside Elasticsearch, although some plugins accessed primarily through the browser (`_site` plugins) may continue to work given that API changes are compatible.
+TIP: 在升级的时候同样要考虑插件的升级. 大多数插件需要和 Elasticsearch 一起升级, 鉴于 API 的变更是兼容的, 一些主要通过浏览器 (`_site` 插件) 访问的插件还可以继续工作.
 
 include::backup.asciidoc[]
 

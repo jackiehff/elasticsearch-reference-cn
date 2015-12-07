@@ -1,31 +1,28 @@
 [[setup-repositories]]
-== Repositories
+== 仓库
 
-We also have repositories available for APT and YUM based distributions. Note that we only provide
-binary packages, but no source packages, as the packages are created as part of the Elasticsearch
-build.
+对于基于 APT 和 YUM 的发行版本我们也有可用的仓库. 注意我们仅提供二进制包, 但是没有源码包, 因为源码包是作为 Elasticsearch 的一部分来构建的.
 
-We have split the major versions in separate urls to avoid accidental upgrades across major version.
-For all 2.x releases use 2.x as version number, for 3.x.y use 3.x etc...
+我们将主版本分隔成单独的URL, 以免在主版本间升级发生意外.对于所有 2.x 发布版使用 2.x 作为版本号, 对于 3.x.y 使用 3.x 作为版本号等等...
 
-We use the PGP key https://pgp.mit.edu/pks/lookup?op=vindex&search=0xD27D666CD88E42B4[D88E42B4],
-Elasticsearch Signing Key, with fingerprint
+我们使用的是 PGP 密钥 https://pgp.mit.edu/pks/lookup?op=vindex&search=0xD27D666CD88E42B4[D88E42B4],
+Elasticsearch 带指纹的签名密钥
 
     4609 5ACC 8548 582C 1A26 99A9 D27D 666C D88E 42B4
 
-to sign all our packages. It is available from https://pgp.mit.edu.
+来签名我们所有的包. 可以参考 https://pgp.mit.edu.
 
 [float]
 === APT
 
-Download and install the Public Signing Key:
+下载并安装公共签名密钥:
 
 [source,sh]
 --------------------------------------------------
 wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
 --------------------------------------------------
 
-Save the repository definition to  +/etc/apt/sources.list.d/elasticsearch-{major-version}.list+:
+保存仓库定义到 +/etc/apt/sources.list.d/elasticsearch-{major-version}.list+ 文件中:
 
 ["source","sh",subs="attributes,callouts"]
 --------------------------------------------------
@@ -34,17 +31,15 @@ echo "deb http://packages.elastic.co/elasticsearch/{major-version}/debian stable
 
 [WARNING]
 ==================================================
-Use the `echo` method described above to add the Elasticsearch repository.  Do not use `add-apt-repository`
-as it will add a `deb-src` entry as well, but we do not provide a source package.
-If you have added the `deb-src` entry, you will see an error like
-the following:
+使用上面描述的 `echo` 方法来新增 Elasticsearch 仓库. 不要使用 `add-apt-repository`, 因为
+它还会增加 `deb-src` 项, 但是我们不提供源码包.如果你已经增加了 `deb-src` 项, 你会看到像下面这样的错误:
 
     Unable to find expected entry 'main/source/Sources' in Release file (Wrong sources.list entry or malformed file)
 
-Just delete the `deb-src` entry from the `/etc/apt/sources.list` file and the installation should work as expected.
+从 `/etc/apt/sources.list` 文件中删除 `deb-src` 项, 安装就可以如预期的那样工作.
 ==================================================
 
-Run apt-get update and the repository is ready for use. You can install it with:
+运行 apt-get update 并且仓库可以使用了. 你可以使用如下命令安装 Elasticsearch:
 
 [source,sh]
 --------------------------------------------------
@@ -53,24 +48,24 @@ sudo apt-get update && sudo apt-get install elasticsearch
 
 [WARNING]
 ==================================================
-If two entries exist for the same Elasticsearch repository, you will see an error like this during `apt-get update`:
+如果同一个 Elasticsearch 目录存在两个相同项, 在执行 `apt-get update` 的时候你会看到如下错误:
 
 ["literal",subs="attributes,callouts"]
-
 Duplicate sources.list entry http://packages.elastic.co/elasticsearch/{major-version}/debian/ ...`
 
-Examine +/etc/apt/sources.list.d/elasticsearch-{major-version}.list+ for the duplicate entry or locate the duplicate entry amongst the files in `/etc/apt/sources.list.d/` and the `/etc/apt/sources.list` file.
+检查 +/etc/apt/sources.list.d/elasticsearch-{major-version}.list+ 文件中的重复项或者在
+ `/etc/apt/sources.list.d/` 和 `/etc/apt/sources.list` 文件中定位重复项.
 ==================================================
 
-Configure Elasticsearch to automatically start during bootup. If your
-distribution is using SysV init, then you will need to run:
+可以配置 Elasticsearch 在系统启动时自动启动. 如果你系统的发行版本使用的是 SysV init启动方式,
+那么你需要运行如下命令:
 
 [source,sh]
 --------------------------------------------------
 sudo update-rc.d elasticsearch defaults 95 10
 --------------------------------------------------
 
-Otherwise if your distribution is using systemd:
+如果你系统的发行版本使用的是 systemd 启动方式, 你就需要运行如下两个命令:
 
 [source,sh]
 --------------------------------------------------
@@ -81,15 +76,14 @@ sudo /bin/systemctl enable elasticsearch.service
 [float]
 === YUM
 
-Download and install the public signing key:
+下载并安装公共签名密钥:
 
 [source,sh]
 --------------------------------------------------
 rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch
 --------------------------------------------------
 
-Add the following in your `/etc/yum.repos.d/` directory
-in a file with a `.repo` suffix, for example `elasticsearch.repo`
+在 `/etc/yum.repos.d/` 目录下一个后缀名为 `.repo` 的文件 (例如 `elasticsearch.repo`) 中增加以下内容
 
 ["source","sh",subs="attributes,callouts"]
 --------------------------------------------------
@@ -101,25 +95,24 @@ gpgkey=http://packages.elastic.co/GPG-KEY-elasticsearch
 enabled=1
 --------------------------------------------------
 
-And your repository is ready for use. You can install it with:
+现在你的仓库可以使用了. 你可以使用如下命令安装 Elasticsearch:
 
 [source,sh]
 --------------------------------------------------
 yum install elasticsearch
 --------------------------------------------------
 
-Configure Elasticsearch to automatically start during bootup. If your
-distribution is using SysV init, then you will need to run:
+可以配置 Elasticsearch 在系统启动时自动启动. 如果你系统的发行版本使用的是 SysV init启动方式,
+那么你需要运行如下命令:
 
-WARNING: The repositories do not work with older rpm based distributions
-         that still use RPM v3, like CentOS5.
+WARNING: 对于仍然使用 RPM v3, 像 CentOS5 这样基于 rpm 的发行版本, 仓库将无法工作.
 
 [source,sh]
 --------------------------------------------------
 chkconfig --add elasticsearch
 --------------------------------------------------
 
-Otherwise if your distribution is using systemd:
+如果你系统的发行版本使用的是 systemd 启动方式, 你就需要运行如下两个命令:
 
 [source,sh]
 --------------------------------------------------
