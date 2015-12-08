@@ -1,58 +1,43 @@
 [[disk-allocator]]
-=== Disk-based Shard Allocation
+=== 基于磁盘的分片分配
 
-Elasticsearch factors in the available disk space on a node before deciding
-whether to allocate new shards to that node or to actively relocate shards
-away from that node.
+Elasticsearch通过调节一个节点上可用磁盘空间来决定是分配新的分片给这个节点还是将分片从节点上
+移除。
 
-Below are the settings that can be configured in the `elasticsearch.yml` config
-file or updated dynamically on a live cluster with the
-<<cluster-update-settings,cluster-update-settings>> API:
+下面是可以在 `elasticsearch.yml`中设置的配置项，或者可以通过
+<<cluster-update-settings,cluster-update-settings>> API动态改变这些值。
 
 `cluster.routing.allocation.disk.threshold_enabled`::
 
-    Defaults to `true`.  Set to `false` to disable the disk allocation decider.
+    默认为 `true`。 设置成 `false` 则可以禁止磁盘分片分配器。
 
 `cluster.routing.allocation.disk.watermark.low`::
 
-    Controls the low watermark for disk usage. It defaults to 85%, meaning ES will
-    not allocate new shards to nodes once they have more than 85% disk used. It
-    can also be set to an absolute byte value (like 500mb) to prevent ES from
-    allocating shards if less than the configured amount of space is available.
+    控制磁盘使用率的低水位，默认为85%，这意味着当磁盘使用率达到85%后，ES将不会分配新的分片给
+    该节点了。 该值也可以是一个绝对大小的字节数值（如 500mb），当磁盘空间小于配置的这个值后，
+    ES也不会分配新分片了。
 
 `cluster.routing.allocation.disk.watermark.high`::
 
-    Controls the high watermark. It defaults to 90%, meaning ES will attempt to
-    relocate shards to another node if the node disk usage rises above 90%. It can
-    also be set to an absolute byte value (similar to the low watermark) to
-    relocate shards once less than the configured amount of space is available on
-    the node.
+    控制磁盘使用率的高水位，默认为90%，意味着当磁盘使用率达到90%后，ES将尝试将分片转移到其它
+    节点上。该值也可以象设置低水位一样，设置一个绝对值，当磁盘空间小于该值后，就会转移分片。
 
-NOTE: Percentage values refer to used disk space, while byte values refer to
-free disk space. This can be confusing, since it flips the meaning of high and
-low. For example, it makes sense to set the low watermark to 10gb and the high
-watermark to 5gb, but not the other way around.
+NOTE: 百分比指的是使用率，字节值指的是剩余空间。这可能导致混淆，因为将颠倒高低值。例如，可以设置
+低水位为10gb，高水位为5gb，而不是反过来设置。
 
 
 `cluster.info.update.interval`::
 
-    How often Elasticsearch should check on disk usage for each node in the
-    cluster. Defaults to `30s`.
+    Elasticsearch多久需要检查集群中每个节点的磁盘使用率，默认为 `30s`。
 
 `cluster.routing.allocation.disk.include_relocations`::
 
-    Defaults to +true+, which means that Elasticsearch will take into account
-    shards that are currently being relocated to the target node when computing a
-    node's disk usage. Taking relocating shards' sizes into account may, however,
-    mean that the disk usage for a node is incorrectly estimated on the high side,
-    since the relocation could be 90% complete and a recently retrieved disk usage
-    would include the total size of the relocating shard as well as the space
-    already used by the running relocation.
+    默认是 +true+, 这表示Elasticsearch会再计算节点磁盘使用率时将正在迁移的分片所占用的空间
+    也计算进去。这样可能导致磁盘使用率计算不准，例如在计算到磁盘使用率达到90%时，可能包含了正在
+    迁移的分片的大小。
 
 
-An example of updating the low watermark to no more than 80% of the disk size, a
-high watermark of at least 50 gigabytes free, and updating the information about
-the cluster every minute:
+下面是一个例子，设置低水位不超过80%，高水位需要预留50Gb空间，并且每分钟检查并更新一下集群的信息。
 
 [source,js]
 --------------------------------------------------
@@ -67,10 +52,6 @@ PUT /_cluster/settings
 --------------------------------------------------
 // AUTOSENSE
 
-NOTE: Prior to 2.0.0, when using multiple data paths, the disk threshold
-decider only factored in the usage across all data paths (if you had two
-data paths, one with 50b out of 100b free (50% used) and another with
-40b out of 50b free (80% used) it would see the node's disk usage as 90b
-out of 150b). In 2.0.0, the minimum and maximum disk usages are tracked
-separately.
-
+NOTE: 在2.0.0之前，当使用多个数据路径时， 磁盘阈值计算只会考虑总的数据使用率(如果你有两个数据
+  路径，一个总容量是100b，使用了50b（50%使用率），另一个数据盘总容量50b，使用了40b(80%使用率)
+  计算得到的结果是总量150b，使用了90b)。在2.0.0中， 每个磁盘的最小最大值时分别统计的。

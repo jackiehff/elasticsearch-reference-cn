@@ -1,114 +1,89 @@
 [[allocation-awareness]]
-=== Shard Allocation Awareness
+=== 索引分片感知
 
-When running nodes on multiple VMs on the same physical server, on multiple
-racks, or across multiple awareness zones, it is more likely that two nodes on
-the same physical server, in the same rack, or in the same awareness zone will
-crash at the same time, rather than two unrelated nodes crashing
-simultaneously.
+当多个节点运行在同一物理机的多个虚拟机上，或者多个机架上，或者可以互相识别的多个区域，更大的可能
+是同一台物理机上，同一个机架上，或者同一个区域上的两个节点会同时奔溃，而不是两个无关的节点同时
+奔溃。
 
-If Elasticsearch is _aware_ of the physical configuration of your hardware, it
-can ensure that the primary shard and its replica shards are spread across
-different physical servers, racks, or zones, to minimise the risk of losing
-all shard copies at the same time.
+如果Elasticsearch能够识别你的硬件的物理配置，就能确保主分片和它的分片副本可以跨物理机器，机架
+或者区域分布，以降低同一分片所有副本同时丢失的风险。
 
-The shard allocation awareness settings allow you to tell Elasticsearch about
-your hardware configuration.
+分片的分配感知配置就是让你告诉Elasticsearch关于你的硬件配置。
 
-As an example, let's assume we have several racks.  When we start a node, we
-can tell it which rack it is in by assigning it an arbitrary metadata
-attribute called `rack_id` -- we could use any attribute name.  For example:
+举个例子，让我们假设我们有几个机架。当我们启动一个节点时，可以通过分配一个名叫 `rack_id` 的任
+意的元属性告诉它在哪个机架上。例如：
 
 [source,sh]
 ----------------------
 ./bin/elasticsearch --node.rack_id rack_one <1>
 ----------------------
-<1> This setting could also be specified in the `elasticsearch.yml` config file.
+<1> 这个配置也可以在配置文件  `elasticsearch.yml`中设置。
 
-Now, we need to setup _shard allocation awareness_  by telling Elasticsearch
-which attributes to use.  This can be configured in the `elasticsearch.yml`
-file on *all* master-eligible nodes, or it can be set (and changed) with the
-<<cluster-update-settings,cluster-update-settings>> API.
+现在，我们需要通过告知Elasticsearch使用哪个属性来建立 _分片分配机制_，这可以通过
+ `elasticsearch.yml` 文件配置在 *所有* 可以作为主节点的节点上，也可以通过
+ <<cluster-update-settings,cluster-update-settings>>API来设置或改变。
 
-For our example, we'll set the value in the config file:
+在我们的例子中，我们可以在配置文件中设置如下的值：
 
 [source,yaml]
 --------------------------------------------------------
 cluster.routing.allocation.awareness.attributes: rack_id
 --------------------------------------------------------
 
-With this config in place, let's say we start two nodes with `node.rack_id`
-set to `rack_one`, and we create an index with 5 primary shards and 1 replica
-of each primary.  All primaries and replicas are allocated across the two
-nodes.
+使用这个配置文件，如果我们启动2个节点，并将  `node.rack_id` 设置为 `rack_one`， 然后创建
+一个5个分片，每个分片包含一个副本的索引。所有的主分片和分片副本会被分配到两个节点上。
 
-Now, if we start two more nodes with `node.rack_id` set to `rack_two`,
-Elasticsearch will move shards across to the new nodes, ensuring (if possible)
-that no two copies of the same shard will be in the same rack. However if `rack_two`
-were to fail, taking down both of its nodes, Elasticsearch will still allocate the lost
-shard copies to nodes in `rack_one`. 
+现在，让我们启动另外两个节点，并将 `node.rack_id` 设置为 `rack_two`，Elasticsearch将会
+把某些分片移动到新的节点上，以保证（如果可能的话）同一个分片的两个备份不会被分配到同一个机架上。
+然而，如果 `rack_two` 发生故障了，它上面的所有节点都挂了，Elasticsearch仍然会分配丢失的分片到
+`rack_one`上。
 
-.Prefer local shards
+.本地分片优先
 *********************************************
 
-When executing search or GET requests, with shard awareness enabled,
-Elasticsearch will prefer using local shards -- shards in the same awareness
-group -- to execute the request. This is usually faster than crossing racks or
-awareness zones.
+当执行搜索或者获取请求时， 如果分片感知开启的话，Elasticsearch会优先使用本地分片 --- 那些
+在同一个感知分组中的分片 --- 来执行请求。这通常会比跨机架或者感知区域的请求要快。
 
 *********************************************
 
-Multiple awareness attributes can be specified, in which case the combination
-of values from each attribute is considered to be a separate value.
+多个感知属性被设置的时候，每个属性值的组合被当做一个独立的值。
 
 [source,yaml]
 -------------------------------------------------------------
 cluster.routing.allocation.awareness.attributes: rack_id,zone
 -------------------------------------------------------------
 
-NOTE: When using awareness attributes, shards will not be allocated to
-nodes that don't have values set for those attributes.
+NOTE: 当使用感知属性时，分片将不会被分配到那些没有属性值的节点上。
 
-NOTE: Number of primary/replica of a shard allocated on a specific group
-of nodes with the same awareness attribute value is determined by the number
-of attribute values. When the number of nodes in groups is unbalanced and
-there are many replicas, replica shards may be left unassigned.
+NOTE: 分配给一个具有相同感知属性的特定组的节点上的主分片或者分片副本的数量是由属性值的数量决定的。
+当组内节点不平衡，且具有较多的副本时，有的分片副本有可能会分配不出去。
 
 [float]
 [[forced-awareness]]
-=== Forced Awareness
+=== 强制感知
 
-Imagine that you have two awareness zones and enough hardware across the two
-zones to host all of your primary and replica shards.  But perhaps the
-hardware in a single zone, while sufficient to host half the shards, would be
-unable to host *ALL* the shards.
+假设你又两个可感知区域和足够多的硬件分布在这两个区域使得能顾承载你的主分片和分片副本。但单一区域
+内的硬件足够承载一般的分片，但是承载不了 *全部* 分片。
 
-With ordinary awareness, if one zone lost contact with the other zone,
-Elasticsearch would assign all of the missing replica shards to a single zone.
-But in this example, this sudden extra load would cause the hardware in the
-remaining zone to be overloaded.
+在通常的感知分配规则下，如果一个区域与另一个区域失去联系了，Elasticsearch会将所有丢失的分片副本
+分配给剩下的那个区域。 但在这个例子中，这样突然增加的压力会导致剩下区域中得硬件压力过大。
 
-Forced awareness solves this problem by *NEVER* allowing copies of the same
-shard to be allocated to the same zone.
+强制感知通过 *永不* 分配同一分片的多个备份到同一个区域中来解决这一问题。
 
-For example, lets say we have an awareness attribute called `zone`, and
-we know we are going to have two zones, `zone1` and `zone2`. Here is how
-we can force awareness on a node:
+例如，假设我们我们有个感知属性叫 `zone`， 且有两个可用区域， `zone1`和 `zone2`， 下面让我们看
+看怎样在一个节点上设置强制感知。
 
 [source,yaml]
 -------------------------------------------------------------------
 cluster.routing.allocation.awareness.force.zone.values: zone1,zone2 <1>
 cluster.routing.allocation.awareness.attributes: zone
 -------------------------------------------------------------------
-<1> We must list all possible values that the `zone` attribute can have.
+<1> 我们必须列出 `zone` 这个属性具有的所有可能值。
 
-Now, if we start 2 nodes with `node.zone` set to `zone1` and create an index
-with 5 shards and 1 replica. The index will be created, but only the 5 primary
-shards will be allocated (with no replicas). Only when we start more shards
-with `node.zone` set to `zone2` will the replicas be allocated.
+现在，让我们启动两个节点，并将 `node.zone`置为 `zone1`, 然后创建一个具有5个分片，每个分片一
+个副本的索引。索引被创建了，但是只有5个主分片被分配（分片副本没有被分配）。 仅当我们启动更多的
+节点，且 `node.zone`设为 `zone1`时，这些分片副本才会被分配。
 
-The `cluster.routing.allocation.awareness.*` settings can all be updated
-dynamically on a live cluster with the
-<<cluster-update-settings,cluster-update-settings>> API.
-
-
+所有 `cluster.routing.allocation.awareness.*` 配置项都可以通过
+<<cluster-update-settings,cluster-update-settings>> API在正在运行的节点上动态
+更新。

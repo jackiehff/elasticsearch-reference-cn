@@ -1,28 +1,23 @@
 [[misc-cluster]]
-=== Miscellaneous cluster settings
+=== 其他集群配置
 
 [[cluster-read-only]]
-==== Metadata
+==== 元数据
 
-An entire cluster may be set to read-only with the following _dynamic_ setting:
-
+整个集群可以通过如下 _dynamic_设置被设置为只读：
 `cluster.blocks.read_only`::
 
-      Make the whole cluster read only (indices do not accept write
-      operations), metadata is not allowed to be modified (create or delete
-      indices).
+      将整个集群设置为只读（索引不接受写操作）， 元数据也不允许修改（创建或者删除索引）。
 
-WARNING: Don't rely on this setting to prevent changes to your cluster. Any
-user with access to the <<cluster-update-settings,cluster-update-settings>>
-API can make the cluster read-write again.
+WARNING: 不要依赖该设置来阻止对索引的更新。任何可以使用
+<<cluster-update-settings,cluster-update-settings>> API的用户都可以重新设置为可以读写。
 
 
 [[cluster-logger]]
-==== Logger
+==== 日志
 
-The settings which control logging can be updated dynamically with the
-`logger.` prefix.  For instance, to increase the logging level of the
-`indices.recovery` module to `DEBUG`, issue this request:
+该设置控制了日志行为可以被动态更新。 例如，要将 `indices.recovery` 模块的日志级别设置
+为 `debug`, 可以通过下面的请求进行：
 
 [source,js]
 -------------------------------
@@ -33,4 +28,3 @@ PUT /_cluster/settings
   }
 }
 -------------------------------
-

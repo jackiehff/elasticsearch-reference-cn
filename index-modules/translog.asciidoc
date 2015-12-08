@@ -1,109 +1,90 @@
 [[index-modules-translog]]
 == Translog
 
-Changes to Lucene are only persisted to disk during a Lucene commit,
-which is a relatively heavy operation and so cannot be performed after every
-index or delete operation. Changes that happen after one commit and before another
-will be lost in the event of process exit or HW failure.
+在Lucene中，更新操作只在commit时被持久化到磁盘中，这是一个相对较重的行为，并且每次索引或者删除
+文档后就没法进行后续操作了。在两次commit中间的更新就可能在进程退出或者硬件错误时丢失。
 
-To prevent this data loss, each shard has a _transaction log_ or write ahead
-log associated with it. Any index or delete operation is written to the
-translog after being processed by the internal Lucene index.
+为了防止这种数据丢失的情况发生， elasticsearch中给每个分片关联一个 _transaction log_
+或者又叫预写式日志。每次索引或者删除操作都会在内部Lucene 索引处理完成后被写入到事务日志
+中去。
+当系统崩溃后，最近的事务会在分片恢复工作时从事务日志中被重放。
 
-In the event of a crash, recent transactions can be replayed from the
-transaction log when the shard recovers.
-
-An Elasticsearch flush is the process of performing a Lucene commit and
-starting a new translog. It is done automatically in the background in order
-to make sure the transaction log doesn't grow too large, which would make
-replaying its operations take a considerable amount of time during recovery.
-It is also exposed through an API, though its rarely needed to be performed
-manually.
+Elasticsearch中得每次flush操作就是执行Lucene的commit和开启一个新的事务日志。这是后台自动
+进行的以避免事务日志变的太大，从而可以确保在恢复时重放操作的时间在可接受范围内。虽然也暴露了
+API，但通常很少会需要手动触发flush操作。
 
 
 [float]
-=== Flush settings
+=== Flush 设置
 
-The following <<indices-update-settings,dynamically updatable>> settings
-control how often the in-memory buffer is flushed to disk:
+下面的 <<indices-update-settings,可动态设置>> 的配置决定了多久执行一次内存到磁盘的刷新操作。
 
 `index.translog.flush_threshold_size`::
 
-Once the translog hits this size, a flush will happen. Defaults to `512mb`.
+一旦事务日志大小达到这个数值，flush就会发生。默认为 `512mb`。
 
 `index.translog.flush_threshold_ops`::
 
-After how many operations to flush. Defaults to `unlimited`.
+多少次操作后flush。默认为 `unlimited`。
 
 `index.translog.flush_threshold_period`::
 
-How long to wait before triggering a flush regardless of translog size. Defaults to `30m`.
+不管事务日志大小，多久执行一次flush操作。 默认为 `30m`。
 
 `index.translog.interval`::
 
-How often to check if a flush is needed, randomized between the interval value
-and 2x the interval value. Defaults to `5s`.
+多久检查是否需要flush，实际取值为该值和2倍该值之间随机取一个。 该值默认为 `5s`。
 
 
 [float]
-=== Translog settings
+=== 事务日志设置
 
-The data in the transaction log is only persisted to disk when the translog is
-++fsync++ed and committed.  In the event of hardware failure, any data written
-since the previous translog commit will be lost.
+事务日志中的数据只有在事务日志被++fsync++并提交后才会被持久化到磁盘上。如果发生硬件故障，事务日志
+上次提交后的数据将会丢失。
 
-By default, Elasticsearch ++fsync++s and commits the translog every 5 seconds
-and at the end of every <<docs-index_,index>>, <<docs-delete,delete>>,
-<<docs-update,update>>, or  <<docs-bulk,bulk>> request.  In fact, Elasticsearch
-will only report success of an index, delete, update, or bulk request to the
-client after the transaction log has been successfully ++fsync++ed and committed
-on the primary and on every allocated replica.
-
-The following <<indices-update-settings,dynamically updatable>> per-index settings
-control the behaviour of the transaction log:
+默认情况下，Elasticsearch会每隔5秒执行 ++fsync++ 和commit操作，并且在每个
+<<docs-index_,index>>, <<docs-delete,delete>>,
+<<docs-update,update>>, 或者  <<docs-bulk,bulk>>请求执行完成后也会执行该操作。实际上，
+Elasticsearch只会在事务日志被成功 ++fsync++ 并提交到主分片和每个分片副本上后才会向客户端
+返回index, delete, update或者buld请求成功的响应。
 
 `index.translog.sync_interval`::
 
-How often the translog is ++fsync++ed to disk and committed, regardless of
-write operations. Defaults to `5s`.
+多久执行一次 ++fsync++并提交，而不管是否有写入操作发生。 默认为 `5s`。
 
 `index.translog.durability`::
 +
 --
 
-Whether or not to `fsync` and commit the translog after every index, delete,
-update, or bulk request.  This setting accepts the following parameters:
+是否每次index，delete，update或buld请求都需要执行 `fsync` 和commit操作。这个设置接受
+以下参数：
 
 `request`::
 
-    (default) `fsync` and commit after every request. In the event
-    of hardware failure, all acknowledged writes will already have been
-    committed to disk.
+    (默认值) 每次请求后都执行 `fsync` 和 commit。 在硬件故障时，所有成功执行的写入操作都会
+    被提交到磁盘上。
 
 `async`::
 
-    `fsync` and commit in the background every `sync_interval`. In
-    the event of hardware failure, all acknowledged writes since the last
-    automatic commit will be discarded.
+    每隔 `sync_interval` 这么长时间执行一次 `fsync` 和 commit。 在硬件故障时，上次提交过后
+    新的写入操作将会丢失。
+
 --
 
 `index.translog.fs.type`::
 +
 --
 
-Whether to buffer writes to the transaction log in memory or not.  This
-setting accepts the following parameters:
+是否将事务日志的写入操作缓存在内存中。这个设置接受如下参数：
 
 `buffered`::
 
-    (default) Translog writes first go to a 64kB buffer in memory,
-    and are only written to the disk when the buffer is full, or when an
-    `fsync` is triggered by a write request or the `sync_interval`.
+    (默认值) 事务日志首先写入一个64kb的内存缓冲区，当缓冲区满或者 `fsync` 被触发或者
+     `sync_interval` 间隔时间到了时才会执行持久化操作。
 
 `simple`::
 
-    Translog writes are written to the file system immediately, without
-    buffering.  However, these writes will only be persisted to disk when an
-    `fsync` and commit is triggered by a write request or the `sync_interval`.
+    事务日志不经过缓冲区直接写入到文件系统中。但是，这个持久化操作只会在 `fsync` 和commit
+    被写入操作或者 `sync_interval` 触发时才发生。
 
 --

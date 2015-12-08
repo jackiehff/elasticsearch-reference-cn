@@ -1,26 +1,19 @@
 [[allocation-total-shards]]
-=== Total Shards Per Node
+=== 每个节点上的总分片数量
 
-The cluster-level shard allocator tries to spread the shards of a single index
-across as many nodes as possible.  However, depending on how many shards and
-indices you have, and how big they are, it may not always be possible to spread
-shards evenly.
+集群级别的分片重分配机制会尝试将一个索引的分片分配到尽量多的节点上。然而，由于分片数量和索引数量
+的多少，以及它们的大小，都决定了并不是总是可以将分片分配的那么均匀。
 
-The following _dynamic_ setting allows you to specify a hard limit on the total
-number of shards from a single index allowed per node:
+下面这个 _dynamic_ 设置让你可以指定单个索引在一个节点上的总分片数量：
 
 `index.routing.allocation.total_shards_per_node`::
 
-    The maximum number of shards (replicas and primaries) that will be
-    allocated to a single node.  Defaults to unbounded.
+    最大可以分配给这个节点的分片数量（包括主分片和分片副本），默认为不限制。
 
 [WARNING]
 =======================================
-This setting imposes a hard limit which can result in some shards not
-being allocated.
 
-Use with caution.
+这个设置限制了节点上分片的数量，有可能导致某些分片没有被分配。
+
+使用时请当心。
 =======================================
-
-
-

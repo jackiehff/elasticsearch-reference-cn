@@ -1,111 +1,104 @@
 [[shards-allocation]]
-=== Cluster Level Shard Allocation
+=== 集群级别的分片分配策略
 
-Shard allocation is the process of allocating shards to nodes. This can
-happen during initial recovery, replica allocation, rebalancing, or
-when nodes are added or removed.
+分片分配是将分片分配到某个节点的过程。这会在分片初始化，副本分配，重新平衡，或者节点加入或者移除
+出集群的时候发生。
 
 [float]
-=== Shard Allocation Settings
+=== 分片分配配置
 
-The following _dynamic_ settings may be used to control shard allocation and recovery:
+下面的 _dynamic_配置可以用来控制分片分配和恢复。
 
 `cluster.routing.allocation.enable`::
 +
 --
-Enable or disable allocation for specific kinds of shards:
+开启或者禁用指定类型分片的分配操作。
 
-* `all` -             (default) Allows shard allocation for all kinds of shards.
-* `primaries` -       Allows shard allocation only for primary shards.
-* `new_primaries` -   Allows shard allocation only for primary shards for new indices.
-* `none` -            No shard allocations of any kind are allowed for any indices.
+* `all` -             (默认值) 允许所有类型分片的分配操作。
+* `primaries` -       仅仅允许主分片的分配。
+* `new_primaries` -   仅仅允许新索引中主分片的分配。
+* `none` -            任何索引的任何分片都不允许分配。
 
-This setting does not affect the recovery of local primary shards when
-restarting a node.  A restarted node that has a copy of an unassigned primary
-shard will recover that primary immediately, assuming that the
-<<index.recovery.initial_shards,`index.recovery.initial_shards`>> setting is
-satisfied.
+该设置并不影响节点启动时本地主分片的恢复行为。刚启动的节点如果包含未分配节点的主分片，将立即开始
+恢复该分片，假设 <<index.recovery.initial_shards,`index.recovery.initial_shards`>>
+中的条件满足。
 
 --
 
 `cluster.routing.allocation.node_concurrent_recoveries`::
 
-     How many concurrent shard recoveries are allowed to happen on a node.
-     Defaults to `2`.
+     一个节点上可以并行执行多少个分片恢复线程，默认为 `2`。
 
 `cluster.routing.allocation.node_initial_primaries_recoveries`::
 
-    While the recovery of replicas happens over the network, the recovery of
-    an unassigned primary after node restart uses data from the local disk.
-    These should be fast so more initial primary recoveries can happen in
-    parallel on the same node.  Defaults to `4`.
-
+    当索引副本通过网络恢复时，节点启动后未分配的主分片的恢复会使用本地磁盘数据。因为同一节点上
+    多个主分片会同时并行恢复，整个过程会比较快。默认值为 `4`。
 
 `cluster.routing.allocation.same_shard.host`::
 
-      Allows to perform a check to prevent allocation of multiple instances of
-      the same shard on a single host, based on host name and host address.
-      Defaults to `false`, meaning that no check is performed by default. This
-      setting only applies if multiple nodes are started on the same machine.
+      开启检查以阻止同一主机上被分配了多个分片的副本，这是基于主机名和地址的。默认为 `false`,
+      即默认不检查。 这个设置只有在一台机器上启动多个节点时才需要配置。
 
 `indices.recovery.concurrent_streams`::
 
-       The number of network streams to open per node to recover a shard from
-       a peer shard. Defaults to `3`.
+       每个节点开启的网络数据流通道数量，以从另一个节点上的分片来恢复本节点的分片。默认为 `3`。
 
 `indices.recovery.concurrent_small_file_streams`::
 
-       The number of streams to open per node for small files (under 5mb) to
-       recover a shard from a peer shard. Defaults to `2`.
+       对于小文件 （小于5mb）每个节点开启的网络数据流通道数量，以从另一个节点上的分片来恢复本
+       节点的分片。默认为 `2`。
+
 
 
 [float]
-=== Shard Rebalancing Settings
+=== 分片重平衡设置
 
-The following _dynamic_ settings may be used to control the rebalancing of
-shards across the cluster:
+下面的 _dynamic_设置用来控制集群中分片之间的重平衡：
 
 
 `cluster.routing.rebalance.enable`::
 +
 --
-Enable or disable rebalancing for specific kinds of shards:
+开启或者禁止某些特定种类分片的重平衡：
 
-* `all` -         (default) Allows shard balancing for all kinds of shards.
-* `primaries` -   Allows shard balancing only for primary shards.
-* `replicas` -    Allows shard balancing only for replica shards.
-* `none` -        No shard balancing of any kind are allowed for any indices.
+* `all` -         (默认值) 允许所有类型分片的重平衡。
+* `primaries` -   仅仅允许主分片的平衡。
+* `replicas` -    仅仅允许分片副本的平衡。
+* `none` -        不允许任何索引的分片平衡。
 --
 
 
 `cluster.routing.allocation.allow_rebalance`::
 +
 --
-Specify when shard rebalancing is allowed:
+指定何时允许分片重平衡：
 
-
-* `always` -                    (default) Always allow rebalancing.
-* `indices_primaries_active` -  Only when all primaries in the cluster are allocated.
-* `indices_all_active` -        Only when all shards (primaries and replicas) in the cluster are allocated.
+* `always` -                    (默认) 始终允许。
+* `indices_primaries_active` -  仅当所有主分片被分配后。
+* `indices_all_active` -        仅当所有分片（主分片和分片副本）都被分配后。
 --
 
 `cluster.routing.allocation.cluster_concurrent_rebalance`::
 
       Allow to control how many concurrent shard rebalances are
       allowed cluster wide. Defaults to `2`.
+      允许多少个分片重分配并行运行。默认为 `2`。
 
 [float]
-=== Shard Balancing Heuristics
+=== 启发式分片平衡策略
 
 The following settings are used together to determine where to place each
 shard.  The cluster is balanced when no allowed action can bring the weights
 of each node closer together by more then the `balance.threshold`.
+下列配置一起作用以确定将每个分片放置在何处。集群在没有更多的操作可以让每个节点的权重更接近
+`balance.threshold` 这个值时就达到了平衡。
 
 `cluster.routing.allocation.balance.shard`::
 
      Defines the weight factor for shards allocated on a node
      (float). Defaults to `0.45f`.  Raising this raises the tendency to
      equalize the number of shards across all nodes in the cluster.
+     定义了一个节点上分片分配的权重因子。 默认为 `0.45f`, 提升这个值可以让该节点上的分片数量增加。
 
 `cluster.routing.allocation.balance.index`::
 
@@ -113,12 +106,15 @@ of each node closer together by more then the `balance.threshold`.
       on a specific node (float). Defaults to `0.55f`.  Raising this raises the
       tendency to equalize the number of shards per index across all nodes in
       the cluster.
+    定义了一个节点上每个索引可以分配得分片数量。 默认为 `0.55f`, 提升该值可以提升这个节点上
+    每个索引可以分配的分片数量。
 
 `cluster.routing.allocation.balance.threshold`::
      Minimal optimization value of operations that should be performed (non
       negative float). Defaults to `1.0f`.  Raising this will cause the cluster
       to be less aggressive about optimizing the shard balance.
+    最小优化参数用来确定是否应该执行平衡操作（非负实数）。默认为 `1.0f`， 提高该值可以让系统不那么积极
+    的执行平衡优化操作。
 
 
-NOTE: Regardless of the result of the balancing algorithm, rebalancing might
-not be allowed due to forced awareness or allocation filtering.
+NOTE: 不管采用何种平衡算法，再平衡都可以被强制感知和分配过滤机制禁用。
