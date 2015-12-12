@@ -1,27 +1,22 @@
 [[breaking-changes-2.0]]
-== Breaking changes in 2.0
+== 2.0 版本中的重大变更
 
-This section discusses the changes that you need to be aware of when migrating
-your application to Elasticsearch 2.0.
-
-[float]
-=== Indices created before 0.90
-
-Elasticsearch 2.0 can read indices created in version 0.90 and above.  If any
-of your indices were created before 0.90 you will need to upgrade to the
-latest 1.x version of Elasticsearch first, in order to upgrade your indices or
-to delete the old indices. Elasticsearch will not start in the presence of old
-indices.
+本节讨论了应用程序升级 Elasticsearch 到 2.0 版本时你应该要注意到的一些变更.
 
 [float]
-=== Elasticsearch migration plugin
+===  0.90 版本之前创建的索引
 
-We have provided the https://github.com/elastic/elasticsearch-migration[Elasticsearch migration plugin]
-to help you detect any issues that you may have when upgrading to
-Elasticsearch 2.0. Please install and run the plugin *before* upgrading.
+Elasticsearch 2.0 可以读取 0.90 及以上版本创建的索引. 如果你有任何索引是在 0.90 版本之前
+创建的, 你首先需要将其升级到最新的 1.x 版本, 以便更新索引或删除旧的索引. 由于存在旧的索引, Elasticsearch 将不会启动.
 
 [float]
-=== Also see
+=== Elasticsearch 迁移插件
+
+我们提供了 https://github.com/elastic/elasticsearch-migration[Elasticsearch 迁移插件]
+来帮助你检测升级到 Elasticsearch 2.0版本时可能会遇到的问题. 请在升级 *之前* 安装并运行这个插件.
+
+[float]
+=== 参考
 
 * <<breaking_20_removed_features>>
 * <<breaking_20_network_changes>>
