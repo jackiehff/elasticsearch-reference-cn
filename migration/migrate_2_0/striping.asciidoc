@@ -1,21 +1,13 @@
 [[breaking_20_multiple_literal_data_path_literal_striping]]
-=== Multiple `path.data` striping
+=== 多个 `path.data` 脚本
 
-Previously, if the `path.data` setting listed multiple data paths, then a
-shard would be ``striped'' across all paths by writing a whole file to each
-path in turn (in accordance with the `index.store.distributor` setting).  The
-result was that files from a single segment in a shard could be spread across
-multiple disks, and the failure of any one disk could corrupt multiple shards.
+之前如果 `path.data` 设置列举了多个数据路径, 那么通过依次为每个路径写一个完整的文
+件 (根据 `index.store.distributor` 设置)一个分片可以分布在所有路径. 结果就是一个分片中的
+单个片段中的文件可以在多个磁盘间传播, 并且任何一个磁盘的失败会破坏多个分片.
 
-This striping is no longer supported.  Instead, different shards may be
-allocated to different paths, but all of the files in a single shard will be
-written to the same path.
+将不再支持分段. 相反, 不同的分片应该分配到不同的路径, 但是单个分片中的所有文件应该写到相同的路径中.
 
-If striping is detected while starting Elasticsearch 2.0.0 or later, *all of
-the files belonging to the same shard will be migrated to the same path*. If
-there is not enough disk space to complete this migration, the upgrade will be
-cancelled and can only be resumed once enough disk space is made available.
+如果启动 Elasticsearch 2.0.0 或以上版本时检测到striping, *所有属于相同分片的文件将会迁移到相同路径*.
+如果没有足够的磁盘空间来完成迁移, 升级将会被取消并且只有当可用的磁盘空间足够时才会立刻重新开始.
 
-The `index.store.distributor` setting has also been removed.
-
-
+`index.store.distributor` 设置也已经被移除.

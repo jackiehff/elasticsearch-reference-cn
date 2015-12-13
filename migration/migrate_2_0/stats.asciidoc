@@ -1,52 +1,45 @@
 [[breaking_20_stats_info_and_literal_cat_literal_changes]]
-=== Stats, info, and `cat` changes
+=== 统计, 信息 以及 `cat` 变更
 
-==== Sigar removed
+==== 移除Sigar
 
-We no longer ship the Sigar library for operating system dependent statistics,
-as it no longer seems to be maintained.  Instead, we rely on the statistics
-provided by the JVM.  This has resulted in a number of changes to the node
-info, and node stats responses:
+由于 Sigar 不再有人维护, 我们不再使用 Sigar 库用于操作系统独立的数据统计. 相反, 我们依赖
+于 JVM 提供的统计数据. 这就导致节点信息和节点统计响应中的一些改变:
 
-* `network.*` has been removed from nodes info and nodes stats.
-* `fs.*.dev` and `fs.*.disk*` have been removed from nodes stats.
-* `os.*` has been removed from nodes stats, except for `os.timestamp`,
-  `os.load_average`, `os.mem.*`, and `os.swap.*`.
-* `os.mem.total` and `os.swap.total` have been removed from nodes info.
-* `process.mem.resident` and `process.mem.share` have been removed from node stats.
+* `network.*` 已经从节点信息和节点统计中移除.
+* `fs.*.dev` 和 `fs.*.disk*` 已经从节点统计中移除.
+* `os.*` 已经从节点统计中移除, 除了 `os.timestamp`, `os.load_average`, `os.mem.*`, 以及 `os.swap.*` 之外.
+* `os.mem.total` 和 `os.swap.total` 已经从节点信息中移除.
+* `process.mem.resident` 和 `process.mem.share` 已经从节点统计中移除.
 
-==== Removed `id_cache` from stats apis
+==== 从统计 API 中移除 `id_cache`
 
-Removed `id_cache` metric from nodes stats, indices stats and cluster stats
-apis. This metric has also been removed from the shards cat, indices cat and
-nodes cat apis. Parent/child memory is now reported under fielddata, because
-it has internally be using fielddata for a while now.
+从节点统计, 索引统计以及集群统计 API 中移除了 `id_cache` 测度. 这个测度也从分片 cat, 索引
+cat 以及节点 cat API 中移除. Parent/child 内存现在在 fielddata 下报告, 因为 fielddata 在内部已经
+使用了一段时间.
 
-To just see how much parent/child related field data is taking, the
-`fielddata_fields` option can be used on the stats apis. Indices stats
-example:
+如果只是想看看 parent/child 相关的字段数据占用了多少内存, 可以在统计 API 上使用
+`fielddata_fields` 选项. 索引统计示例:
 
 [source,js]
 --------------------------------------------------
 GET /_stats/fielddata?fielddata_fields=_parent
 --------------------------------------------------
 
-==== Percolator stats
+==== 过滤器统计
 
-The total time spent running percolator queries is now called `percolate.time`
-instead of `percolate.get_time`.
+过滤器查询总耗费时间现在被称作 `percolate.time` 而不是 `percolate.get_time`.
 
-==== Cluster state REST API
+==== 集群状态 REST API
 
-The cluster state API doesn't return the `routing_nodes` section anymore when
-`routing_table` is requested. The newly introduced `routing_nodes` flag can be
-used separately to control whether `routing_nodes` should be returned.
+当请求 `routing_table`时, 集群状态 API 不再返回 `routing_nodes` 部分. 新加入的 `routing_nodes` 标识可以单独用来控制 `routing_nodes` 是
+否应该被返回.
 
-==== Index status API
+==== 索引状态 API
 
-The deprecated index status API has been removed.
+废弃的索引状态API已经被移除.
 
-==== Nodes Stats API
+==== 节点统计 API
 
-Queue lengths are now reported as basic numeric so they can easily processed by code. Before we used a human
-readable format. For example, a queue with 1,000 items is now reported as `1000` instead of `1k`.
+队列长度现在作为基本的数字报告, 因此它们可以很容易地通过代码处理. 在我们使用一种可读的格式之前.
+例如, 拥有 1,000 项的队列现在报告为 `1000` 而不是 `1k`.

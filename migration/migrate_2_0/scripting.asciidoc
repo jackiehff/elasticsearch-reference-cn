@@ -1,12 +1,11 @@
 [[breaking_20_scripting_changes]]
-=== Scripting changes
+=== 脚本变更
 
-==== Scripting syntax
+==== 脚本语法
 
-The syntax for scripts has been made consistent across all APIs. The accepted
-format is as follows:
+脚本的语法在所有 API 间变得一致. 可接受的格式如下:
 
-Inline/Dynamic scripts::
+内联/动态脚本::
 +
 --
 
@@ -18,12 +17,12 @@ Inline/Dynamic scripts::
   "params": { "val": 3 } <3>
 }
 ---------------
-<1> The inline script to execute.
-<2> The optional language of the script.
-<3> Any named parameters.
+<1> 要执行的内联脚本.
+<2> 脚本的可选语言.
+<3> 任何命名参数.
 --
 
-Indexed scripts::
+索引脚本::
 +
 --
 [source,js]
@@ -34,12 +33,12 @@ Indexed scripts::
   "params": { "val": 3 } <3>
 }
 ---------------
-<1> The ID of the indexed script.
-<2> The optional language of the script.
-<3> Any named parameters.
+<1> 索引的脚本ID.
+<2> 脚本的可选语言.
+<3> 任何命名参数.
 --
 
-File scripts::
+文件脚本::
 +
 --
 [source,js]
@@ -50,12 +49,12 @@ File scripts::
   "params": { "val": 3 } <3>
 }
 ---------------
-<1> The filename of the script, without the `.lang` suffix.
-<2> The optional language of the script.
-<3> Any named parameters.
+<1> 脚本文件的文件名, 没有 `.lang` 后缀.
+<2> 脚本的可选语言.
+<3> 任何命名参数.
 --
 
-For example, an update request might look like this:
+例如, 一个更新请求看起来可能像下面这样:
 
 [source,js]
 ---------------
@@ -71,8 +70,7 @@ POST my_index/my_type/1/_update
 }
 ---------------
 
-A short syntax exists for running inline scripts in the default scripting
-language without any parameters:
+存在一个简短的语法, 可以在默认的脚本语言中运行内联脚本而不带任何参数:
 
 [source,js]
 ----------------
@@ -86,18 +84,15 @@ GET _search
 }
 ----------------
 
-==== Scripting settings
+==== 脚本设置
 
-The `script.disable_dynamic` node setting has been replaced by fine-grained
-script settings described in <<migration-script-settings>>.
+`script.disable_dynamic` 节点设置已经被 <<migration-script-settings>> 中描述的更细
+粒度的脚本所替代.
 
-==== Groovy scripts sandbox
+==== Groovy脚本沙箱
 
-The Groovy sandbox and related settings have been removed. Groovy is now a
-non-sandboxed scripting language, without any option to turn the sandbox on.
+Groovy沙箱以及相关的设置已经被移除. Groovy现在是一种无沙箱的脚本语言, 没有任何选项可用来打开沙箱.
 
-==== Plugins making use of scripts
+==== 使用脚本的插件
 
-Plugins that make use of scripts must register their own script context
-through `ScriptModule`. Script contexts can be used as part of fine-grained
-settings to enable/disable scripts selectively.
+使用脚本的插件必须通过 `ScriptModule` 注册它们自己的脚本上下文. 脚本上下文可以用作细粒度设置的一部分来选择性地启用/禁用脚本.

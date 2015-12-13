@@ -1,102 +1,84 @@
 [[breaking_20_removed_features]]
-=== Removed features
+=== 移除的功能
 
-==== Rivers have been removed
+==== Rivers已经被移除
 
-Elasticsearch does not support rivers anymore. While we had first planned to
-keep them around to ease migration, keeping support for rivers proved to be
-challenging as it conflicted with other important changes that we wanted to
-bring to 2.0 like synchronous dynamic mappings updates, so we eventually
-decided to remove them entirely. See
-link:/blog/deprecating_rivers[Deprecating Rivers] for more background about
-why we took this decision.
+Elasticsearch 不再支持 rivers. 虽然最开始我们打算保留他们来方便迁移, 但是继续支持rivers后来被证明是非常具有挑战性,
+因为它和我们想要引入到2.0版本中的其它一些重要变更有冲突, 像同步动态映射更新, 因此我们最终决定完全移除它们. 想要了解关于我们为什么采用这个决定的更多背景可以参见
+link:/blog/deprecating_rivers[废弃Rivers].
 
-==== Facets have been removed
+==== Facets已经被移除
 
-Facets, deprecated since 1.0, have now been removed.  Instead, use the much
-more powerful and flexible <<search-aggregations,aggregations>> framework.
-This also means that Kibana 3 will not work with Elasticsearch 2.0.
+Facets 从1.0版本开始被废弃, 现在正式地被移除了. 取而代之的是使用更加强大和灵活的 <<search-aggregations,聚合>> 框架.
+这也意味着 Kibana 3 将无法使用 Elasticsearch 2.0.
 
-==== MVEL has been removed
+==== MVEL已经被移除
 
-The MVEL scripting language has been removed.  The default scripting language
-is now Groovy.
+MVEL 脚本语言已经被移除.  现在默认的脚本语言是 Groovy.
 
-==== Delete-by-query is now a plugin
+==== Delete-by-query现在是一个插件
 
-The old delete-by-query functionality was fast but unsafe.  It could lead to
-document differences between the primary and replica shards, and could even
-produce out of memory exceptions and cause the cluster to crash.
+原来的 delete-by-query 功能虽然很快但是不安全. 它可能会导致主分片和复制分片间的节点有差异, 甚至会产生
+内存溢出异常并导致整个集群崩溃.
 
-This feature has been reimplemented using the <<scroll-scan,scroll/scan>> and
-the <<docs-bulk,`bulk`>> API, which may be slower for queries which match
-large numbers of documents, but is safe.
+这个功能现在已经使用 <<scroll-scan,scroll/scan>> 和 <<docs-bulk,`bulk`>> API 重新实现了, 虽然对于匹配大量
+文档的查询来说可能慢了一些, 但是它是安全的.
 
-Currently, a long running delete-by-query job cannot be cancelled, which is
-one of the reasons that this functionality is only available as a plugin.  You
-can install the plugin with:
+目前, 一个长时间运行的 delete-by-query 任务不能被取消, 这也是这个功能只能作为插件来使用的原因之一.  你可以使用
+如下方式安装这个插件:
 
 [source,sh]
 ------------------
 ./bin/plugin install delete-by-query
 ------------------
 
-See {plugins}/plugins-delete-by-query.html for more information.
+更多信息参见 {plugins}/plugins-delete-by-query.html.
 
-==== Multicast Discovery is now a plugin
+==== 多播发现 (Multicast Discovery) 现在是一个插件
 
-Support for multicast is very patchy. Linux doesn’t allow multicast listening on localhost,
-while OS/X sends multicast broadcasts across all interfaces regardless of the configured
-bind address. On top of that, some networks have multicast disabled by default.
+对于多播的支持非常不尽如人意. Linux 不允许在localhost上进行多播监听, 但是 OS/X 系统会在所有接口之间发送
+多播广播而不管配置绑定的地址. 除此之外, 一些网络默认禁用了多播.
 
-This feature has been moved to a plugin. The default discovery mechanism now uses
-unicast, with a default setup which looks for the first 5 ports on localhost. If you
-still need to use multicast discovery, you can install the plugin with:
+这个功能已经被移到一个插件中. 现在默认使用带有默认设置的单播发现机制来寻找localhost上前5个端口. 如果
+你仍然需要使用组播发现, 你可以使用如下方式安装这个插件:
 
 [source,sh]
 ------------------
 ./bin/plugin install discovery-multicast
 ------------------
 
-See {plugins}/discovery-multicast.html for more information.
+更多信息参见 {plugins}/discovery-multicast.html.
 
 ==== `_shutdown` API
 
-The `_shutdown` API has been removed without a replacement. Nodes should be
-managed via the operating system and the provided start/stop scripts.
+`_shutdown` API 已经被移除并且没有可替代的API. 节点应该由操作系统以及提供的启动/停止脚本来管理.
 
-==== `murmur3` is now a plugin
+==== `murmur3` 现在是一个插件
 
-The `murmur3` field, which indexes hashes of the field values, has been moved
-out of core and is available as a plugin. It can be installed as:
+用于索引字段值散列码的 `murmur3` 字段, 已经从核心部分中移除并作为一个插件使用, 可以使用如下方式安装该插件:
 
 [source,sh]
 ------------------
 ./bin/plugin install mapper-murmur3
 ------------------
 
-==== `_size` is now a plugin
+==== `_size` 现在是一个插件
 
-The `_size` meta-data field, which indexes the size in bytes of the original
-JSON document, has been moved out of core and is available as a plugin.  It
-can be installed as:
+用于索引原始 JSON 文档的字节大小的 `_size` 元数据字段, 已经从核心部分中移除并作为一个插件使用, 可以使用如下方式安装该插件:
 
 [source,sh]
 ------------------
 ./bin/plugin install mapper-size
 ------------------
 
-==== Thrift and memcached transport
+==== Thrift 和 memcached 传输
 
-The thrift and memcached transport plugins are no longer supported.  Instead, use
-either the HTTP transport (enabled by default) or the node or transport Java client.
+将不再支持thrift 和 memcached 传输插件. 取而代之的是使用 HTTP 传输 (默认开启) 或 节点 或 Java传输客户端.
 
 ==== Bulk UDP
 
-The bulk UDP API has been removed.  Instead, use the standard
-<<docs-bulk,`bulk`>> API, or use UDP to send documents to Logstash first.
+批量的 UDP API 已经被移除 has been removed. 取而代之的是使用标准的 <<docs-bulk,`bulk`>> API, 或者优先使用 UDP 发送文档给 Logstash.
 
-==== MergeScheduler pluggability
+==== MergeScheduler可插入性
 
-The merge scheduler is no longer pluggable.
-
+合并调度器不再是可插入的.

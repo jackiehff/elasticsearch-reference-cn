@@ -1,84 +1,77 @@
 [[breaking_20_plugin_and_packaging_changes]]
-=== Plugin and packaging changes
+=== 插件和打包变更
 
-==== Symbolic links and paths
+==== 符号链接和路径
 
-Elasticsearch 2.0 runs with the Java security manager enabled and is much more
-restrictive about which paths it is allowed to access.  Various paths can be
-configured, e.g. `path.data`, `path.scripts`, `path.repo`.  A configured path
-may itself be a symbolic link, but no symlinks under that path will be
-followed.
+Elasticsearch 2.0 运行时启用了Java安全管理器, 并且对于可以访问哪个路径变得更加严格. 可以
+通过 `path.data`, `path.scripts`, `path.repo` 等配置多个路径. 配置的路径本身可以是一个
+符号链接, 但是这个路径下不会跟着符号链接.
 
-==== Running `bin/elasticsearch`
+==== 运行 `bin/elasticsearch`
 
-The command line parameter parsing has been rewritten to deal properly with
-spaces in parameters. All config settings can still be specified on the
-command line when starting Elasticsearch, but they must appear after the
-built-in "static parameters", such as `-d` (to daemonize) and `-p` (the PID path).
+为了恰当地处理参数中的空格, 命令行参数解析已经被重写. 所有配置的设置仍然可以在启动 Elasticsearch
+时在命令行指定, 但是它们必须出现在内置的 "静态参数" 之后, 像 `-d` (变成守护进程) 以及 `-p` (PID文件路径).
 
-For instance:
+例如:
 
 [source,sh]
 -----------
 bin/elasticsearch -d -p /tmp/foo.pid --http.cors.enabled=true --http.cors.allow-origin='*'
 -----------
 
-For a list of static parameters, run `bin/elasticsearch -h`
+想要获取静态参数列表, 运行 `bin/elasticsearch -h`
 
-==== `-f` removed
+==== 移除 `-f`
 
-The `-f` parameter, which used to indicate that Elasticsearch should be run in
-the foreground, was deprecated in 1.0 and removed in 2.0.
+`-f` 参数, 原来表示 Elasticsearch 应该在前台运行, 在 1.0 版本中已经被废弃并且在 2.0 版本中
+被移除.
 
-==== `V` for version
+==== `V` 表示版本
 
-The `-v` parameter now means `--verbose` for both `bin/plugin` and
-`bin/elasticsearch` (although it has no effect on the latter).  To output the
-version, use `-V` or `--version` instead.
+对于 `bin/plugin` 和 `bin/elasticsearch` (虽然对于后者没有影响) 来说, `-v` 参数现在
+表示 `--verbose`. 想要输出版本号, 使用 `-V` 或 `--version`.
 
-==== Plugin manager should run as root
+==== 插件管理器应该作为root用户运行
 
-The permissions of the `config`, `bin`, and `plugins` directories in the RPM
-and deb packages have been made more restrictive.  The plugin manager should
-be run as root otherwise it will not be able to install plugins.
+RPM 和 deb 包中 `config`, `bin` 以及 `plugins` 目录的权限控制已经变得更加严格. 插件管理器应该作为 root 用户运行,否则
+将不能安装插件.
 
-==== Support for official plugins
+==== 支持官方插件
 
-Almost all of the official Elasticsearch plugins have been moved to the main
-`elasticsearch` repository. They will be released at the same time as
-Elasticsearch and have the same version number as Elasticsearch.
+几乎所有官方的 Elasticsearch 插件都被移到 `elasticsearch` 主仓库中. 它们会和 Elasticsearch
+同时发布并且和 Elasticsearch 版本号一样.
 
-Official plugins can be installed as follows:
+官方插件可以使用如下方式安装:
 
 [source,sh]
 ---------------
 sudo bin/plugin install analysis-icu
 ---------------
 
-Community-provided plugins can be installed as before.
+社区提供的插件可以像以前一样安装.
 
-==== Plugins require descriptor file
+==== 插件需要描述符文件
 
-All plugins are now required to have a https://github.com/elastic/elasticsearch/blob/2.0/dev-tools/src/main/resources/plugin-metadata/plugin-descriptor.properties[plugin-descriptor.properties]  file.  If a node has a plugin installed which lacks this file, it will be unable to start.
+所有插件现在都需要一个 https://github.com/elastic/elasticsearch/blob/2.0/dev-tools/src/main/resources/plugin-metadata/plugin-descriptor.properties[plugin-descriptor.properties] 文件.
+如果节点安装的插件缺少这个文件, 它将不能启动.
 
-==== Repository naming structure changes
+==== 仓库命名结构变更
 
-Elasticsearch 2.0 changes the way the repository URLs are referenced. Instead
-of specific repositories for both major and minor versions, the repositories will
-use a major version reference only.
+Elasticsearch 2.0 版本改变了仓库 URL 引用的方式. 仓库仅使用一个主版本号引用而不是为
+主版本和次版本都指定仓库.
 
-The URL for apt packages now uses the following structure;
+对于 apt 包, URL使用下面的结构:
 
 [source,sh]
 ---------------
 deb http://packages.elastic.co/elasticsearch/2.x/debian stable main
 ---------------
 
-And for yum packages it is;
+而对于 yum 包, 它是:
 
 [source,sh]
 ---------------
 baseurl=http://packages.elastic.co/elasticsearch/2.x/centos
 ---------------
 
-The <<setup-repositories, repositories>> page details this change.
+<<setup-repositories, 仓库>> 页详细描述了这个变更.

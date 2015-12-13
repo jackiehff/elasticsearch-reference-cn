@@ -1,10 +1,9 @@
 [[breaking_20_java_api_changes]]
-=== Java API changes
+=== Java API变更
 
-==== Transport API construction
+==== Transport API 构造
 
-The `TransportClient` construction code has changed, it now uses the builder
-pattern. Instead of:
+`TransportClient` 构造代码已经改变, 它现在使用构造器模式. 以前使用的是:
 
 [source,java]
 --------------------------------------------------
@@ -13,7 +12,7 @@ Settings settings = Settings.settingsBuilder()
 Client client = new TransportClient(settings);
 --------------------------------------------------
 
-Use the following:
+现在使用下面的方式:
 
 [source,java]
 --------------------------------------------------
@@ -22,9 +21,7 @@ Settings settings = Settings.settingsBuilder()
 Client client = TransportClient.builder().settings(settings).build();
 --------------------------------------------------
 
-The transport client also no longer supports loading settings from config files.
-If you have a config file, you can load it into settings yourself before
-constructing the transport client:
+传输客户端不再支持从配置文件中加载设置.如果你有配置文件, 你可以在构造传输客户端之前自己将它加载到设置中:
 
 [source,java]
 --------------------------------------------------
@@ -33,115 +30,106 @@ Settings settings = Settings.settingsBuilder()
 Client client = TransportClient.builder().settings(settings).build();
 --------------------------------------------------
 
-==== Exception are only thrown on total failure
+==== 只有当整个失败时抛出异常
 
-Previously, many APIs would throw an exception if any shard failed to execute
-the request. Now the exception is only thrown if all shards fail the request.
-The responses for these APIs will always have a `getShardFailures` method that
-you can and should check for failures.
+在之前, 如果任何一个分片执行请求失败许多 API 会抛出一个异常. 仙现在只有当所有分片响应请求失
+败才会抛出异常. 这些 API 的响应总会有一个 `getShardFailures` 方法, 这样你可以检查失败.
 
 
-==== IndexMissingException removed.
+==== 移除 IndexMissingException.
 
-Use `IndexNotFoundException` instead.
-
-
-==== Automatically thread client listeners
-
-Previously, the user had to set request listener threads to `true` when on the
-client side in order not to block IO threads on heavy operations. This proved
-to be very trappy for users, and ended up creating problems that are very hard
-to debug.
-
-In 2.0, Elasticsearch automatically threads listeners that are used from the
-client when the client is a node client or a transport client. Threading can
-no longer be manually set.
+使用 `IndexNotFoundException` 代替.
 
 
-==== Query/filter refactoring
+==== 自动地 thread 客户端监听器
 
-`org.elasticsearch.index.queries.FilterBuilders` has been removed as part of the merge of
-queries and filters. These filters are now available in `QueryBuilders` with the same name.
-All methods that used to accept a `FilterBuilder` now accept a `QueryBuilder` instead.
+在之前, 当在客户端执行繁重操作时为了不阻塞 IO 线程, 用户需要设置请求监听器线程为 `true`. 这被证明是
+非常困难的, 对于用户来说, 并且最终创建了非常难于调试的问题.
 
-In addition some query builders have been removed or renamed:
+在 2.0 版本中, 当客户端是一个节点客户端或者是一个传输客户端时, Elasticsearch 自动地 threads 客
+户端使用的监听器. 线程将不再手工设置.
 
-* `commonTerms(...)` renamed with `commonTermsQuery(...)`
-* `queryString(...)` renamed with `queryStringQuery(...)`
-* `simpleQueryString(...)` renamed with `simpleQueryStringQuery(...)`
-* `textPhrase(...)` removed
-* `textPhrasePrefix(...)` removed
-* `textPhrasePrefixQuery(...)` removed
-* `filtered(...)` removed. Use `filteredQuery(...)` instead.
-* `inQuery(...)` removed.
+
+==== 重构 查询/过滤器
+
+作为查询和过滤器的一部分 `org.elasticsearch.index.queries.FilterBuilders` 已经被移除.
+这些过滤器可以在 `QueryBuilders` 中使用同样的名称访问到.之前接受一个 `FilterBuilder` 的所
+有方法现在接受一个 `QueryBuilder`.
+
+另外, 有些查询构造器已经被移除或重命名:
+
+* `commonTerms(...)` 重命名为 `commonTermsQuery(...)`
+* `queryString(...)` 重命名为 `queryStringQuery(...)`
+* `simpleQueryString(...)` 重命名为 `simpleQueryStringQuery(...)`
+* 移除 `textPhrase(...)`
+* 移除 `textPhrasePrefix(...)`
+* 移除 `textPhrasePrefixQuery(...)`
+* 移除 `filtered(...)`. 使用 `filteredQuery(...)` 代替.
+* 移除 `inQuery(...)`.
 
 ==== GetIndexRequest
 
-`GetIndexRequest.features()` now returns an array of Feature Enums instead of an array of String values.
+`GetIndexRequest.features()` 现在返回一个 Feature枚举数组而不是字符串值数组.
 
-The following deprecated methods have been removed:
+下面废弃的方法已经被移除:
 
-* `GetIndexRequest.addFeatures(String[])` - Use
-  `GetIndexRequest.addFeatures(Feature[])` instead
+* `GetIndexRequest.addFeatures(String[])` - 使用 `GetIndexRequest.addFeatures(Feature[])` 代替
 
-* `GetIndexRequest.features(String[])` - Use
-  `GetIndexRequest.features(Feature[])` instead.
+* `GetIndexRequest.features(String[])` - 使用
+  `GetIndexRequest.features(Feature[])` 代替.
 
-* `GetIndexRequestBuilder.addFeatures(String[])` - Use
-  `GetIndexRequestBuilder.addFeatures(Feature[])` instead.
+* `GetIndexRequestBuilder.addFeatures(String[])` - 使用
+  `GetIndexRequestBuilder.addFeatures(Feature[])` 代替.
 
-* `GetIndexRequestBuilder.setFeatures(String[])` - Use
-  `GetIndexRequestBuilder.setFeatures(Feature[])` instead.
+* `GetIndexRequestBuilder.setFeatures(String[])` - 使用
+  `GetIndexRequestBuilder.setFeatures(Feature[])` 代替.
 
 
-==== BytesQueryBuilder removed
+==== 移除 BytesQueryBuilder
 
-The redundant BytesQueryBuilder has been removed in favour of the
-WrapperQueryBuilder internally.
+冗余的 BytesQueryBuilder 已经被移除以在内部支持 WrapperQueryBuilder.
 
-==== TermsQueryBuilder execution removed
+==== 移除 TermsQueryBuilder的execution方法
 
-The `TermsQueryBuilder#execution` method has been removed as it has no effect, it is ignored by the
- corresponding parser.
+由于 `TermsQueryBuilder#execution` 方法已经没有用处, 它已经被移除, 它会被相应的解析器忽略.
 
-==== ImmutableSettings removed
+==== 移除 ImmutableSettings
 
-Use `Settings.builder()` instead of `ImmutableSettings.builder()`.
+使用 `Settings.builder()` 替代 `ImmutableSettings.builder()`.
 
-==== InetSocketTransportAddress removed
+==== 移除 InetSocketTransportAddress
 
-Use `InetSocketTransportAddress(InetSocketAddress address)` instead of `InetSocketTransportAddress(String, int)`.
-You can create an InetSocketAddress instance with `InetSocketAddress(String, int)`. For example:
+使用 `InetSocketTransportAddress(InetSocketAddress address)` 代替 `InetSocketTransportAddress(String, int)`.
+你可以使用 `InetSocketAddress(String, int)` 创建一个 InetSocketAddress 实例. 例如:
 
 [source,java]
 -----------------------------
 new InetSocketTransportAddress(new InetSocketAddress("127.0.0.1", 0));
 -----------------------------
 
-==== Request Builders refactoring
+==== 重构请求构造器
 
-An `action` parameter has been added to various request builders:
+各请求构造器新加了一个 `action` 参数:
 
-* Instead of `new SnapshotsStatusRequestBuilder(elasticSearchClient)` use `new SnapshotsStatusRequestBuilder(elasticSearchClient, SnapshotsStatusAction.INSTANCE)`.
+* 使用 `new SnapshotsStatusRequestBuilder(elasticSearchClient, SnapshotsStatusAction.INSTANCE)` 代替 `new SnapshotsStatusRequestBuilder(elasticSearchClient)`.
 
-* Instead of `new CreateSnapshotRequestBuilder(elasticSearchClient)` use `new CreateSnapshotRequestBuilder(elasticSearchClient, CreateSnapshotAction.INSTANCE)`.
+* 使用 `new CreateSnapshotRequestBuilder(elasticSearchClient, CreateSnapshotAction.INSTANCE)` 代替 `new CreateSnapshotRequestBuilder(elasticSearchClient)`.
 
-* Instead of `new CreateIndexRequestBuilder(elasticSearchClient, index)` use `new CreateIndexRequestBuilder(elasticSearchClient, CreateIndexAction.INSTANCE, index)`.
+* 使用 `new CreateIndexRequestBuilder(elasticSearchClient, CreateIndexAction.INSTANCE, index)` 代替 `new CreateIndexRequestBuilder(elasticSearchClient, index)`.
 
-==== Shading and package relocation removed
+==== 移除 Shading 和 包迁移
 
-Elasticsearch used to shade its dependencies and to relocate packages. We no longer use shading or relocation.
-You might need to change your imports to the original package names:
+Elasticsearch 原来 shade 它的依赖并迁移包. 我们不再使用shading或包迁移. 你可能需要将导入改变成原始的包名:
 
-* `com.google.common` was `org.elasticsearch.common`
-* `com.carrotsearch.hppc` was `org.elasticsearch.common.hppc`
-* `jsr166e` was `org.elasticsearch.common.util.concurrent.jsr166e`
-* `com.fasterxml.jackson` was `org.elasticsearch.common.jackson`
-* `org.joda.time` was `org.elasticsearch.common.joda.time`
-* `org.joda.convert` was `org.elasticsearch.common.joda.convert`
-* `org.jboss.netty` was `org.elasticsearch.common.netty`
-* `com.ning.compress` was `org.elasticsearch.common.compress`
-* `com.github.mustachejava` was `org.elasticsearch.common.mustache`
-* `com.tdunning.math.stats` was `org.elasticsearch.common.stats`
-* `org.apache.commons.lang` was `org.elasticsearch.common.lang`
-* `org.apache.commons.cli` was `org.elasticsearch.common.cli.commons`
+* `com.google.common` 原来是 `org.elasticsearch.common`
+* `com.carrotsearch.hppc` 原来是 `org.elasticsearch.common.hppc`
+* `jsr166e` 原来是 `org.elasticsearch.common.util.concurrent.jsr166e`
+* `com.fasterxml.jackson` 原来是 `org.elasticsearch.common.jackson`
+* `org.joda.time` 原来是 `org.elasticsearch.common.joda.time`
+* `org.joda.convert` 原来是 `org.elasticsearch.common.joda.convert`
+* `org.jboss.netty` 原来是 `org.elasticsearch.common.netty`
+* `com.ning.compress` 原来是 `org.elasticsearch.common.compress`
+* `com.github.mustachejava` 原来是 `org.elasticsearch.common.mustache`
+* `com.tdunning.math.stats` 原来是 `org.elasticsearch.common.stats`
+* `org.apache.commons.lang` 原来是 `org.elasticsearch.common.lang`
+* `org.apache.commons.cli` 原来是 `org.elasticsearch.common.cli.commons`

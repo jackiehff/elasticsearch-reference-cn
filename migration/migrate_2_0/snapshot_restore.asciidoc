@@ -1,38 +1,30 @@
 [[breaking_20_snapshot_and_restore_changes]]
-=== Snapshot and Restore changes
+=== 快照和恢复变更
 
-==== File-system repositories must be whitelisted
+==== 文件系统仓库必须设置白名单
 
-Locations of the shared file system repositories and the URL repositories with
-`file:` URLs now have to be registered before starting Elasticsearch using the
-`path.repo` setting. The `path.repo` setting can contain one or more
-repository locations:
+在启动带有 `path.repo` 设置的 Elasticsearch 之前, 共享文件系统仓库的位置和 URL 中带有 `file:` 的 URL 仓库
+现在必须要注册. `path.repo` 设置可以包含一个或多个仓库位置:
 
 [source,yaml]
 ---------------
 path.repo: ["/mnt/daily", "/mnt/weekly"]
 ---------------
 
-If the repository location is specified as an absolute path it has to start
-with one of the locations specified in `path.repo`. If the location is
-specified as a relative path, it will be resolved against the first location
-specified in the `path.repo` setting.
+如果仓库位置指定的是一个绝对路径, 那么它需要使用 `path.repo` 设置中指定的其中一个路径启动.
+如果仓库位置指定的是一个相对路径, 那么它将对 `path.repo` 设置中指定的第一个位置进行解析.
 
-==== URL repositories must be whitelisted
+==== URL仓库必须设置白名单
 
-URL repositories with `http:`, `https:`, and `ftp:` URLs have to be
-whitelisted before starting Elasticsearch with the
-`repositories.url.allowed_urls` setting. This setting supports wildcards in
-the place of host, path, query, and fragment. For example:
+在启动带有 `repositories.url.allowed_urls` 设置的 Elasticsearch 之前, URL 中带有 `http:`, `https:` 以
+及 `ftp:` 的 URL 仓库必须设置白名单. 这个设置在主机, 路径, 以及片段的位置上支持通配符. 例如:
 
 [source,yaml]
 -----------------------------------
 repositories.url.allowed_urls: ["http://www.example.org/root/*", "https://*.mydomain.com/*?*#*"]
 -----------------------------------
 
-==== Wildcard expansion
+==== 通配符扩展
 
-The obsolete parameters `expand_wildcards_open` and `expand_wildcards_close`
-are no longer supported by the snapshot and restore operations. These
-parameters have been replaced by a single `expand_wildcards` parameter. See
-<<multi-index,the multi-index docs>> for more.
+快照和恢复操作不再支持过时的参数 `expand_wildcards_open` 和 `expand_wildcards_close`.
+这两个参数已经由单个参数 `expand_wildcards` 替代. 想要了解更多信息参见 <<multi-index,多索引文档>>.

@@ -1,18 +1,15 @@
 [[breaking_20_parent_child_changes]]
-=== Parent/Child changes
+=== Parent/Child变更
 
-Parent/child has been rewritten completely to reduce memory usage and to
-execute `has_child` and `has_parent` queries faster and more efficient. The
-`_parent` field uses doc values by default. The refactored and improved
-implementation is only active for indices created on or after version 2.0.
+为了减少内存使用并且更快以及更高效的执行 `has_child` 和 `has_parent` 查询, Parent/Child
+已经被完全重写. `_parent` 字段默认使用 doc 值. 重构的和改进的实现只对 Elasticsearch 2.0
+及以后版本中创建的索引有效.
 
-In order to benefit from all the performance and memory improvements, we
-recommend reindexing all existing indices that use the `_parent` field.
+为了充分利用所有的性能和内存改进带来的好处, 我们推荐重新索引现有的所有使用 `_parent` 字段的索引.
 
-==== Parent type cannot pre-exist
+==== 父类型不能提前存在
 
-A mapping type is declared as a child of another mapping type by specifying
-the `_parent` meta field:
+通过指定 `_parent` 元字段映射类型可以声明为另一个映射类型的子类型:
 
 [source,js]
 --------------------------
@@ -30,14 +27,11 @@ PUT my_index
   }
 }
 --------------------------
-<1> The `my_parent` type is the parent of the `my_child` type.
+<1> `my_parent` 类型是 `my_child` 类型的父类型.
 
-The mapping for the parent type can be added at the same time as the mapping
-for the child type, but cannot be added before the child type.
+在新增子类型的映射的同时可以新增父类型的映射, 但是不能在子类型之前新增.
 
-==== `top_children` query removed
+==== 移除 `top_children` 查询
 
-The `top_children` query has been removed in favour of the `has_child` query.
-It wasn't always faster than the `has_child` query and the results were usually
-inaccurate. The total hits and any aggregations in the same search request
-would be incorrect if `top_children` was used.
+`top_children` 查询已经被移除以支持 `has_child` 查询.它不总是比 `has_child` 查询快, 并且
+返回结果通常是不准确的. 如果使用了 `top_children` , 相同搜索请求中的总数和任何聚合都是不准确的.

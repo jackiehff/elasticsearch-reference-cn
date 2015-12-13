@@ -1,39 +1,36 @@
 [[breaking_20_setting_changes]]
-=== Setting changes
+=== 设置变更
 
-==== Command line flags
+==== 命令行标志
 
-Command line flags using single dash notation must be now specified as the first arguments.
-For example if previously using:
+使用单个破折号的命令行标志现在必须指定为第一个参数.例如如果之前使用的是:
 
 [source,sh]
 ---------------
 ./elasticsearch --node.name=test_node -Des.path.conf=/opt/elasticsearch/conf/test_node
 ---------------
 
-This will now need to be changed to:
+那么现在需要改变成:
 
 [source,sh]
 ---------------
 ./elasticsearch -Des.path.conf=/opt/elasticsearch/conf/test_node --node.name=test_node
 ---------------
 
-for the flag to take effect.
+这样这个标志才会生效.
 
 [[migration-script-settings]]
-==== Scripting settings
+==== 脚本设置
 
-The `script.disable_dynamic` node setting has been replaced by fine-grained
-script settings described in the <<enable-dynamic-scripting,scripting docs>>.
-The following setting previously used to enable dynamic or inline scripts:
+`script.disable_dynamic` 节点设置已经被 <<enable-dynamic-scripting,脚本文档>> 中描述
+的细粒度的脚本设置所替代.下面的设置之前用于启用动态的或内联的脚本:
 
 [source,yaml]
 ---------------
 script.disable_dynamic: false
 ---------------
 
-It should be replaced with the following two settings in `elasticsearch.yml` that
-achieve the same result:
+想要实现相同的结果需要在 `elasticsearch.yml` 文件中使用下面两个设置来替换它:
 
 [source,yaml]
 ---------------
@@ -41,11 +38,10 @@ script.inline: on
 script.indexed: on
 ---------------
 
-==== Units required for time and byte-sized settings
+==== 时间和字节大小设置需要的单位
 
-Any settings which accept time or byte values must now be specified with
-units.  For instance, it is too easy to set the `refresh_interval` to 1
-*millisecond* instead of 1 second:
+任何接受时间或字节值的设置现在必须要指定单位. 例如, 很容易设置 `refresh_interval` 为 1
+*毫秒* 而不是 1 秒:
 
 [source,js]
 ---------------
@@ -55,13 +51,11 @@ PUT _settings
 }
 ---------------
 
-In 2.0, the above request will throw an exception. Instead the refresh
-interval should be set to `"1s"` for one second.
+在 2.0 版本中, 上述请求会抛出一个异常. 刷新时间间隔应该设置成 `"1s"` 来表示1秒.
 
-==== Merge and merge throttling settings
+==== 合并以及合并节流设置
 
-The tiered merge policy is now the only supported merge policy. These settings
-have been removed:
+分层合并策略是现在唯一支持的合并策略. 下面这些设置已经被移除:
 
 * `index.merge.policy.type`
 * `index.merge.policy.min_merge_size`
@@ -72,27 +66,24 @@ have been removed:
 * `index.merge.policy.min_merge_docs`
 * `index.merge.policy.max_merge_docs`
 
-Merge throttling now uses a feedback loop to auto-throttle.  These settings
-have been removed:
+合并节流现在使用一个反馈循环来自动节流. 下面这些设置已经被移除:
 
 * `indices.store.throttle.type`
 * `indices.store.throttle.max_bytes_per_sec`
 * `index.store.throttle.type`
 * `index.store.throttle.max_bytes_per_sec`
 
-==== Shadow replica settings
+==== 影子副本设置
 
-The `node.enable_custom_paths` setting has been removed and replaced by the
-`path.shared_data` setting to allow shadow replicas with custom paths to work
-with the security manager. For example, if your previous configuration had:
+`node.enable_custom_paths` 设置已经被移除并且使用 `path.shared_data` 设置作为替代来允许
+使用自定义路径的影子副本与安全管理器一起工作. 例如, 如果你之前的配置是:
 
 [source,yaml]
 ------
 node.enable_custom_paths: true
 ------
 
-And you created an index using shadow replicas with `index.data_path` set to
-`/opt/data/my_index` with the following:
+并且你使用 `index.data_path` 设置为 `/opt/data/my_index` 的影子副本创建一个索引, 如下:
 
 [source,js]
 --------------------------------------------------
@@ -107,45 +98,40 @@ PUT /my_index
 }
 --------------------------------------------------
 
-For 2.0, you will need to set `path.shared_data` to a parent directory of the
-index's data_path, so:
+对于 2.0 版本, 你将需要设置 `path.shared_data` 为索引的 data_path 的一个父目录, 即像下面这样:
 
 [source,yaml]
 -----------
 path.shared_data: /opt/data
 -----------
 
-==== Resource watcher settings renamed
+==== 重命名资源监视器设置
 
-The setting names for configuring the resource watcher have been renamed
-to prevent clashes with the watcher plugin
+用于配置资源监视器的设置名称已经被重命名以防止与监视器插件冲突
 
-* `watcher.enabled` is now `resource.reload.enabled`
-* `watcher.interval` is now `resource.reload.interval`
-* `watcher.interval.low` is now `resource.reload.interval.low`
-* `watcher.interval.medium` is now `resource.reload.interval.medium`
-* `watcher.interval.high` is now `resource.reload.interval.high`
+* `watcher.enabled` 现在是 `resource.reload.enabled`
+* `watcher.interval` 现在是 `resource.reload.interval`
+* `watcher.interval.low` 现在是 `resource.reload.interval.low`
+* `watcher.interval.medium` 现在是 `resource.reload.interval.medium`
+* `watcher.interval.high` 现在是 `resource.reload.interval.high`
 
-==== Hunspell dictionary configuration
+==== Hunspell字典配置
 
-The parameter `indices.analysis.hunspell.dictionary.location` has been
-removed, and `<path.conf>/hunspell` is always used.
+`indices.analysis.hunspell.dictionary.location` 参数已经被移除, 并且永久使用 `<path.conf>/hunspell`.
 
 ==== CORS allowed origins
 
-The CORS allowed origins setting, `http.cors.allow-origin`, no longer has a default value. Previously, the default value
-was `*`, which would allow CORS requests from any origin and is considered insecure. The `http.cors.allow-origin` setting
-should be specified with only the origins that should be allowed, like so:
+CORS 允许的起源设置 `http.cors.allow-origin` 不再有默认值.之前的默认值是 `*`, 它允许任何
+源发起的 CORS 请求并且被认为是不安全的. `http.cors.allow-origin` 设置应该仅指定允许的源, 像这样:
 
 [source,yaml]
 ---------------
 http.cors.allow-origin: /https?:\/\/localhost(:[0-9]+)?/
 ---------------
 
-==== JSONP support
+==== JSONP支持
 
-JSONP callback support has now been removed. CORS should be used to access Elasticsearch
-over AJAX instead:
+JSONP的回调支持现在已经被移除. CORS应该优于 AJAX 用于访问 Elasticsearch:
 
 [source,yaml]
 ---------------
@@ -153,27 +139,25 @@ http.cors.enabled: true
 http.cors.allow-origin: /https?:\/\/localhost(:[0-9]+)?/
 ---------------
 
-==== In memory indices
+==== 内存索引
 
-The `memory` / `ram` store (`index.store.type`) option was removed in
-Elasticsearch.  In-memory indices are no longer supported.
+Elasticsearch 中已经移除了 `memory` / `ram` 存储 (`index.store.type`) 选项. 将不再
+支持内存索引.
 
-==== Log messages truncated
+==== 截取日志消息
 
-Log messages are now truncated at 10,000 characters. This can be changed in
-the `logging.yml` configuration file with the `file.layout.conversionPattern`
-setting.
+日志消息现在被截取到 10,000 个字符. 可以使用 `logging.yml` 配置文件中的 `file.layout.conversionPattern`
+设置来改变.
 
-==== Custom config file
+==== 自定义配置文件
 
-It is no longer possible to specify a custom config file with the `CONF_FILE`
-environment variable, or the `-Des.config`, `-Des.default.config`, or
-`-Delasticsearch.config` parameters.
+现在已不太可能使用 `CONF_FILE` 环境变量, 或 `-Des.config`, `-Des.default.config`, 或者
+`-Delasticsearch.config` 参数来指定一个自定义配置文件.
 
-Instead, the config file must be named `elasticsearch.yml` and must be located
-in the default `config/` directory, unless a custom config directory is specified.
+相反, 配置文件必须命名为 `elasticsearch.yml` 并且必须放置在默认的 `config/` 目录下, 除非
+指定一个自定义配置路径.
 
-The location of a custom config directory may be specified as follows:
+自定义配置文件目录的路径可以使用如下方式指定:
 
 [source,sh]
 --------------
@@ -181,14 +165,11 @@ The location of a custom config directory may be specified as follows:
 ./bin/plugin -Des.path.conf=/path/to/conf/dir install analysis-icu
 --------------
 
-When using the RPM or debian packages, the plugin script and the
-init/service scripts will consult the `CONF_DIR` environment variable
-to check for a custom config location.  The value of the `CONF_DIR`
-variable can be set in the environment config file which is located either in
-`/etc/default/elasticsearch` or `/etc/sysconfig/elasticsearch`.
+当使用 RPM 或 debian 包时, 插件脚本和init/service 脚本将查询 `CONF_DIR` 环境变量来检查自定义
+配置路径. `CONF_DIR` 变量的值可以在位于 `/etc/default/elasticsearch` 或 `/etc/sysconfig/elasticsearch`
+中的环境配置文件中设置.
 
-==== `ES_CLASSPATH removed`
+==== 移除 `ES_CLASSPATH`
 
-The `ES_CLASSPATH` environment variable is no longer used to set the class
-path. External libraries should preferably be loaded using the plugin
-mechanism or, if you really must, be copied to the `lib/` directory.
+`ES_CLASSPATH` 环境变量不再用来设置类路径. 外部库应该优先使用插件机制来加载, 或者如果你真的
+需要的话, 可以拷贝到 `lib/` 目录.
