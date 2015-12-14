@@ -1,43 +1,34 @@
 [[breaking_20_index_api_changes]]
-=== Index API changes
+=== 索引 API 变更
 
-==== Index aliases
-
-
-Fields used in alias filters no longer have to exist in the mapping at alias
-creation time. Previously, alias filters were parsed at alias creation time
-and the parsed form was cached in memory. Now, alias filters are  parsed at
-request time and the fields in filters are resolved from the current mapping.
-
-This also means that index aliases now support `has_parent` and `has_child`
-queries.
-
-The <<alias-retrieving, GET alias api>> will now throw an exception if no
-matching aliases are found. This change brings the defaults for this API in
-line with the other Indices APIs. The <<multi-index>> options can be used on a
-request to change this behavior.
-
-==== File based index templates
-
-Index templates can no longer be configured on disk. Use the
-<<indices-templates,`_template`>> API instead.
-
-==== Analyze API changes
+==== 索引别名
 
 
-The Analyze API now returns the the `position` of the first token as `0`
-instead of `1`.
+别名过滤器中的字段现在不需要在创建别名的时候在映射中一定存在. 之前别名过滤器在别名创建的时候被
+解析并且解析的表格被缓存在内存中. 现在, 别名过滤器在请求的时候被解析并且过滤器中的字段从当前映射
+中解析.
 
-The `prefer_local` parameter has been removed. The `_analyze` API is a light
-operation and the caller shouldn't be concerned about whether it executes on
-the node that receives the request or another node.
+这也意味着索引别名现在支持 `has_parent` 和 `has_child` 查询.
 
-The `text()` method on `AnalyzeRequest` now returns `String[]` instead of
-`String`.
+如果没有找到匹配的别名, <<alias-retrieving, GET alias api>> 将会抛出一个异常. 这种变化为
+这个 API 带来的默认值和其它索引 API 一致. 可以在请求上使用 <<multi-index>> 选项来改变这种
+行为.
 
-==== Removed `id_cache` from clear cache api
+==== 基于文件的索引模板
 
-The <<indices-clearcache,clear cache>> API no longer supports the `id_cache`
-option.  Instead, use the `fielddata` option to clear the cache for the
-`_parent` field.
+索引模板不再在磁盘上配置. 使用 <<indices-templates,`_template`>> API 来代替.
 
+==== Analyze API变更
+
+
+Analyze API 现在返回第一个令牌的 `position` 为 `0` 而不是 `1`.
+
+`prefer_local` 参数已经被移除. `_analyze` API 是一个轻量级操作并且调用者不需要关心它是在
+接收请求的节点上执行还是在另外的节点上执行.
+
+`AnalyzeRequest` 中的 `text()` 方法现在返回 `String[]` 而不是 `String`.
+
+==== 从缓存清除API中移除 `id_cache`
+
+<<indices-clearcache,缓存清除>> API 不再支持 `id_cache` 选项. 相反, 使用 `fielddata`
+选项来为`_parent` 字段清除缓存.

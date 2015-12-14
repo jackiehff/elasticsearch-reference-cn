@@ -1,44 +1,34 @@
 [[breaking_20_crud_and_routing_changes]]
-=== CRUD and routing changes
+=== CRUD和路由变更
 
-==== Explicit custom routing
+==== 显示的自定义路由
 
-Custom `routing` values can no longer be extracted from the document body, but
-must be specified explicitly as part of the query string, or in the metadata
-line in the <<docs-bulk,`bulk`>> API.  See <<migration-meta-fields>> for an
-example.
+自定义 `routing` 值不再从文档主体中提取, 但是必须作为查询字符串的一部分或 在 <<docs-bulk,`bulk`>> API 中
+的元数据行中显示地指定. 参考 <<migration-meta-fields>> 中的示例.
 
-==== Routing hash function
+==== 路由哈希函数
 
-The default hash function that is used for routing has been changed from
-`djb2` to `murmur3`. This change should be transparent unless you relied on
-very specific properties of `djb2`. This will help ensure a better balance of
-the document counts between shards.
+用于路由的默认哈希函数已经从`djb2` 变为 `murmur3`. 这种改变是透明的, 除非你依赖 `djb2` 的
+一个非常特定的属性. 这将有助于确保分片间文档数量有一个更好的平衡.
 
-In addition, the following routing-related node settings have been deprecated:
+另外, 下面的路由相关的节点设置已经被废弃:
 
 `cluster.routing.operation.hash.type`::
 
-  This was an undocumented setting that allowed to configure which hash function
-  to use for routing. `murmur3` is now enforced on new indices.
+  这是一个没有文档记载的设置, 它允许配置路由使用哪种哈希算法. `murmur3` 现在被强制使用在新索引上.
 
 `cluster.routing.operation.use_type`::
 
-  This was an undocumented setting that allowed to take the `_type` of the
-  document into account when computing its shard (default: `false`). `false` is
-  now enforced on new indices.
+  这是一个没有文档记载的设置, 它允许计算分片时考虑文档的 `_type` (默认值: `false`). `false`
+  现在被强制使用在新索引上.
 
-==== Delete API with custom routing
+==== 使用自定义路由的删除 API
 
-The delete API used to be broadcast to all shards in the index which meant
-that, when using custom routing, the `routing` parameter was optional. Now,
-the delete request is forwarded only to the document holding the shard. If you
-are using custom routing then you should specify the `routing` value when
-deleting a document, just as is already required for the `index`, `create`,
-and `update` APIs.
+删除 API 过去被广播到索引中的所有分片, 这意味着, 当使用自定义路由时, `routing` 参数是可选的.
+现在, 删除请求只会转发给持有文档的分片. 当删除文档时, 如果你使用自定义路由, 那么你应该指定 `routing` 值,
+正如 `index`, `create` 以及 `update` API 已经要求的那样.
 
-To make sure that you never forget a routing value, make routing required with
-the following mapping:
+为了确保你不会忘记路由值, 下面的映射让路由必须:
 
 [source,js]
 ---------------------------
@@ -54,22 +44,20 @@ PUT my_index
 }
 ---------------------------
 
-==== All stored meta-fields returned by default
+==== 默认返回所有存储的元字段
 
-Previously, meta-fields like `_routing`, `_timestamp`, etc would only be
-included in a GET request if specifically requested with the `fields`
-parameter.  Now, all meta-fields which have stored values will be returned by
-default.  Additionally, they are now returned at the top level (along with
-`_index`, `_type`, and `_id`) instead of in the `fields` element.
+之前, 如果明确使用 `fields` 参数发起请求, 像 `_routing`, `_timestamp` 等这样的元字段只
+会包括在一个 GET 请求中.  现在默认会返回有存储值的所有元字段. 另外, 它们会在顶层返回 (和
+`_index`, `_type` 以及 `_id` 一样) 而不是在 `fields` 元素中.
 
-For instance, the following request:
+例如下面的请求:
 
 [source,sh]
 ---------------
 GET /my_index/my_type/1
 ---------------
 
-might return:
+可能会返回:
 
 [source,js]
 ---------------
@@ -83,23 +71,20 @@ might return:
   }
 }
 ---------------
-<1> The `_timestamp` is returned by default, and at the top level.
+<1> `_timestamp` 默认返回 ，并且在最顶层.
 
 
-==== Async replication
+==== 异步复制
 
-The `replication` parameter has been removed from all CRUD operations
-(`index`, `create`,  `update`, `delete`, `bulk`) as it interfered with the
-<<indices-synced-flush,synced flush>> feature.  These operations are now
-synchronous only and a request will only return once the changes have been
-replicated to all active shards in the shard group.
+`replication` 参数已经从所有 CRUD 操作(`index`, `create`,  `update`, `delete`, `bulk`)
+中移除, 因为它干扰了 <<indices-synced-flush,synced flush>> 功能. 这些操作现在都是同步的
+并且分片组中的变更被复制到所有活动分片时请求只会返回一次.
 
-Instead, use more client processes to send more requests in parallel.
+相反, 使用更多的客户端进程来并行的发送更多请求.
 
-==== Documents must be specified without a type wrapper
+==== 必须指定不带类型包装器的文档
 
-Previously, the document body could be wrapped in another object with the name
-of the `type`:
+之前文档主体可以被包装到另一个和 `type` 名称相同的对象中:
 
 [source,js]
 --------------------------
@@ -110,11 +95,10 @@ PUT my_index/my_type/1
   }
 }
 --------------------------
-<1> This `my_type` wrapper is not part of the document itself, but represents the document type.
+<1> `my_type` 包装器不是文档的一部分, 但是代表文档类型.
 
-This feature was deprecated before but could be reenabled with the
-`mapping.allow_type_wrapper` index setting.  This setting is no longer
-supported.  The above document should be indexed as follows:
+这个功能已经被废弃但是可以使用 `mapping.allow_type_wrapper` 这个索引设置重新启用. 将不再
+支持这个设置. 上面的文档应该使用如下方式索引:
 
 [source,js]
 --------------------------
@@ -126,5 +110,4 @@ PUT my_index/my_type/1
 
 ==== Term Vectors API
 
-Usage of `/_termvector` is deprecated in favor of `/_termvectors`.
-
+`/_termvector` 的使用已被废弃以支持 `/_termvectors`.
