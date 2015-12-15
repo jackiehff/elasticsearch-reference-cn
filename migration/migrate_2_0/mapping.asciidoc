@@ -1,25 +1,17 @@
 [[breaking_20_mapping_changes]]
-=== Mapping changes
+=== 映射(Mapping)变更
 
-A number of changes have been made to mappings to remove ambiguity and to
-ensure that conflicting mappings cannot be created.
+映射中的一些变更是为了消除歧义并确保不会创建冲突的映射.
 
-One major change is that dynamically added fields must have their mapping
-confirmed by the master node before indexing continues.  This is to avoid a
-problem where different shards in the same index dynamically add different
-mappings for the same field.  These conflicting mappings can silently return
-incorrect results and can lead to index corruption.
+一个主要的变更是在继续索引之前, 动态地新增字段必须要让映射获得 master 节点的确认. 这样做是为了避免相同索引中的不同分片为相同的字段动态地增加不同的映射这个问题.  这些冲突的映射可以默默地返回不正确的结果并且可能会导致索引失败.
 
-This change can make indexing slower when frequently adding many new fields.
-We are looking at ways of optimising this process but we chose safety over
-performance for this extreme use case.
+这个改变会导致频繁地新增许多字段时索引变慢.我们正在寻找优化这个过程的解决方式, 但是对于这种极端的使用场景我们选择安全性高于性能.
 
-==== Conflicting field mappings
+==== 冲突的字段映射
 
-Fields with the same name, in the same index, in different types, must have
-the same mapping, with the exception of the <<copy-to>>, <<dynamic>>,
-<<enabled>>, <<ignore-above>>, <<include-in-all>>, and <<properties>>
-parameters, which may have different settings per field.
+同一个索引不同类型中有着相同名称的字段必须要有相同的映射, 除了 <<copy-to>>, <<dynamic>>,
+<<enabled>>, <<ignore-above>>, <<include-in-all>> 以及 <<properties>>
+参数以外, 每个字段可能会有不同的设置.
 
 [source,js]
 ---------------
@@ -44,19 +36,15 @@ PUT my_index
   }
 }
 ---------------
-<1> The two `name` fields have conflicting mappings and will prevent Elasticsearch
-    from starting.
+<1> 两个 `name` 字段有冲突的映射并且会阻止 Elasticsearch 启动.
 
-Elasticsearch will not start in the presence of conflicting field mappings.
-These indices must be deleted or reindexed using a new mapping.
+由于存在冲突的字段映射, Elasticsearch 将不会启动. 这些索引必须要删除或使用一个新的映射重新索引.
 
-The `ignore_conflicts` option of the put mappings API has been removed.
-Conflicts can't be ignored anymore.
+put mappings API 的 `ignore_conflicts` 选项已经被移除. 冲突现在不能被忽略.
 
-==== Fields cannot be referenced by short name
+==== 字段不能被简称引用
 
-A field can no longer be referenced using its short name.  Instead, the full
-path to the field is required.  For instance:
+字段现在不能使用简称来引用了. 相反, 需要字段的全路径.  例如:
 
 [source,js]
 ---------------
@@ -78,25 +66,18 @@ PUT my_index
   }
 }
 ---------------
-<1> This field is referred to as `title`.
-<2> This field is referred to as `name.title`.
+<1> 这个字段被称为 `title`.
+<2> 这个字段被称为 `name.title`.
 
-Previously, the two `title` fields in the example above could have been
-confused with each other when using the short name `title`.
+在以前, 当使用简称 `title` 时, 上述示例中的两个 `title` 字段可能会相互混淆.
 
-==== Type name prefix removed
+==== 移除类型名称前缀
 
-Previously, two fields with the same name in two different types could
-sometimes be disambiguated by prepending the type name.  As a side effect, it
-would add a filter on the type name to the relevant query.  This feature was
-ambiguous -- a type name could be confused with a field name -- and didn't
-work everywhere e.g. aggregations.
+在以前, 在两个不同类型中有着相同名称的两个字段可以通过在字段名称前面附加类型名称来消除歧义.  副作用是它会在相关查询的类型名称上增加一个过滤器.  这个功能是有歧义的 -- 类型名称可能会和字段名称混淆 -- 并且不是所有地方都适用, 比如聚合.
 
-Instead, fields should be specified with the full path, but without a type
-name prefix.  If you wish to filter by the `_type` field, either specify the
-type in the URL or add an explicit filter.
+相反, 字段应该指定全路径而不用类型名称前缀. 如果你想要按 `_type` 字段过滤, 要么在 URL 中指定类型, 要么显示的增加一个过滤器.
 
-The following example query in 1.x:
+下面的示例在 1.x 版本中查询:
 
 [source,js]
 ----------------------------
@@ -110,7 +91,7 @@ GET my_index/_search
 }
 ----------------------------
 
-would be rewritten in 2.0 as:
+将会在 2.0 版本中被重写为:
 
 [source,js]
 ----------------------------
@@ -123,13 +104,12 @@ GET my_index/my_type/_search <1>
   }
 }
 ----------------------------
-<1> The type name can be specified in the URL to act as a filter.
-<2> The field name should be specified without the type prefix.
+<1> 类型名称可以作为一个过滤器在URL中指定.
+<2> 字段名称可以不指定类型前缀.
 
-==== Field names may not contain dots
+==== 字段名称不能包含圆点
 
-In 1.x, it was possible to create fields with dots in their name, for
-instance:
+在 1.x 版本中, 创建字段的名称中可以带圆点, 例如:
 
 [source,js]
 ----------------------------
@@ -153,55 +133,40 @@ PUT my_index
   }
 }
 ----------------------------
-<1> These two fields cannot be distinguised as both are referred to as `foo.bar`.
+<1> 这两个字段没办法区分, 因为它们都称为 `foo.bar`.
 
-You can no longer create fields with dots in the name.
+你不能再创建名称中带有圆点的字段.
 
-==== Type names may not start with a dot
+==== 类型名称不能以圆点开始
 
-In 1.x, Elasticsearch would issue a warning if a type name included a dot,
-e.g. `my.type`.  Now that type names are no longer used to distinguish between
-fields in different types, this warning has been relaxed: type names may now
-contain dots, but they may not *begin* with a dot.  The only exception to this
-is the special `.percolator` type.
+在 1.x 版本中, 如果类型名称中包含一个圆点, Elasticsearch 会发出一个警告, 例如 `my.type`.现在由于类型名称不再用于在不同的类型中区分字段, 这个警告已经放宽了: 类型名称现在可以包含圆点, 但是不能以圆点作为 *开始* .  唯一的例外是这个特殊的 `.percolator` 类型.
 
-==== Type names may not be longer than 255 characters
+==== 类型名称不能超过255个字符
 
-Mapping type names may not be longer than 255 characters.  Long type names
-will continue to function on indices created before upgrade, but it will not
-be possible create types with long names in new indices.
+映射的类型名称不能超过255个字符. 长的类型名称可以继续作用于升级之前创建的索引上, 但是不能在新的索引中创建名称很长的类型.
 
-==== Types may no longer be deleted
+==== 类型不再被删除
 
-In 1.x it was possible to delete a type mapping, along with all of the
-documents of that type, using the delete mapping API.  This is no longer
-supported, because remnants of the fields in the type could remain in the
-index, causing corruption later on.
+在 1.x 版本中可以使用 delete mapping API 删除一个类型映射, 连同所有这种类型的文档. 现在不再支持了, 因为类型中残留的字段可能仍然在索引中, 这样导致后面的失败.
 
-Instead, if you need to delete a type mapping, you should reindex to a new
-index which does not contain the mapping.  If you just need to delete the
-documents that belong to that type, then use the delete-by-query plugin
-instead.
+相反, 如果你要删除一个类型映射, 你应该重新索引一个不包含这个映射的新索引. 如果你只需要删除属于这种类型的文档, 那么使用 delete-by-query 插件来代替.
 
 [[migration-meta-fields]]
-==== Type meta-fields
+==== 类型元字段
 
-The <<mapping-fields,meta-fields>> associated with had configuration options
-removed, to make them more reliable:
+<<mapping-fields,元字段>> 相关的配置选项被删除, 这样使它们更可靠:
 
-* `_id` configuration can no longer be changed.  If you need to sort, use the <<mapping-uid-field,`_uid`>> field instead.
-* `_type` configuration can no longer be changed.
-* `_index` configuration can no longer be changed.
-* `_routing` configuration is limited to marking routing as required.
-* `_field_names` configuration is limited to disabling the field.
-* `_size` configuration is limited to enabling the field.
-* `_timestamp` configuration is limited to enabling the field, setting format and default value.
-* `_boost` has been removed.
-* `_analyzer` has been removed.
+* `_id` 配置不允许再改变.  如果你需要排序, 使用 <<mapping-uid-field,`_uid`>> 字段代替.
+* `_type` 配置不允许再改变.
+* `_index` 配置不允许再改变.
+* `_routing` 配置仅限于在需要的时候标记路由.
+* `_field_names` 配置仅限于禁用字段.
+* `_size` 配置仅限于启用字段.
+* `_timestamp` 配置仅限于启用字段, 设置格式以及默认值.
+* `_boost` 已经被移除.
+* `_analyzer` 已经被移除.
 
-Importantly, *meta-fields can no longer be specified as part of the document
-body.*  Instead, they must be specified in the query string parameters.  For
-instance, in 1.x, the `routing` could be specified as follows:
+重要的是, *元字段不再作为文档主体的一部分指定.*  相反, 它们必须在查询字符串参数中指定.  例如, 在 1.x 版本中, `routing` 可以像下面这样指定:
 
 [source,json]
 -----------------------------
@@ -226,10 +191,10 @@ PUT my_index/my_type/1 <2>
   "group": "foo"
 }
 -----------------------------
-<1> This 1.x mapping tells Elasticsearch to extract the `routing` value from the `group` field in the document body.
-<2> This indexing request uses a `routing` value of `foo`.
+<1> 这个 1.x 版本的映射告诉 Elasticsearch 从文档主体中的 `group` 字段中提取 `routing` 值.
+<2> 这个索引请求使用的 `routing` 值是 `foo`.
 
-In 2.0, the routing must be specified explicitly:
+在 2.0 版本中, routing 必须显示地指定:
 
 [source,json]
 -----------------------------
@@ -254,57 +219,40 @@ PUT my_index/my_type/1?routing=bar <2>
   "group": "foo"
 }
 -----------------------------
-<1> Routing can be marked as required to ensure it is not forgotten during indexing.
-<2> This indexing request uses a `routing` value of `bar`.
+<1> 路由可以标记为必须的以确保在索引期间不被忘记.
+<2> 这个索引请求使用的 `routing` 值是 `bar`.
 
-==== `_timestamp` and `_ttl` deprecated
+==== `_timestamp` 和 `_ttl` 已废弃
 
-The `_timestamp` and `_ttl` fields are deprecated, but will remain functional
-for the remainder of the 2.x series.
+`_timestamp` 和 `_ttl` 字段已被废弃, 但在 2.x系列的剩余部分中仍将保留其功能.
 
-Instead of the `_timestamp` field, use a normal <<date,`date`>> field and set
-the value explicitly.
+使用一个标准的 <<date,`date`>> 字段并显示地设置值, 而不是 `_timestamp` 字段.
 
-The current `_ttl` functionality will be replaced in a future version with a
-new implementation of TTL, possibly with different semantics, and will not
-depend on the `_timestamp` field.
+将会在未来的某个版本中使用一个新的 TTL 实现来取代目前的 `_ttl` 的功能, 可能会使用不同的语义并且不会依赖于 `_timestamp` 字段.
 
-==== Analyzer mappings
+==== 分析器映射
 
-Previously, `index_analyzer` and `search_analyzer` could be set separately,
-while the `analyzer` setting would set both.  The `index_analyzer` setting has
-been removed in favour of just using the `analyzer` setting.
+在以前, `index_analyzer` 和 `search_analyzer` 可以单独地设置, 而 `analyzer` 设置可以同时设置. `index_analyzer` 设置已经被移除以支持只使用 `analyzer` 设置.
 
-If just the `analyzer` is set, it will be used at index time and at search time.  To use a different analyzer at search time, specify both the `analyzer` and a `search_analyzer`.
+如果只设置 `analyzer` , 它将会在索引和搜索时使用.  要在搜索时使用不同的分析器, 同时指定 `analyzer` 和 `search_analyzer`.
 
-The `index_analyzer`, `search_analyzer`,  and `analyzer` type-level settings
-have also been removed, as is is no longer possible to select fields based on
-the type name.
+`index_analyzer`, `search_analyzer` 以及 `analyzer` 类型级别的设置也已经被移除, 因为不再基于类型名称来选择字段.
 
-The `_analyzer` meta-field, which allowed setting an analyzer per document has
-also been removed.  It will be ignored on older indices.
+允许为每个文档设置一个分析器的 `_analyzer` 元字段也已经被移除. 在原来的索引上它会被忽略.
 
-==== Date fields and Unix timestamps
+==== 日期字段和Unix时间戳
 
-Previously, `date` fields would first try to parse values as a Unix timestamp
--- milliseconds-since-the-epoch -- before trying to use their defined date
-`format`.  This meant that formats like `yyyyMMdd` could never work, as values
-would be interpreted as timestamps.
+在以前, `date` 字段首先会试着将值解析成一个Unix时间戳 -- 格林威治标准时间以来的毫秒数作 -- 在试着使用它们定义的日期 `format` 之前.  这意味着像 `yyyyMMdd` 这样的格式永远都不能工作, 因为值将被解析成时间戳.
 
-In 2.0, we have added two formats: `epoch_millis` and `epoch_second`.  Only
-date fields that use these formats will be able to parse timestamps.
+在 2.0 版本中, 我们新增了两种格式: `epoch_millis` 和 `epoch_second`.  只有使用了这些格式的日期字段才能解析时间戳.
 
-These formats cannot be used in dynamic templates, because they are
-indistinguishable from long values.
+这些格式不能用于动态的模板中, 因为它们无法区分长整型的值.
 
-==== Default date format
+==== 默认日期格式
 
-The default date format has changed from `date_optional_time` to
-`strict_date_optional_time`, which expects a 4 digit year, and a 2 digit month
-and day, (and optionally, 2 digit hour, minute, and second).
+默认的日期格式已经从 `date_optional_time` 变成 `strict_date_optional_time`, 它需要一个4位数的年, 和一个2位月和天(以及可选的2位数的小时, 分和秒).
 
-A dynamically added date field, by default, includes the `epoch_millis`
-format to support timestamp parsing.  For instance:
+一个动态新增的日期字段默认包括 `epoch_millis` 格式来支持时间戳解析.  例如:
 
 [source,js]
 -------------------------
@@ -313,28 +261,23 @@ PUT my_index/my_type/1
   "date_one": "2015-01-01" <1>
 }
 -------------------------
-<1> Has `format`: `"strict_date_optional_time||epoch_millis"`.
+<1> `format` 是: `"strict_date_optional_time||epoch_millis"`.
 
-==== `mapping.date.round_ceil` setting
+==== `mapping.date.round_ceil` 设置
 
-The `mapping.date.round_ceil` setting for date math parsing has been removed.
+用于日期数学解析的 `mapping.date.round_ceil` 设置已经被移除.
 
 [[migration-bool-fields]]
-==== Boolean fields
+==== 布尔字段
 
-Boolean fields used to have a string fielddata with `F` meaning `false` and `T`
-meaning `true`. They have been refactored to use numeric fielddata, with `0`
-for `false` and `1` for `true`. As a consequence, the format of the responses of
-the following APIs changed when applied to boolean fields: `0`/`1` is returned
-instead of `F`/`T`:
+布尔字段原来使用带有 `F` 的字符串 fielddata 表示 `false` 以及 `T` 表示 `true`. 它们已经被重构成使用数字 fielddata, `0`
+代表 `false`, `1` 代表 `true`. 因此, 当应用于布尔字段时, 下面的API的响应格式发生了改变: 返回 `0`/`1` 而不是 `F`/`T`:
 
-* <<search-request-fielddata-fields,fielddata fields>>
-* <<search-request-sort,sort values>>
-* <<search-aggregations-bucket-terms-aggregation,terms aggregations>>
+* <<search-request-fielddata-fields,fielddata 字段>>
+* <<search-request-sort,排序值>>
+* <<search-aggregations-bucket-terms-aggregation,terms 聚合>>
 
-In addition, terms aggregations use a custom formatter for boolean (like for
-dates and ip addresses, which are also backed by numbers) in order to return
-the user-friendly representation of boolean fields: `false`/`true`:
+另外, terms 聚合为布尔使用一个自定义格式化器 (像为日期和ip地址, 使用支持的数字) 以便返回用户友好的布尔字段描述: `false`/`true`:
 
 [source,js]
 ---------------
@@ -352,20 +295,15 @@ the user-friendly representation of boolean fields: `false`/`true`:
 ]
 ---------------
 
-==== `index_name` and `path` removed
+==== 移除 `index_name` 和 `path`
 
-The `index_name` setting was used to change the name of the Lucene field,
-and the `path` setting was used on `object` fields to determine whether the
-Lucene field should use the full path (including parent object fields), or
-just the final `name`.
+`index_name` 设置用于改变 Lucene 字段的名称, 而 `path` 设置用于 `object` 字段来决定Lucene 字段是使用全路径 (包括付对象字段) 还是仅仅是最终的 `name`.
 
-These setting have been removed as their purpose is better served with the
-<<copy-to>> parameter.
+这些设置已经被移除, 因为可以使用<<copy-to>> 参数更好的达到它们的目的.
 
-==== Murmur3 Fields
+==== Murmur3 字段
 
-Fields of type `murmur3` can no longer change `doc_values` or `index` setting.
-They are always mapped as follows:
+`murmur3` 类型的字段不能再改变 `doc_values` 或 `index` 设置. 它们总是被映射成如下这样:
 
 [source,js]
 ---------------------
@@ -376,56 +314,41 @@ They are always mapped as follows:
 }
 ---------------------
 
-==== Mappings in config files not supported
+==== 不支持配置文件中的映射
 
-The ability to specify mappings in configuration files has been removed. To
-specify default mappings that apply to multiple indexes, use
-<<indices-templates,index templates>> instead.
+在配置文件中指定映射的功能已经被移除. 想要指定默认映射来应用于多个索引, 可以使用 <<indices-templates,索引模板>> 代替.
 
-Along with this change, the following settings have been removed:
+伴随着这个改变, 下面的设置已经被移除:
 
 * `index.mapper.default_mapping_location`
 * `index.mapper.default_percolator_mapping_location`
 
-==== Fielddata formats
+==== Fielddata 格式
 
-Now that doc values are the default for fielddata, specialized in-memory
-formats have become an esoteric option. These fielddata formats have been removed:
+既然文档值是 fielddata 的默认值, 专用的内存格式已经变成一个难以理解的选项. 下面这些 fielddata 格式已经被移除:
 
-* `fst` on string fields
-* `compressed` on geo points
+* 字符串字段上的 `fst`
+* 地理位置点上的 `compressed`
 
-The default fielddata format will be used instead.
+将使用默认的 fielddata 格式.
 
-==== Posting and doc-values codecs
+==== Posting 和 doc-values 编解码器
 
-It is no longer possible to specify per-field postings and doc values formats
-in the mappings. This setting will be ignored on indices created before 2.0
-and will cause mapping parsing to fail on indices created on or after 2.0. For
-old indices, this means that new segments will be written with the default
-postings and doc values formats of the current codec.
+不能在映射中指定每个字段 postings 和 doc values 格式. 这个设置在2.0之前版本创建的索引上会被忽略并且会导致2.0或之后版本中创建的索引上映射解析失败.对于老的索引, 这意味着新的片段将使用当前编解码器的默认postings 和 doc values 格式来写.
 
-It is still possible to change the whole codec by using the `index.codec`
-setting. Please however note that using a non-default codec is discouraged as
-it could prevent future versions of Elasticsearch from being able to read the
-index.
+仍然可以通过使用 `index.codec` 设置来改变整个编解码器. 请无论如何要注意不建议使用一个非默认的编解码器, 因为它可能会导致未来版本的 Elasticsearch 不能读取索引.
 
-==== Compress and compress threshold
+==== 压缩和压缩阈
 
-The `compress` and `compress_threshold` options have been removed from the
-`_source` field and fields of type `binary`.  These fields are compressed by
-default.  If you would like to increase compression levels, use the new
-<<index-codec,`index.codec: best_compression`>> setting instead.
+`compress` 和 `compress_threshold` 选项已经从`_source` 字段以及类型 `binary` 的字段中
+移除.  这些字段默认会被压缩. 如果你想要提高压缩级别, 可以使用新的
+<<index-codec,`index.codec: best_compression`>> 设置来代替.
 
 ==== position_offset_gap
 
-The `position_offset_gap` option is renamed to 'position_increment_gap'. This was
-done to clear away the confusion. Elasticsearch's 'position_increment_gap' now is
-mapped directly to Lucene's 'position_increment_gap'
+`position_offset_gap` 选项被重命名为 'position_increment_gap'. 这样做是为了消除困惑.
+ Elasticsearch 的 'position_increment_gap' 现在直接映射到 Lucene 的 'position_increment_gap'
 
-The default `position_increment_gap` is now 100. Indexes created in Elasticsearch
-2.0.0 will default to using 100 and indexes created before that will continue
-to use the old default of 0. This was done to prevent phrase queries from
-matching across different values of the same term unexpectedly. Specifically,
-100 was chosen to cause phrase queries with slops up to 99 to match only within
-a single value of a field.
+`position_increment_gap` 现在的默认值是 100. Elasticsearch 2.0.0版本中创建的索引将使用
+默认值 100, 而 2.0.0 版本之前创建的索引将继续使用原来的默认值 0. 这样做是为了防止短语查询意外地
+在相同term的不同值间匹配. 特别是100被用来与99的短语查询仅匹配一个字段的单个值.

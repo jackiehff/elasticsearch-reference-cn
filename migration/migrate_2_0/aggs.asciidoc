@@ -1,70 +1,53 @@
 [[breaking_20_aggregation_changes]]
-=== Aggregation changes
+=== 聚合变更
 
-==== Min doc count defaults to zero
+==== 文档最小数量默认设置为0
 
-Both the `histogram` and `date_histogram` aggregations now have a default
-`min_doc_count` of `0` instead of `1`.
+`histogram` 和 `date_histogram` 聚合现在的 `min_doc_count` 的默认值是 `0` 而不是 `1`.
 
-==== Timezone for date field
+==== 用于日期字段的时区(Timezone)
 
-Specifying the `time_zone` parameter in queries or aggregations on fields of
-type `date` must now be either an ISO 8601 UTC offset, or a timezone id. For
-example, the value `+1:00` must now be written as `+01:00`.
+指定用于查询或聚合中类型为 `date` 的字段上的 `time_zone` 参数现在要么是一个 ISO 8601 UTC
+偏移量, 要么是一个时区ID. 例如, `+1:00` 这个值现在必须写成 `+01:00`.
 
-==== Time zones and offsets
+==== 时区和偏移量
 
-The `histogram` and the `date_histogram` aggregation now support a simplified
-`offset` option that replaces the previous `pre_offset` and `post_offset`
-rounding options. Instead of having to specify two separate offset shifts of
-the underlying buckets, the `offset` option moves the bucket boundaries in
-positive or negative direction depending on its argument.
+`histogram` 和 `date_histogram` 聚合现在支持一个简化的 `offset` 选项来替代之前的 `pre_offset`
+和 `post_offset` 舍入选项. 不用为底层的 bucket 指定两个单独的平行迁移, `offset` 选项根据
+它的参数将 bucket 边界往正的或者反的方向移动.
 
-The `date_histogram` options for `pre_zone` and `post_zone` are replaced by
-the `time_zone` option. The behavior of `time_zone` is equivalent to the
-former `pre_zone` option. Setting `time_zone` to a value like "+01:00" now
-will lead to the bucket calculations being applied in the specified time zone.
-The `key` is returned as the timestamp in UTC, but the `key_as_string` is
-returned in the time zone specified.
+`date_histogram` 选项 `pre_zone` 和 `post_zone` 现在被 `time_zone` 选项取代. `time_zone`
+的行为等同于之前的 `pre_zone` 选项. 现在将 `time_zone` 设置成像 "+01:00" 这样的值会导致
+bucket计算被应用到指定的时区.`key` 返回的是 UTC 时间戳, 但是 `key_as_string` 返回的是指定
+的时区.
 
-In addition to this, the `pre_zone_adjust_large_interval` is removed because
-we now always return dates and bucket keys in UTC.
+除此之外, 由于我们总是返回 UTC 日期和 bucket keys, `pre_zone_adjust_large_interval`
+已经被移除.
 
-==== Including/excluding terms
+==== 包括/排除 terms
 
-`include`/`exclude` filtering on the `terms` aggregation now uses the same
-syntax as <<regexp-syntax,regexp queries>> instead of the Java regular
-expression syntax. While simple regexps should still work, more complex ones
-might need some rewriting. Also, the `flags` parameter is no longer supported.
+`terms` 聚合上的 `include`/`exclude` 过滤器现在使用同样的 <<regexp-syntax,正则表达式查询>>
+语法而不是 Java 正则表达式语法. 虽然简单的正则表达式仍然可以工作, 但是更复杂可能需要重写. 此
+外, 不再支持 `flags` 参数.
 
-==== Boolean fields
+==== 布尔字段
 
-Aggregations on `boolean` fields will now return `0` and `1` as keys, and
-`"true"` and `"false"` as string keys.  See <<migration-bool-fields>> for more
-information.
+`boolean` 字段上的聚合现在返回 `0` 和 `1` 作为键, 以及 `"true"` 和 `"false"` 作为字符
+串键.  想要了解更多信息参见 <<migration-bool-fields>>.
 
 
-==== Java aggregation classes
+==== Java聚合类
 
-The `date_histogram` aggregation now returns a `Histogram` object in the
-response, and the `DateHistogram` class has been removed.  Similarly the
-`date_range`, `ipv4_range`, and `geo_distance` aggregations all return a
-`Range` object in the response, and the `IPV4Range`, `DateRange`, and
-`GeoDistance` classes have been removed.
+`date_histogram` 聚合现在在响应中返回一个 `Histogram` 对象, 并且 `DateHistogram` 类已
+经被移除.  类似地, `date_range`, `ipv4_range` 以及 `geo_distance` 聚合全都在响应中返回
+一个 `Range` 对象, 并且 `IPV4Range`, `DateRange` 以及 `GeoDistance` 类已经被移除.
 
-The motivation for this is to have a single response API for the Range and
-Histogram aggregations regardless of the type of data being queried.  To
-support this some changes were made in the `MultiBucketAggregation` interface
-which applies to all bucket aggregations:
+这样做的动机是为了对于 Range 和 Histogram 聚合能有一个简单的响应 API 而不用管被查询数据的类
+型.为了支持它, 在应用于所有 bucket 聚合的 `MultiBucketAggregation` 接口中做了一些改变:
 
-* The `getKey()` method now returns `Object` instead of `String`. The actual
-  object type returned depends on the type of aggregation requested (e.g. the
-  `date_histogram` will return a `DateTime` object for this method whereas a
-  `histogram` will return a `Number`).
-* A `getKeyAsString()` method has been added to return the String
-  representation of the key.
-* All other `getKeyAsX()` methods have been removed.
-* The `getBucketAsKey(String)` methods have been removed on all aggregations
-  except the `filters` and `terms` aggregations.
-
-
+* `getKey()` 方法现在返回 `Object` 而不是 `String`. 实际返回的对象类型取决于请求的聚合类
+型(例如, 对于这个方法 `date_histogram` 将会返回一个 `DateTime` 对象, 而 `histogram` 将
+返回一个 `Number` 对象).
+* 新增了一个用于返回键的字符串描述的 `getKeyAsString()` 方法.
+* 所有其它 `getKeyAsX()` 方法已经被移除.
+* `getBucketAsKey(String)` 方法已经在除了 `filters` 和 `terms` 聚合之外的所有聚合上移除.
