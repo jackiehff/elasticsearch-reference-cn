@@ -1,8 +1,7 @@
 [[cat-thread-pool]]
-== cat thread pool
+== cat 线程池
 
-The `thread_pool` command shows cluster wide thread pool statistics per node. By default the active, queue and rejected
-statistics are returned for the bulk, index and search thread pools.
+`thread_pool` 命令显示了集群中每个节点比较全面的线程池统计数据. bulk, 索引和搜索线程池默认不会返回活动,队列和被拒绝统计信息.
 
 [source,sh]
 --------------------------------------------------
@@ -11,7 +10,7 @@ host1 192.168.1.35 0 0 0 0 0 0 0 0 0
 host2 192.168.1.36 0 0 0 0 0 0 0 0 0
 --------------------------------------------------
 
-The first two columns contain the host and ip of a node.
+前两列包含节点的主机和IP.
 
 [source,sh]
 --------------------------------------------------
@@ -20,7 +19,7 @@ host1 192.168.1.35
 host2 192.168.1.36
 --------------------------------------------------
 
-The next three columns show the active queue and rejected statistics for the bulk thread pool.
+接下来的三列显示了bulk线程池中活动队列和被拒绝的队列的统计信息.
 
 [source,sh]
 --------------------------------------------------
@@ -28,9 +27,9 @@ bulk.active bulk.queue bulk.rejected
           0          0             0
 --------------------------------------------------
 
-The remaining columns show the active queue and rejected statistics of the index and search thread pool respectively.
+剩下的列分别显示了索引和搜索线程池的活动队列和被拒绝队列的统计信息.
 
-Also other statistics of different thread pools can be retrieved by using the `h` (header) parameter.
+不同线程池的其它统计数据也可以通过使用 `h` (头部) 参数来检索.
 
 [source,sh]
 --------------------------------------------------
@@ -40,71 +39,65 @@ host1                  0                0                 0
 host2                  0                0                 0
 --------------------------------------------------
 
-Here the host columns and the active, rejected and completed suggest thread pool statistic are displayed. The suggest
-thread pool won't be displayed by default, so you always need to be specific about what statistic you want to display.
+这里展示了 host 列以及 suggest线程池的活动的, 被拒绝的和已完成的线程统计数据. suggest 线程池默认不会显示, 因此你总是需要指定你想要展示的统计数据.
 
 [float]
-=== Available Thread Pools
+=== 可用的线程池
 
-Currently available <<modules-threadpool,thread pools>>:
+当前可用的 <<modules-threadpool,线程池>>:
 
 [cols="<,<,<",options="header"]
 |=======================================================================
-|Thread Pool |Alias |Description
-|`bulk` |`b` |Thread pool used for <<docs-bulk,bulk>> operations
-|`flush` |`f` |Thread pool used for <<indices-flush,flush>> operations
-|`generic` |`ge` |Thread pool used for generic operations (e.g. background node discovery)
-|`get` |`g` |Thread pool used for <<docs-get,get>> operations
-|`index` |`i` |Thread pool used for <<docs-index_,index>>/<<docs-delete,delete>> operations
-|`management` |`ma` |Thread pool used for management of Elasticsearch (e.g. cluster management)
-|`optimize` |`o` |Thread pool used for <<indices-optimize,optimize>> operations
-|`percolate` |`p` |Thread pool used for <<search-percolate,percolator>> operations
-|`refresh` |`r` |Thread pool used for <<indices-refresh,refresh>> operations
-|`search` |`s` |Thread pool used for <<search-search,search>>/<<search-count,count>> operations
-|`snapshot` |`sn` |Thread pool used for <<modules-snapshots,snapshot>> operations
-|`suggest` |`su` |Thread pool used for <<search-suggesters,suggester>> operations
-|`warmer` |`w` |Thread pool used for <<indices-warmers,index warm-up>> operations
+|线程池 |别名 |描述
+|`bulk` |`b` | <<docs-bulk,bulk>> 操作使用的线程池
+|`flush` |`f` | <<indices-flush,flush>> 操作使用的线程池
+|`generic` |`ge` |用于一般操作的线程池 (例如, 后台节点发现)
+|`get` |`g` | <<docs-get,get>> 操作使用的线程池
+|`index` |`i` | <<docs-index_,index>>/<<docs-delete,delete>> 操作使用的线程池
+|`management` |`ma` |用于 Elasticsearch 管理的线程池 (例如, 集群管理)
+|`optimize` |`o` | <<indices-optimize,optimize>> 操作使用的线程池
+|`percolate` |`p` | <<search-percolate,percolator>> 操作使用的线程池
+|`refresh` |`r` | <<indices-refresh,refresh>> 操作使用的线程池
+|`search` |`s` | <<search-search,search>>/<<search-count,count>> 操作使用的线程池
+|`snapshot` |`sn` | <<modules-snapshots,snapshot>> 操作使用的线程池
+|`suggest` |`su` | <<search-suggesters,suggester>> 操作使用的线程池
+|`warmer` |`w` | <<indices-warmers,index warm-up>> 操作使用的线程池
 |=======================================================================
 
-The thread pool name (or alias) must be combined with a thread pool field below
-to retrieve the requested information.
+线程池名称 (或别名) 必须和下面的一个线程池字段相结合来检索请求的信息.
 
 [float]
-==== Thread Pool Fields
+==== 线程池字段
 
-For each thread pool, you can load details about it by using the field names
-in the table below, either using the full field name (e.g. `bulk.active`) or
-its alias (e.g. `sa` is equivalent to `search.active`).
+对于每个线程池, 你可以使用下面表格中的字段名称来加载关于线程池的详细信息, 既可以使用全字段名 (例如 `bulk.active`) 也可以使用字段 (例如 `sa` 等同于 `search.active`).
 
 [cols="<,<,<",options="header"]
 |=======================================================================
-|Field Name |Alias |Description
-|`type` |`t` |The current (*) type of thread pool (`cached`, `fixed` or `scaling`)
-|`active` |`a` |The number of active threads in the current thread pool
-|`size` |`s` |The number of threads in the current thread pool
-|`queue` |`q` |The number of tasks in the queue for the current thread pool
-|`queueSize` |`qs` |The maximum number of tasks in the queue for the current thread pool
-|`rejected` |`r` |The number of rejected threads in the current thread pool
-|`largest` |`l` |The highest number of active threads in the current thread pool
-|`completed` |`c` |The number of completed threads in the current thread pool
-|`min` |`mi` |The configured minimum number of active threads allowed in the current thread pool
-|`max` |`ma` |The configured maximum number of active threads allowed in the current thread pool
-|`keepAlive` |`k` |The configured keep alive time for threads
+|字段名 |别名 |描述
+|`type` |`t` |线程池当前类型 (*) (`cached`, `fixed` 或 `scaling`)
+|`active` |`a` |当前线程池中活跃线程数量
+|`size` |`s` |当前线程池中的线程数量
+|`queue` |`q` |当前线程池队列中任务数量
+|`queueSize` |`qs` |当前线程池队列中最大任务数量
+|`rejected` |`r` |当前线程池中被拒绝的线程数
+|`largest` |`l` |当前线程池中活动线程的最高值
+|`completed` |`c` |当前线程池中已完成的线程数
+|`min` |`mi` |当前线程池中允许配置的最小活动线程数量
+|`max` |`ma` |当前线程池中允许配置的最大活动线程数量
+|`keepAlive` |`k` |线程配置的生存时间
 |=======================================================================
 
 [float]
-=== Other Fields
+=== 其它字段
 
-In addition to details about each thread pool, it is also convenient to get an
-understanding of where those thread pools reside.  As such, you can request
-other details like the `ip` of the responding node(s).
+除了关于每个线程池的详细信息之外, 也可以很方便的了解到这些线程池在哪儿. 同样的你也可以请求其它像相应节点的  `ip` 这样的详细信息.
 
 [cols="<,<,<",options="header"]
 |=======================================================================
-|Field Name |Alias |Description
-|`id` |`nodeId` |The unique node ID
-|`pid` |`p` |The process ID of the running node
-|`host` |`h` |The hostname for the current node
-|`ip` |`i` |The IP address for the current node
-|`port` |`po` |The bound transport port for the current node
+|字段名 |别名 |描述
+|`id` |`nodeId` |唯一的节点 ID
+|`pid` |`p` |运行节点的进程 ID
+|`host` |`h` |当前节点的主机名
+|`ip` |`i` |当前节点的IP地址
+|`port` |`po` |当前节点绑定的传输端口
 |=======================================================================

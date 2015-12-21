@@ -1,9 +1,7 @@
 [[cat-health]]
-== cat health
+== cat 健康
 
-`health` is a terse, one-line representation of the same information
-from `/_cluster/health`. It has one option `ts` to disable the
-timestamping.
+`health` 是从 `/_cluster/health` 获取同样信息的一个简洁的, 一行表示. 它有一个用于禁用时间戳的选项 `ts`.
 
 [source,sh]
 --------------------------------------------------
@@ -14,8 +12,7 @@ cluster status nodeTotal nodeData shards pri relo init unassign tasks
 foo     green          3        3      3   3    0    0        0     0
 --------------------------------------------------
 
-A common use of this command is to verify the health is consistent
-across nodes:
+这个命令的通常用法是校验所有节点的健康状况是一致的:
 
 [source,sh]
 --------------------------------------------------
@@ -28,10 +25,7 @@ across nodes:
 1384309218 18:20:18 foo green 3 3 3 3 0 0 0 0
 --------------------------------------------------
 
-A less obvious use is to track recovery of a large cluster over
-time. With enough shards, starting a cluster, or even recovering after
-losing a node, can take time (depending on your network & disk). A way
-to track its progress is by using this command in a delayed loop:
+一个不常使用的方式是跟踪一个大型集群的恢复时间. 当有足够数量的分片时, 启动一个集群或者甚至是失去一个节点后的恢复都可能需要花费点时间 (取决于你的网络和磁盘).跟踪其进展的一种方式是在一个延迟的循环中使用这个命令:
 
 [source,sh]
 --------------------------------------------------
@@ -43,19 +37,12 @@ to track its progress is by using this command in a delayed loop:
 ^C
 --------------------------------------------------
 
-In this scenario, we can tell that recovery took roughly four minutes.
-If this were going on for hours, we would be able to watch the
-`UNASSIGNED` shards drop precipitously.  If that number remained
-static, we would have an idea that there is a problem.
+在上述场景中, 我们可以看出恢复大概花了四分钟. 如果这持续了几个小时, 我们可以看到 `UNASSIGNED` 分片数量急剧下降. 如果这个数字保持不变, 我们就可以认为出现问题了.
 
 [float]
 [[timestamp]]
-=== Why the timestamp?
+=== 为什么使用时间戳?
 
-You typically are using the `health` command when a cluster is
-malfunctioning.  During this period, it's extremely important to
-correlate activities across log files, alerting systems, etc.
+当集群出现故障时你通常在使用 `health` 命令. 在这期间, 将日志文件,报警系统等的活动关联起来是极其重要的.
 
-There are two outputs.  The `HH:MM:SS` output is simply for quick
-human consumption.  The epoch time retains more information, including
-date, and is machine sortable if your recovery spans days.
+有两种输出. `HH:MM:SS` 输出只是为了快速地消费. 新纪元时间保留了更多的信息, 包括日期, 并且如果你的恢复跨天它是机器可排序的.

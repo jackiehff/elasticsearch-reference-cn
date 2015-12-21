@@ -1,8 +1,7 @@
 [[cat-count]]
-== cat count
+== cat 计数
 
-`count` provides quick access to the document count of the entire
-cluster, or individual indices.
+`count` 提供了整个集群或单个索引中文档数量的快速访问.
 
 [source,sh]
 --------------------------------------------------

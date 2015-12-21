@@ -1,11 +1,9 @@
 [[cat-shards]]
-== cat shards
+== cat 分片
 
-The `shards` command is the detailed view of what nodes contain which
-shards.  It will tell you if it's a primary or replica, the number of
-docs, the bytes it takes on disk, and the node where it's located.
+`shards` 命令是什么节点包含了哪些分片的详细视图. 它会告诉你它是主分片还是副本, 文档的数量, 它在磁盘上占用的字节大小以及它在哪个节点上.
 
-Here we see a single index, with three primary shards and no replicas:
+下面我们看到一个单一索引, 它有着三个主分片并且没有副本:
 
 [source,sh]
 --------------------------------------------------
@@ -16,11 +14,9 @@ wiki1 2 p STARTED 3973 38.1mb 192.168.56.20 Commander Kraken
 --------------------------------------------------
 
 [[index-pattern]]
-=== Index pattern
+=== 索引模式
 
-If you have many shards, you may wish to limit which indices show up
-in the output.  You can always do this with `grep`, but you can save
-some bandwidth by supplying an index pattern to the end.
+如果你有很多分片, 你可能想要限制输出中展示的索引. 你可以使用 `grep` 来这么做, 但是通过在末尾提供一个索引模式你可以节约一些带宽.
 
 [source,sh]
 --------------------------------------------------
@@ -32,10 +28,9 @@ wiki2 2 p STARTED 275 7.8mb 192.168.56.20 Commander Kraken
 
 
 [[relocation]]
-=== Relocation
+=== 重新分配
 
-Let's say you've checked your health and you see two relocating
-shards.  Where are they from and where are they going?
+假设你已经检查了集群健康并且你看到两个重新分配的分片. 它们来自于哪儿并且它们要到哪儿去?
 
 [source,sh]
 --------------------------------------------------
@@ -47,10 +42,9 @@ wiki1 1 r RELOCATING 3013 29.6mb 192.168.56.10 Stiletto -> 192.168.56.30 Frankie
 --------------------------------------------------
 
 [[states]]
-=== Shard states
+=== 分片状态
 
-Before a shard can be used, it goes through an `INITIALIZING` state.
-`shards` can show you which ones.
+分片在可以被使用之前, 它经过一个 `INITIALIZING` 状态. `shards` 可以向你展示是哪一个.
 
 [source,sh]
 --------------------------------------------------
@@ -65,9 +59,7 @@ wiki1 2 r INITIALIZING    0   14mb 192.168.56.10 Stiletto
 wiki1 2 p STARTED      3973 38.1mb 192.168.56.20 Commander Kraken
 --------------------------------------------------
 
-If a shard cannot be assigned, for example you've overallocated the
-number of replicas for the number of nodes in the cluster, they will
-remain `UNASSIGNED`.
+如果分片不能被分配, 例如你已经为集群中的节点过度分配了副本数量, 它们将会保持 `UNASSIGNED` 状态.
 
 [source,sh]
 --------------------------------------------------

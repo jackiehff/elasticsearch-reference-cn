@@ -1,7 +1,7 @@
 [[cat-nodeattrs]]
-== cat nodeattrs
+== cat 节点属性
 
-The `nodeattrs` command shows custom node attributes.
+`nodeattrs` 命令展示了自定义节点属性.
 
 ["source","sh",subs="attributes,callouts"]
 --------------------------------------------------
@@ -11,7 +11,7 @@ Black Bolt epsilon 192.168.1.8 rack  rack314
 Black Bolt epsilon 192.168.1.8 azone us-east-1
 --------------------------------------------------
 
-The first few columns give you basic info per node.
+开始的几列提供了每个节点的基本信息.
 
 
 ["source","sh",subs="attributes,callouts"]
@@ -22,7 +22,7 @@ Black Bolt epsilon 192.168.1.8
 --------------------------------------------------
 
 
-The attr and value columns can give you a picture of custom node attributes.
+attr 和 value 列可以让你了解自定义节点属性.
 
 [source,sh]
 --------------------------------------------------
@@ -32,22 +32,14 @@ azone us-east-1
 --------------------------------------------------
 
 [float]
-=== Columns
+=== 列
 
-Below is an exhaustive list of the existing headers that can be
-passed to `nodes?h=` to retrieve the relevant details in ordered
-columns.  If no headers are specified, then those marked to Appear
-by Default will appear. If any header is specified, then the defaults
-are not used.
+下面是现有头部的一个详细列表, 它们可以传递给 `nodes?h=` 来在有序列中解析相关的信息.  如果没有指定头部, 那么那些标记为默认显示的将会显示. 如果指定了任意一个头部, 则不会使用默认值.
 
-Aliases can be used in place of the full header name for brevity.
-Columns appear in the order that they are listed below unless a
-different order is specified (e.g., `h=attr,value` versus `h=value,attr`).
+为了尽量简洁, 可以使用别名来代替头部的全名.列按照下面列举出来的顺序显示, 除非指定一个不同的顺序 (例如, `h=attr,value` 相对于 `h=value,attr`).
 
-When specifying headers, the headers are not placed in the output
-by default.  To have the headers appear in the output, use verbose
-mode (`v`). The header name will match the supplied value (e.g.,
-`pid` versus `p`).  For example:
+当指定了头部时, 这个头部默认不会放置在输出中. 想要让头部显示在输出中, 使用 verbose
+模式 (`v`). 头部名称将会匹配提供的值 (例如, `pid` 相对于 `p`).  例如:
 
 ["source","sh",subs="attributes,callouts"]
 --------------------------------------------------
@@ -59,13 +51,13 @@ Black Bolt 28000 azone us-east-1
 
 [cols="<,<,<,<,<",options="header",subs="normal"]
 |=======================================================================
-|Header |Alias |Appear by Default |Description |Example
-|`node`|`name`|Yes|Name of the node|Black Bolt
-|`id` |`nodeId` |No |Unique node ID |k0zy
-|`pid` |`p` |No |Process ID |13061
-|`host` |`h` |Yes |Host name |n1
-|`ip` |`i` |Yes |IP address |127.0.1.1
-|`port` |`po` |No |Bound transport port |9300
-|`attr` | `attr.name` | Yes | Attribute name | rack
-|`value` | `attr.value` | Yes | Attribute value | rack123
+|头部 |别名 |默认显示 |描述 |示例
+|`node`|`name`|Yes| 节点名称|Black Bolt
+|`id` |`nodeId` |No |唯一的节点 ID |k0zy
+|`pid` |`p` |No |进程 ID |13061
+|`host` |`h` |Yes |主机名 |n1
+|`ip` |`i` |Yes |IP地址 |127.0.1.1
+|`port` |`po` |No |绑定的传输端口 |9300
+|`attr` | `attr.name` | Yes | 属性名 | rack
+|`value` | `attr.value` | Yes | 属性值 | rack123
 |=======================================================================

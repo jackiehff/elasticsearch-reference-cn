@@ -1,7 +1,7 @@
 [[cat-plugins]]
-== cat plugins
+== cat 插件
 
-The `plugins` command provides a view per node of running plugins. This information *spans nodes*.
+`plugins` 命令提供了每个节点上运行的插件的一个视图. 这个信息 *跨节点*.
 
 [source,sh]
 ------------------------------------------------------------------------------
@@ -17,4 +17,4 @@ Abraxas kopf            0.5.2          s              /_plugin/kopf/
 Abraxas segmentspy      NA             s              /_plugin/segmentspy/
 -------------------------------------------------------------------------------
 
-We can tell quickly how many plugins per node we have and which versions.
+我们可以很快的看出每个节点上的插件数量以及插件的版本.

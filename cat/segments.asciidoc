@@ -1,9 +1,7 @@
 [[cat-segments]]
-== cat segments
+== cat 分段
 
-The `segments` command provides low level information about the segments
-in the shards of an index. It provides information similar to the
-link:indices-segments.html[_segments] endpoint.
+`segments` 命令提供了关于索引分片中分段的一般信息. 它提供了和 link:indices-segments.html[_segments] 端点类似的信息.
 
 [source,sh]
 --------------------------------------------------
@@ -22,50 +20,34 @@ test1 3     p      192.168.2.105 _2               2          1
                  0 2.9kb        7818 false     true       4.10.2  true
 --------------------------------------------------
 
-The output shows information about index names and shard numbers in the first
-two columns.
+输出的前两列显示了索引名称和分片数量信息.
 
-If you only want to get information about segments in one particular index,
-you can add the index name in the URL, for example `/_cat/segments/test`. Also,
-several indexes can be queried like `/_cat/segments/test,test1`
+如果你只想要获取某个特定索引中的片段信息, 你可以在 URL 中增加索引名称, 例如 `/_cat/segments/test`.
+另外, 有些索引可以像 `/_cat/segments/test,test1` 这样查询
 
 
-The following columns provide additional monitoring information:
+下面的列提供了附加的监控信息:
 
-prirep::        Whether this segment belongs to a primary or replica shard.
+prirep::        这个分片是否属于一个主分片或是复制分片.
 
-ip::            The ip address of the segments shard.
+ip::            分段分片的IP地址.
 
-segment::       A segment name, derived from the segment generation. The name
-                is internally used to generate the file names in the directory
-                of the shard this segment belongs to.
+segment::       分段名称是从段代派生二来. 这个名称内部用于在分段所属分片的目录中生成文件名称.
 
-generation::    The generation number is incremented with each segment that is written.
-                The name of the segment is derived from this generation number.
+generation::    代数随着每个分段被写而增加.分段名称派生自这个段代.
 
-docs.count::    The number of non-deleted documents that are stored in this segment.
+docs.count::    这个分段中存储的未被删除的文档数量.
 
-docs.deleted::  The number of deleted documents that are stored in this segment.
-                It is perfectly fine if this number is greater than 0, space is
-                going to be reclaimed when this segment gets merged.
+docs.deleted::  这个分段中存储的被删除的文档数量. 数量大于0是完全可以的, 当分段合并时空间会被回收.
 
-size::          The amount of disk space that this segment uses.
+size::          分段使用的磁盘空间大小.
 
-size.memory::   Segments store some data into memory in order to be searchable efficiently.
-                This column shows the number of bytes in memory that are used.
+size.memory::   为了被高效的搜索, 分段将一些数据存储在内存中.这一列显示了内存中已使用的字节大小.
 
-committed::     Whether the segment has been sync'ed on disk. Segments that are
-                committed would survive a hard reboot. No need to worry in case
-                of false, the data from uncommitted segments is also stored in
-                the transaction log so that Elasticsearch is able to replay
-                changes on the next start.
+committed::     分段是否被同步到了磁盘上. 已经提交的分段会从一次硬重启中生存下来. 如果为false也不用担心, 未提交分段上的数据也存储在事务日志中, 因此在下次启动时 Elasticsearch 可以重播变更.
 
-searchable::    True if the segment is searchable. A value of false would most
-                likely mean that the segment has been written to disk but no
-                refresh occurred since then to make it searchable.
+searchable::    如果分段可以被搜索则为True. 值为 false 很可能意味着为了让它可以被搜索, 分段已经被写到磁盘上, 但是从那之后没有发生刷新.
 
-version::       The version of Lucene that has been used to write this segment.
+version::       用来写这个分段的 Lucene 的版本.
 
-compound::      Whether the segment is stored in a compound file. When true, this
-                means that Lucene merged all files from the segment in a single
-                one in order to save file descriptors.
+compound::      分段是否存储在一个复合文件中. 当为 true 时, 意味着为了保存文件描述符 Lucene 将分段的所有文件合并到单个文件中.

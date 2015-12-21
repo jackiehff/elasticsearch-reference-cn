@@ -1,8 +1,7 @@
 [[cat-allocation]]
-== cat allocation
+== cat 分配
 
-`allocation` provides a snapshot of how many shards are allocated to each data node
-and how much disk space they are using.
+`allocation` 提供了每个数据节点分配的分片数量以及它们使用了多少磁盘空间的一个快照.
 
 [source,sh]
 --------------------------------------------------
@@ -13,5 +12,4 @@ shards diskUsed diskAvail diskRatio ip            node
      1    5.5gb    72.3gb      7.6% 192.168.56.20 Adam II
 --------------------------------------------------
 
-Here we can see that each node has been allocated a single shard and
-that they're all using about the same amount of space.
+这里我们可以看到每个节点已经分配了一个分片并且它们使用了同样多的磁盘空间.

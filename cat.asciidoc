@@ -1,31 +1,25 @@
 [[cat]]
-= cat APIs
+= cat API
 
 [partintro]
 --
 
 ["float",id="intro"]
-== Introduction
+== 介绍
 
-JSON is great... for computers.  Even if it's pretty-printed, trying
-to find relationships in the data is tedious.  Human eyes, especially
-when looking at an ssh terminal, need compact and aligned text.  The
-cat API aims to meet this need.
+对于计算机来说 JSON 很棒. 即使它是输出美化的, 视图找到数据中的关系是冗长乏味的. 当人类的眼睛看着ssh终端时,  需要的是紧凑和对齐的文本. cat API 旨在满足这样的需求.
 
-All the cat commands accept a query string parameter `help` to see all
-the headers and info they provide, and the `/_cat` command alone lists all
-the available commands.
+所有的 cat 命令都接受一个查询字符串参数 `help` 来查看它们提供的所有头部和信息, 并且单独使用 `/_cat` 命令可以列出所有可使用的命令.
 
 [float]
 [[common-parameters]]
-== Common parameters
+== 通用参数
 
 [float]
 [[verbose]]
 === Verbose
 
-Each of the commands accepts a query string parameter `v` to turn on
-verbose output.
+每个命令都接受一个查询字符串参数 `v` 来打开详细输出.
 
 [source,sh]
 --------------------------------------------------
@@ -38,8 +32,7 @@ EGtKWZlWQYWDmX29fUnp3Q 127.0.0.1 Grey, Sara
 [[help]]
 === Help
 
-Each of the commands accepts a query string parameter `help` which will
-output its available columns.
+每个命令都接受一个查询字符串参数 `help`, 它会输出可用的列.
 
 [source,sh]
 --------------------------------------------------
@@ -51,10 +44,9 @@ node | node name
 
 [float]
 [[headers]]
-=== Headers
+=== 头部
 
-Each of the commands accepts a query string parameter `h` which forces
-only those columns to appear.
+每个命令都接受一个查询字符串参数 `h`, 它强制只显示那些列.
 
 [source,sh]
 --------------------------------------------------
@@ -66,26 +58,15 @@ only those columns to appear.
 192.168.56.30 9300 43.9 Ramsey, Doug
 --------------------------------------------------
 
-You can also request multiple columns using simple wildcards like
-`/_cat/thread_pool?h=ip,bulk.*` to get all headers (or aliases) starting
-with `bulk.`.
+你也可以使用简单的通配符来请求多个字段, 像 `/_cat/thread_pool?h=ip,bulk.*` 这样来获取以 `bulk.`开头的所有头部 (或别名).
 
 [float]
 [[numeric-formats]]
-=== Numeric formats
+=== 数字格式
 
-Many commands provide a few types of numeric output, either a byte
-value or a time value.  By default, these types are human-formatted,
-for example, `3.5mb` instead of `3763212`.  The human values are not
-sortable numerically, so in order to operate on these values where
-order is important, you can change it.
+许多命令都提供了几种类型的数字输出, 要么是字节值要么是时间值. 这些类型默认使用人类可读的格式, 例如, `3.5mb` 而不是 `3763212`.  这些人类可读的值不是可排序的数字, 因此为了在这些值上做排序操作, 你可以改变它.
 
-Say you want to find the largest index in your cluster (storage used
-by all the shards, not number of documents).  The `/_cat/indices` API
-is ideal.  We only need to tweak two things.  First, we want to turn
-off human mode.  We'll use a byte-level resolution.  Then we'll pipe
-our output into `sort` using the appropriate column, which in this
-case is the eight one.
+假设你想要找到集群中最大的索引 (所有分片使用的存储空间, 而不是文档数量). `/_cat/indices` API 很完美.  我们只需要调整两件事.  首先, 我们想要关闭人类模式.我们将会使用一个字节级别的解决方案.  然后我们将使用合适的列将输出用管道输入到 `sort` 中, 在本例中是第八个.
 
 [source,sh]
 --------------------------------------------------

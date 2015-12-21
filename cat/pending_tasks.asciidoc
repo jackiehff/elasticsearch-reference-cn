@@ -1,9 +1,7 @@
 [[cat-pending-tasks]]
-== cat pending tasks
+== cat 待处理的任务
 
-`pending_tasks` provides the same information as the
-<<cluster-pending,`/_cluster/pending_tasks`>> API in a
-convenient tabular format.
+`pending_tasks` 提供了和 <<cluster-pending,`/_cluster/pending_tasks`>> API 相同的信息, 它使用了一种方便的列表格式.
 
 [source,sh]
 --------------------------------------------------

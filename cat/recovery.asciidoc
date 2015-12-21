@@ -1,16 +1,13 @@
 [[cat-recovery]]
-== cat recovery
+== cat 恢复
 
-The `recovery` command is a view of index shard recoveries, both on-going and previously
-completed. It is a more compact view of the JSON <<indices-recovery,recovery>> API.
+`recovery` 命令是索引分片恢复的一个视图, 包括正在进行的和之前已经完成的. 它是 JSON <<indices-recovery,recovery>> API 的一个更紧凑的视图.
 
-A recovery event occurs anytime an index shard moves to a different node in the cluster.
-This can happen during a snapshot recovery, a change in replication level, node failure, or
-on node startup. This last type is called a local store recovery and is the normal
-way for shards to be loaded from disk when a node starts up.
+恢复事件发生在索引分片移动到集群中一个不同节点上的任何时候.
+它可以发生在快照恢复期间, 复制级别改变期间, 节点失败或节点启动时. 最后的类型被称为本地存储恢复
+并且对于当节点启动时从磁盘上加载的分片来说是一般方式.
 
-As an example, here is what the recovery state of a cluster may look like when there
-are no shards in transit from one node to another:
+下面的示例展示了当没有分片从一个节点转移到另一个节点时集群的恢复状态看起来是什么样的:
 
 [source,sh]
 ----------------------------------------------------------------------------
@@ -21,12 +18,9 @@ wiki  1     245  store done  hostA  hostA  33    100.0%  24501912 100.0%
 wiki  2     230  store done  hostA  hostA  36    100.0%  30267222 100.0%
 ---------------------------------------------------------------------------
 
-In the above case, the source and target nodes are the same because the recovery
-type was store, i.e. they were read from local storage on node start.
+在上面的例子中, 由于恢复类型是store, 源节点和目标节点是一样的, 例如, 它们是在节点启动时从本地存储中读取的.
 
-Now let's see what a live recovery looks like. By increasing the replica count
-of our index and bringing another node online to host the replicas, we can see
-what a live shard recovery looks like.
+现在让我们来看一下真实的恢复看起来是什么样的. 通过增加索引的副本数量以及将另一个节点带上线来招待这些副本, 我们可以看到一个真是的分片恢复看起来是什么样的.
 
 [source,sh]
 ----------------------------------------------------------------------------
@@ -43,13 +37,10 @@ wiki  2     1689 replica index hostA  hostB  4     75.0%   28681851 40.2%
 wiki  2     5317 store done  hostA  hostA  36    100.0%  30267222 100.0%
 ----------------------------------------------------------------------------
 
-We can see in the above listing that our 3 initial shards are in various stages
-of being replicated from one node to another. Notice that the recovery type is
-shown as `replica`. The files and bytes copied are real-time measurements.
+在上面列出的信息中可以看到我们3个初始的分片处于从一个节点复制到另一个节点中的不同阶段. 注意到恢复类型显示为 `replica`. 拷贝的文件和字节大小是实时计算的.
 
-Finally, let's see what a snapshot recovery looks like. Assuming I have previously
-made a backup of my index, I can restore it using the <<modules-snapshots,snapshot and restore>>
-API.
+最后, 让我们看一下快照恢复看起来是什么样子的. 假设之前我已经备份了索引, 我可以使用 <<modules-snapshots,快照和恢复>>
+API 来恢复它.
 
 [source,sh]
 --------------------------------------------------------------------------------
@@ -63,8 +54,3 @@ imdb  2     2790 snapshot index imdb       snap_1   85    0.0%    12072 0.0%
 imdb  3     2796 snapshot index imdb       snap_1   85    2.4%    12048 7.2%
 imdb  4     819  snapshot init  imdb       snap_1   0     0.0%    0     0.0%
 --------------------------------------------------------------------------------
-
-
-
-
-

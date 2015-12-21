@@ -1,8 +1,7 @@
 [[cat-fielddata]]
 == cat fielddata
 
-`fielddata` shows how much heap memory is currently being used by fielddata 
-on every data node in the cluster.
+`fielddata` 展示了集群中每个数据节点上的 fielddata 当前使用的堆内存大小.
 
 [source,sh]
 --------------------------------------------------
@@ -13,7 +12,7 @@ waPCbitNQaCL6xC8VxjAwg myhost2 10.20.100.201 Adversary     435.2kb 159.8kb 275.3
 yaDkp-G3R0q1AJ-HUEvkSQ myhost3 10.20.100.202 Microchip     284.6kb 109.2kb 175.3kb
 --------------------------------------------------
 
-Fields can be specified either as a query parameter, or in the URL path:
+字段既可以作为查询参数指定, 也可以在 URL 路径中指定:
 
 [source,sh]
 --------------------------------------------------
@@ -30,5 +29,4 @@ waPCbitNQaCL6xC8VxjAwg myhost2 10.20.100.201 Adversary     435.2kb 159.8kb 275.3
 yaDkp-G3R0q1AJ-HUEvkSQ myhost3 10.20.100.202 Microchip     284.6kb 109.2kb 175.3kb
 --------------------------------------------------
 
-The output shows the total fielddata and then the individual fielddata for the
-`body` and `text` fields.
+输出展示了 fielddata 总大小, 然后是 `body` 和 `text` 字段各自占用的 fielddata 大小.

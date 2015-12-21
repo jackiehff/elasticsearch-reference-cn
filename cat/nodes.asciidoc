@@ -1,7 +1,7 @@
 [[cat-nodes]]
-== cat nodes
+== cat 节点
 
-The `nodes` command shows the cluster topology.
+`nodes` 命令展示了集群的拓扑结构.
 
 ["source","sh",subs="attributes,callouts"]
 --------------------------------------------------
@@ -11,8 +11,7 @@ _uhJ 5134 192.168.56.10 9300 {version} {jdk} 72.1gb 33.3 93.9mb 85 239.1mb 0.06 
 HfDp 4562 192.168.56.20 9300 {version} {jdk} 72.2gb 74.5 93.9mb 83 239.1mb 0.12 3.4h d m Zarek
 --------------------------------------------------
 
-The first few columns tell you where your nodes live.  For sanity it
-also tells you what version of ES and the JVM each one runs.
+前面几列告诉你节点在哪儿.同时它还告诉你每个节点运行的 ES 版本以及 JVM 版本.
 
 ["source","sh",subs="attributes,callouts"]
 --------------------------------------------------
@@ -23,7 +22,7 @@ ActN   3806 192.168.56.20 9300 {version}   {jdk}
 --------------------------------------------------
 
 
-The next few give a picture of your heap, memory, and load.
+接下来几列给出堆, 内存以及负载的一个快照.
 
 [source,sh]
 --------------------------------------------------
@@ -33,11 +32,7 @@ diskAvail heapPercent heapMax ramPercent  ramMax load
    72.2gb        64.9  93.9mb         84 239.1mb 0.12
 --------------------------------------------------
 
-The last columns provide ancillary information that can often be
-useful when looking at the cluster as a whole, particularly large
-ones.  How many master-eligible nodes do I have?  How many client
-nodes?  It looks like someone restarted a node recently; which one was
-it?
+当我们将集群作为一个整体,一个特别大的整体来看时, 最后的几列提供了很有用的辅助信息.  我有多少有资格当选 master 的节点?  有多少客户端节点?  看起来像是某个人最近重启了一个节点;到底是谁呢?
 
 [source,sh]
 --------------------------------------------------
@@ -48,22 +43,13 @@ uptime data/client master name
 --------------------------------------------------
 
 [float]
-=== Columns
+=== 列
 
-Below is an exhaustive list of the existing headers that can be
-passed to `nodes?h=` to retrieve the relevant details in ordered
-columns.  If no headers are specified, then those marked to Appear
-by Default will appear. If any header is specified, then the defaults
-are not used.
+下面是现有头部的一个详细列表, 它们可以传递给 `nodes?h=` 来在有序列中解析相关的信息.  如果没有指定头部, 那么那些标记为默认显示的将会显示. 如果指定了任意一个头部, 则不会使用默认值.
 
-Aliases can be used in place of the full header name for brevity.
-Columns appear in the order that they are listed below unless a
-different order is specified (e.g., `h=pid,id` versus `h=id,pid`).
+为了尽量简洁, 可以使用别名来代替头部的全名.列按照下面列举出来的顺序显示, 除非指定一个不同的顺序 (例如, `h=attr,value` 相对于 `h=value,attr`).
 
-When specifying headers, the headers are not placed in the output
-by default.  To have the headers appear in the output, use verbose
-mode (`v`). The header name will match the supplied value (e.g.,
-`pid` versus `p`).  For example:
+当指定了头部时, 这个头部默认不会放置在输出中. 想要让头部显示在输出中, 使用 verbose 模式 (`v`). 头部名称将会匹配提供的值 (例如, `pid` 相对于 `p`).  例如
 
 ["source","sh",subs="attributes,callouts"]
 --------------------------------------------------
@@ -80,120 +66,79 @@ k0zy 192.168.56.10 9300 {version} m
 
 [cols="<,<,<,<,<",options="header",subs="normal"]
 |=======================================================================
-|Header |Alias |Appear by Default |Description |Example
-|`id` |`nodeId` |No |Unique node ID |k0zy
-|`pid` |`p` |No |Process ID |13061
-|`host` |`h` |Yes |Host name |n1
-|`ip` |`i` |Yes |IP address |127.0.1.1
-|`port` |`po` |No |Bound transport port |9300
-|`version` |`v` |No |Elasticsearch version |{version}
-|`build` |`b` |No |Elasticsearch Build hash |5c03844
-|`jdk` |`j` |No |Running Java version |1.8.0
-|`disk.avail` |`d`, `disk`, `diskAvail` |No |Available disk space |1.8gb
-|`heap.current` |`hc`, `heapCurrent` |No |Used heap |311.2mb
-|`heap.percent` |`hp`, `heapPercent` |Yes |Used heap percentage |7
-|`heap.max` |`hm`, `heapMax` |No |Maximum configured heap |1015.6mb
-|`ram.current` |`rc`, `ramCurrent` |No |Used total memory |513.4mb
-|`ram.percent` |`rp`, `ramPercent` |Yes |Used total memory percentage |47
-|`ram.max` |`rm`, `ramMax` |No |Total memory |2.9gb
-|`file_desc.current` |`fdc`, `fileDescriptorCurrent` |No |Used file
-descriptors |123
-|`file_desc.percent` |`fdp`, `fileDescriptorPercent` |Yes |Used file
-descriptors percentage |1
-|`file_desc.max` |`fdm`, `fileDescriptorMax` |No |Maximum number of file
-descriptors |1024
-|`load` |`l` |No |Most recent load average |0.22
-|`uptime` |`u` |No |Node uptime |17.3m
-|`node.role` |`r`, `role`, `dc`, `nodeRole` |Yes |Data node (d); Client
-node (c) |d
-|`master` |`m` |Yes |Current master (*); master eligible (m) |m
-|`name` |`n` |Yes |Node name |Venom
-|`completion.size` |`cs`, `completionSize` |No |Size of completion |0b
-|`fielddata.memory_size` |`fm`, `fielddataMemory` |No |Used fielddata
-cache memory |0b
-|`fielddata.evictions` |`fe`, `fielddataEvictions` |No |Fielddata cache
-evictions |0
-|`filter_cache.memory_size` |`fcm`, `filterCacheMemory` |No |Used filter
-cache memory |0b
-|`filter_cache.evictions` |`fce`, `filterCacheEvictions` |No |Filter
-cache evictions |0
-|`flush.total` |`ft`, `flushTotal` |No |Number of flushes |1
-|`flush.total_time` |`ftt`, `flushTotalTime` |No |Time spent in flush |1
-|`get.current` |`gc`, `getCurrent` |No |Number of current get
-operations |0
-|`get.time` |`gti`, `getTime` |No |Time spent in get |14ms
-|`get.total` |`gto`, `getTotal` |No |Number of get operations |2
-|`get.exists_time` |`geti`, `getExistsTime` |No |Time spent in
-successful gets |14ms
-|`get.exists_total` |`geto`, `getExistsTotal` |No |Number of successful
-get operations |2
-|`get.missing_time` |`gmti`, `getMissingTime` |No |Time spent in failed
-gets |0s
-|`get.missing_total` |`gmto`, `getMissingTotal` |No |Number of failed
-get operations |1
-|`indexing.delete_current` |`idc`, `indexingDeleteCurrent` |No |Number
-of current deletion operations |0
-|`indexing.delete_time` |`idti`, `indexingDeleteTime` |No |Time spent in
-deletions |2ms
-|`indexing.delete_total` |`idto`, `indexingDeleteTotal` |No |Number of
-deletion operations |2
-|`indexing.index_current` |`iic`, `indexingIndexCurrent` |No |Number
-of current indexing operations |0
-|`indexing.index_time` |`iiti`, `indexingIndexTime` |No |Time spent in
-indexing |134ms
-|`indexing.index_total` |`iito`, `indexingIndexTotal` |No |Number of
-indexing operations |1
-|`merges.current` |`mc`, `mergesCurrent` |No |Number of current
-merge operations |0
-|`merges.current_docs` |`mcd`, `mergesCurrentDocs` |No |Number of
-current merging documents |0
-|`merges.current_size` |`mcs`, `mergesCurrentSize` |No |Size of current
-merges |0b
-|`merges.total` |`mt`, `mergesTotal` |No |Number of completed merge
-operations |0
-|`merges.total_docs` |`mtd`, `mergesTotalDocs` |No |Number of merged
-documents |0
-|`merges.total_size` |`mts`, `mergesTotalSize` |No |Size of current
-merges |0b
-|`merges.total_time` |`mtt`, `mergesTotalTime` |No |Time spent merging
-documents |0s
-|`percolate.current` |`pc`, `percolateCurrent` |No |Number of current
-percolations |0
-|`percolate.memory_size` |`pm`, `percolateMemory` |No |Memory used by
-current percolations |0b
-|`percolate.queries` |`pq`, `percolateQueries` |No |Number of
-registered percolation queries |0
-|`percolate.time` |`pti`, `percolateTime` |No |Time spent
-percolating |0s
-|`percolate.total` |`pto`, `percolateTotal` |No |Total percolations |0
-|`refresh.total` |`rto`, `refreshTotal` |No |Number of refreshes |16
-|`refresh.time` |`rti`, `refreshTime` |No |Time spent in refreshes |91ms
-|`script.compilations` |`scrcc`, `scriptCompilations` |No |Total script compilations |17
-|`script.cache_evictions` |`scrce`, `scriptCacheEvictions` |No |Total compiled scripts evicted from cache |6
-|`search.fetch_current` |`sfc`, `searchFetchCurrent` |No |Current fetch
-phase operations |0
-|`search.fetch_time` |`sfti`, `searchFetchTime` |No |Time spent in fetch
-phase |37ms
-|`search.fetch_total` |`sfto`, `searchFetchTotal` |No |Number of fetch
-operations |7
-|`search.open_contexts` |`so`, `searchOpenContexts` |No |Open search
-contexts |0
-|`search.query_current` |`sqc`, `searchFetchCurrent` |No |Current query
-phase operations |0
-|`search.query_time` |`sqti`, `searchFetchTime` |No |Time spent in query
-phase |43ms
-|`search.query_total` |`sqto`, `searchFetchTotal` |No |Number of query
-operations |9
-|`search.scroll_current` |`scc`, `searchScrollCurrent` |No |Open scroll contexts |2
-|`search.scroll_time` |`scti`, `searchScrollTime` |No |Time scroll contexts held open|2m
-|`search.scroll_total` |`scto`, `searchScrollTotal` |No |Completed scroll contexts |1
-|`segments.count` |`sc`, `segmentsCount` |No |Number of segments |4
-|`segments.memory` |`sm`, `segmentsMemory` |No |Memory used by
-segments |1.4kb
-|`segments.index_writer_memory` |`siwm`, `segmentsIndexWriterMemory` |No
-|Memory used by index writer |18mb
-|`segments.index_writer_max_memory` |`siwmx`, `segmentsIndexWriterMaxMemory` |No
-|Maximum memory index writer may use before it must write buffered documents to a new segment |32mb
-|`segments.version_map_memory` |`svmm`, `segmentsVersionMapMemory` |No
-|Memory used by version map |1.0kb
+|头部 |别名 |默认显示 |描述 |示例
+|`id` |`nodeId` |No |唯一的节点 ID |k0zy
+|`pid` |`p` |No |进程 ID |13061
+|`host` |`h` |Yes |主机名 |n1
+|`ip` |`i` |Yes |IP地址 |127.0.1.1
+|`port` |`po` |No |绑定的传输端口 |9300
+|`version` |`v` |No |Elasticsearch 版本 |{version}
+|`build` |`b` |No |Elasticsearch 构建的散列码 |5c03844
+|`jdk` |`j` |No |运行的 Java 版本 |1.8.0
+|`disk.avail` |`d`, `disk`, `diskAvail` |No |可用的磁盘空间 |1.8gb
+|`heap.current` |`hc`, `heapCurrent` |No |已使用的堆内存大小 |311.2mb
+|`heap.percent` |`hp`, `heapPercent` |Yes |已使用的堆内存百分比 |7
+|`heap.max` |`hm`, `heapMax` |No |配置堆内存最大值 |1015.6mb
+|`ram.current` |`rc`, `ramCurrent` |No |已使用的总内存 |513.4mb
+|`ram.percent` |`rp`, `ramPercent` |Yes |已使用的总内存百分比 |47
+|`ram.max` |`rm`, `ramMax` |No |总内存 |2.9gb
+|`file_desc.current` |`fdc`, `fileDescriptorCurrent` |No |已使用的文件描述符数量 |123
+|`file_desc.percent` |`fdp`, `fileDescriptorPercent` |Yes |已使用的文件描述符百分比 |1
+|`file_desc.max` |`fdm`, `fileDescriptorMax` |No |文件描述符数量的最大值 |1024
+|`load` |`l` |No |最近平均负载 |0.22
+|`uptime` |`u` |No |节点正常运行的时间 |17.3m
+|`node.role` |`r`, `role`, `dc`, `nodeRole` |Yes |数据节点 (d); 客户端节点 (c) |d
+|`master` |`m` |Yes |当前的master (*); 有资格当选master (m) |m
+|`name` |`n` |Yes |节点名称 |Venom
+|`completion.size` |`cs`, `completionSize` |No |完整的大小 |0b
+|`fielddata.memory_size` |`fm`, `fielddataMemory` |No |已使用的 fielddata 缓存内存大小 |0b
+|`fielddata.evictions` |`fe`, `fielddataEvictions` |No |Fielddata 缓存清除数量 |0
+|`filter_cache.memory_size` |`fcm`, `filterCacheMemory` |No |已使用的过滤器缓存内存大小 |0b
+|`filter_cache.evictions` |`fce`, `filterCacheEvictions` |No |过滤器缓存清楚数量 |0
+|`flush.total` |`ft`, `flushTotal` |No |刷新次数 |1
+|`flush.total_time` |`ftt`, `flushTotalTime` |No |刷新耗费的时间 |1
+|`get.current` |`gc`, `getCurrent` |No |当前 get 操作数量 |0
+|`get.time` |`gti`, `getTime` |No |get 操作耗费的时间 |14ms
+|`get.total` |`gto`, `getTotal` |No |get 操作总次数 |2
+|`get.exists_time` |`geti`, `getExistsTime` |No |成功的get耗费的时间 |14ms
+|`get.exists_total` |`geto`, `getExistsTotal` |No |get操作成功的次数 |2
+|`get.missing_time` |`gmti`, `getMissingTime` |No |失败的get耗费的时间 |0s
+|`get.missing_total` |`gmto`, `getMissingTotal` |No |get操作失败的次数 |1
+|`indexing.delete_current` |`idc`, `indexingDeleteCurrent` |No |当前删除操作次数 |0
+|`indexing.delete_time` |`idti`, `indexingDeleteTime` |No |删除操作耗费的时间 |2ms
+|`indexing.delete_total` |`idto`, `indexingDeleteTotal` |No |删除操作次数 |2
+|`indexing.index_current` |`iic`, `indexingIndexCurrent` |No |当前索引操作次数 |0
+|`indexing.index_time` |`iiti`, `indexingIndexTime` |No |索引操作耗费的时间 |134ms
+|`indexing.index_total` |`iito`, `indexingIndexTotal` |No |索引操作总次数 |1
+|`merges.current` |`mc`, `mergesCurrent` |No |当前合并操作次数 |0
+|`merges.current_docs` |`mcd`, `mergesCurrentDocs` |No |当前合并的文档数量 |0
+|`merges.current_size` |`mcs`, `mergesCurrentSize` |No |当前合并的大小 |0b
+|`merges.total` |`mt`, `mergesTotal` |No |完成的合并操作次数 |0
+|`merges.total_docs` |`mtd`, `mergesTotalDocs` |No |合并的文档总数 |0
+|`merges.total_size` |`mts`, `mergesTotalSize` |No |当前合并的总大小 |0b
+|`merges.total_time` |`mtt`, `mergesTotalTime` |No |合并文档耗费的总时间 |0s
+|`percolate.current` |`pc`, `percolateCurrent` |No |当前过滤操作次数 |0
+|`percolate.memory_size` |`pm`, `percolateMemory` |No |当前过滤操作使用的内存大小 |0b
+|`percolate.queries` |`pq`, `percolateQueries` |No |已注册的过滤查询次数 |0
+|`percolate.time` |`pti`, `percolateTime` |No |过滤耗费的时间 |0s
+|`percolate.total` |`pto`, `percolateTotal` |No |过滤操作总次数 |0
+|`refresh.total` |`rto`, `refreshTotal` |No |刷新总次数 |16
+|`refresh.time` |`rti`, `refreshTime` |No |刷新耗费的时间 |91ms
+|`script.compilations` |`scrcc`, `scriptCompilations` |No |脚本编译总数 |17
+|`script.cache_evictions` |`scrce`, `scriptCacheEvictions` |No |缓存中清除的编译脚本总数 |6
+|`search.fetch_current` |`sfc`, `searchFetchCurrent` |No |当前读取阶段操作次数 |0
+|`search.fetch_time` |`sfti`, `searchFetchTime` |No |读取阶段耗费的时间 |37ms
+|`search.fetch_total` |`sfto`, `searchFetchTotal` |No |fetch操作次数 |7
+|`search.open_contexts` |`so`, `searchOpenContexts` |No |打开搜索上下文次数 |0
+|`search.query_current` |`sqc`, `searchFetchCurrent` |No |当前查询阶段操作次数 |0
+|`search.query_time` |`sqti`, `searchFetchTime` |No |查询阶段耗费的时间 |43ms
+|`search.query_total` |`sqto`, `searchFetchTotal` |No |查询操作总次数 |9
+|`search.scroll_current` |`scc`, `searchScrollCurrent` |No |打开的滚动上下文数量 |2
+|`search.scroll_time` |`scti`, `searchScrollTime` |No |保持打开的滚动上下文时间|2m
+|`search.scroll_total` |`scto`, `searchScrollTotal` |No |完成的滚动上下文数量 |1
+|`segments.count` |`sc`, `segmentsCount` |No |分段的数量 |4
+|`segments.memory` |`sm`, `segmentsMemory` |No |分段使用的内存 |1.4kb
+|`segments.index_writer_memory` |`siwm`, `segmentsIndexWriterMemory` |No |index writer使用的内存大小 |18mb
+|`segments.index_writer_max_memory` |`siwmx`, `segmentsIndexWriterMaxMemory` |No |在将缓冲的文档写道新的分段之前index writer 可以使用的最大内存 |32mb
+|`segments.version_map_memory` |`svmm`, `segmentsVersionMapMemory` |No |版本映射使用的内存大小 |1.0kb
 |=======================================================================
