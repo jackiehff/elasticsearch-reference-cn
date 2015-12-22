@@ -1,18 +1,12 @@
 [[cluster-nodes-hot-threads]]
-== Nodes hot_threads
+== 节点热点线程
 
-An API allowing to get the current hot threads on each node in the
-cluster. Endpoints are `/_nodes/hot_threads`, and
-`/_nodes/{nodesIds}/hot_threads`.
+允许获取集群中每个节点上当前热点线程的一个API. 端点是 `/_nodes/hot_threads` 和 `/_nodes/{nodesIds}/hot_threads`.
 
-The output is plain text with a breakdown of each node's top hot
-threads. Parameters allowed are:
+输出的是一个纯文本, 它带有每个节点的最热线程的分类. 允许的参数有:
 
 [horizontal]
-`threads`:: 	number of hot threads to provide, defaults to 3.
-`interval`:: 	the interval to do the second sampling of threads.
-				Defaults to 500ms.
-`type`:: 		The type to sample, defaults to cpu, but supports wait and
-				block to see hot threads that are in wait or block state.
-`ignore_idle_threads`::    If true, known idle threads (e.g. waiting in a socket select, or to
-			   get a task from an empty queue) are filtered out.  Defaults to true.
+`threads`:: 	提供的热点线程数量, 默认值为 3.
+`interval`:: 	进行第二次线程数据采样的时间间隔.默认值是 500ms.
+`type`:: 		采样类型, 默认值是 cpu, 但是也支持 wait 和 block 来查看 wait 或 block 状态的热点线程.
+`ignore_idle_threads`::    如果为true, 已知的 idle 线程 (例如, 在一个套接字选择中等待, 或从一个空的队列中获取任务) 会被过滤掉. 默认值为 true.

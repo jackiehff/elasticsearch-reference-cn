@@ -1,18 +1,14 @@
 [[cluster-pending]]
-== Pending cluster tasks
+== 等待的集群任务
 
-The pending cluster tasks API returns a list of any cluster-level changes
-(e.g. create index, update mapping, allocate or fail shard) which have not yet
-been executed.
+等待的集群任务 API 返回任何集群级别的还未被执行的变更列表(例如创建索引, 更新映射, 分配或丢弃分片) .
 
 [source,js]
 --------------------------------------------------
 $ curl -XGET 'http://localhost:9200/_cluster/pending_tasks'
 --------------------------------------------------
 
-Usually this will return an empty list as cluster-level changes are usually
-fast. However if there are tasks queued up, the output will look something
-like this:
+通常它会返回一个空的列表, 因为集群级别的变更通常很快. 然而如果有任务在排队, 输出看起来将会像下面这样:
 
 [source,js]
 --------------------------------------------------

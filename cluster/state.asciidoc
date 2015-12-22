@@ -1,61 +1,56 @@
 [[cluster-state]]
-== Cluster State
+== 集群状态
 
-The cluster state API allows to get a comprehensive state information of
-the whole cluster.
+集群状态 API 允许获取整个集群的一个全面的状态信息.
 
 [source,js]
 --------------------------------------------------
 $ curl -XGET 'http://localhost:9200/_cluster/state'
 --------------------------------------------------
 
-By default, the cluster state request is routed to the master node, to
-ensure that the latest cluster state is returned.   
-For debugging purposes, you can retrieve the cluster state local to a
-particular node by adding `local=true` to the  query string.
+为了确保返回最新的集群状态, 集群状态请求默认会路由到 master 节点.
+出于调试目的, 通过给查询字符串增加 `local=true` 你可以检索本地特定节点的集群状态.
 
 [float]
-=== Response Filters
+=== 响应过滤器
 
-As the cluster state can grow (depending on the number of shards and indices, your mapping, templates),
-it is possible to filter the cluster state response specifying the parts in the URL.
+由于集群状态可以增长 (取决于分片和索引, 映射以及模板数量), 可以通过在URL中指定想要的部分来过滤集群状态响应.
 
 [source,js]
 --------------------------------------------------
 $ curl -XGET 'http://localhost:9200/_cluster/state/{metrics}/{indices}'
 --------------------------------------------------
 
-`metrics` can be a comma-separated list of
+`metrics` 可以是逗号分隔的列表
 
 `version`::
-    Shows the cluster state version.
+    显示集群状态版本.
 
 `master_node`::
-    Shows the elected `master_node` part of the response
+    显示响应的当选 `master_node` 部分
 
 `nodes`::
-    Shows the `nodes` part of the response
+    显示响应的 `nodes` 部分
 
 `routing_table`::
-    Shows the `routing_table` part of the response. If you supply a comma separated list of indices, the returned output will only contain the indices listed.
+    显示响应的 `routing_table` 部分. 如果你提供一个逗号分隔的索引列表, 返回的输出结果将只包含列举出的索引.
 
 `metadata`::
-    Shows the `metadata` part of the response. If you supply a comma separated list of indices, the returned output will only contain the indices listed.
+    显示响应的 `metadata` 部分. 如果你提供一个逗号分隔的索引列表, 返回的输出结果将只包含列举出的索引.
 
 `blocks`::
-    Shows the `blocks` part of the response
+    显示响应的 `blocks` 部分
 
-A couple of example calls:
+几个示例调用:
 
 [source,js]
 --------------------------------------------------
-# return only metadata and routing_table data for specified indices
+# 仅返回指定索引的 metadata 和 routing_table 数据
 $ curl -XGET 'http://localhost:9200/_cluster/state/metadata,routing_table/foo,bar'
 
-# return everything for these two indices
+# 返回这两个索引的所有信息
 $ curl -XGET 'http://localhost:9200/_cluster/state/_all/foo,bar'
 
-# Return only blocks data
+# 仅返回 blocks 数据
 $ curl -XGET 'http://localhost:9200/_cluster/state/blocks'
 --------------------------------------------------
-

@@ -1,28 +1,25 @@
 [[cluster]]
-= Cluster APIs
+= 集群API
 
 [partintro]
 --
 ["float",id="cluster-nodes"]
-== Node specification
+== 节点规范
 
-Most cluster level APIs allow to specify which nodes to execute on (for
-example, getting the node stats for a node). Nodes can be identified in
-the APIs either using their internal node id, the node name, address,
-custom attributes, or just the `_local` node receiving the request. For
-example, here are some sample executions of nodes info:
+大多数集群级别的 API 允许指定在哪个节点上执行 (例如, 为节点获取节点统计信息). 可以在 API 中标识节点, 要么使用它们内部的节点ID, 节点名称, 地址,
+自定义属性, 要么只使用 `_local` 节点接收请求. 例如, 下面是节点信息的一些执行示例:
 
 [source,js]
 --------------------------------------------------
-# Local
+# 本地
 curl localhost:9200/_nodes/_local
-# Address
+# 地址
 curl localhost:9200/_nodes/10.0.0.3,10.0.0.4
 curl localhost:9200/_nodes/10.0.0.*
-# Names
+# 名称
 curl localhost:9200/_nodes/node_name_goes_here
 curl localhost:9200/_nodes/node_name_goes_*
-# Attributes (set something like node.rack: 2 in the config)
+# 属性 (在配置中设置像 node.rack: 2 这样的东西)
 curl localhost:9200/_nodes/rack:2
 curl localhost:9200/_nodes/ra*:2
 curl localhost:9200/_nodes/ra*:2*

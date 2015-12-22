@@ -1,9 +1,7 @@
 [[cluster-update-settings]]
-== Cluster Update Settings
+== 集群更新设置
 
-Allows to update cluster wide specific settings. Settings updated can
-either be persistent (applied cross restarts) or transient (will not
-survive a full cluster restart). Here is an example:
+允许更新整个集群特定的设置. 设置更新可以是持久的 (在重启时可以应用) 或者瞬时的 (在整个集群重启时丢失). 下面是一个示例:
 
 [source,js]
 --------------------------------------------------
@@ -14,7 +12,7 @@ curl -XPUT localhost:9200/_cluster/settings -d '{
 }'
 --------------------------------------------------
 
-Or:
+或:
 
 [source,js]
 --------------------------------------------------
@@ -25,8 +23,7 @@ curl -XPUT localhost:9200/_cluster/settings -d '{
 }'
 --------------------------------------------------
 
-The cluster responds with the settings updated. So the response for the
-last example will be:
+当设置更新时集群会做出反应. 所以后面一个示例的响应将会是:
 
 [source,js]
 --------------------------------------------------
@@ -38,7 +35,7 @@ last example will be:
 }'
 --------------------------------------------------
 
-Cluster wide settings can be returned using:
+整个集群的设置可以使用如下方式返回:
 
 [source,js]
 --------------------------------------------------
@@ -46,6 +43,4 @@ curl -XGET localhost:9200/_cluster/settings
 --------------------------------------------------
 
 
-A list of dynamically updatable settings can be found in the
-<<modules,Modules>> documentation.
-
+可动态更新的设置列表可以在 <<modules,Modules>> 文档中找到.

@@ -1,13 +1,9 @@
 [[cluster-reroute]]
-== Cluster Reroute
+== 集群重路由
 
-The reroute command allows to explicitly execute a cluster reroute
-allocation command including specific commands. For example, a shard can
-be moved from one node to another explicitly, an allocation can be
-canceled, or an unassigned shard can be explicitly allocated on a
-specific node.
+重路由命令允许显示地执行一个一个集群重路由分配命令, 包括特定的命令. 例如, 分片可以显示地从一个节点移动到另一个节点, 分配可以被取消, 或者一个未分配的分片可以显示地被分配到一个特定的节点上.
 
-Here is a short example of how a simple reroute API call:
+下面是一个简单的重路由API如何调用的简短示例:
 
 [source,js]
 --------------------------------------------------
@@ -28,50 +24,25 @@ curl -XPOST 'localhost:9200/_cluster/reroute' -d '{
 }'
 --------------------------------------------------
 
-An important aspect to remember is the fact that once when an allocation
-occurs, the cluster will aim at re-balancing its state back to an even
-state. For example, if the allocation includes moving a shard from
-`node1` to `node2`, in an `even` state, then another shard will be moved
-from `node2` to `node1` to even things out.
+一个要记住的很重要的方面是一旦当分配发生时, 集群将会旨在重新平衡它的状态回到一个 even 状态. 例如, 如果分配包括从 `node1` 移动一个分片到 `node2`, 在一个 `even` 状态,
+那么另一个分片将会从 `node2` 移动到 `node1` 到 to even things out.
 
-The cluster can be set to disable allocations, which means that only the
-explicitly allocations will be performed. Obviously, only once all
-commands has been applied, the cluster will aim to be re-balance its
-state.
+集群可以设置禁用分配, 这意味着只有显示的分配才会被执行. 很显然地, 只有一旦所有命令被应用, 集群将计划重新平衡它的状态.
 
-Another option is to run the commands in `dry_run` (as a URI flag, or in
-the request body). This will cause the commands to apply to the current
-cluster state, and return the resulting cluster after the commands (and
-re-balancing) has been applied.
+另一个选项是在 `dry_run` 中运行这个命令 (作为一个 URI 标识, 或者在请求体中). 这将导致命令应用到当前的集群状态, 并且在应用命令 (以及重新平衡) 之后生成的集群返回.
 
-If the `explain` parameter is specified, a detailed explanation of why the
-commands could or could not be executed is returned.
+如果指定了 `explain` 参数, 将返回关于为什么命令可以或不可以被执行的一个详细的解释.
 
-The commands supported are:
+支持的命令有:
 
 `move`::
-    Move a started shard from one node to another node. Accepts
-    `index` and `shard` for index name and shard number, `from_node` for the
-    node to move the shard `from`, and `to_node` for the node to move the
-    shard to.
+    将一个已启动的分片从一个节点移动到另一个节点. 对于索引名称和分片数量接受 `index` 和 `shard` , `from_node` 指定分片从哪个节点移动出来的, 以及 `to_node` 指定分片要移动到的节点.
 
 `cancel`::
-    Cancel allocation of a shard (or recovery). Accepts `index`
-    and `shard` for index name and shard number, and `node` for the node to
-    cancel the shard allocation on. It also accepts `allow_primary` flag to
-    explicitly specify that it is allowed to cancel allocation for a primary
-    shard.  This can be used to force resynchronization of existing replicas
-    from the primary shard by cancelling them and allowing them to be
-    reinitialized through the standard reallocation process.
+    取消分片的分配 (或恢复). 对于索引名称和分片数量接受 `index` 和 `shard`, 以及 `node` 指定取消分片分配所在的节点. 它还接受 `allow_primary` 标识
+    来显示地指定它允许为一个主分片取消分配. 这可以用来强制从主分片重新同步已存在的副本, 通过取消它们以及允许它们通过标准的重新分配过程重新初始化.
 
 `allocate`::
-    Allocate an unassigned shard to a node. Accepts the
-    `index` and `shard` for index name and shard number, and `node` to
-    allocate the shard to. It also accepts `allow_primary` flag to
-    explicitly specify that it is allowed to explicitly allocate a primary
-    shard (might result in data loss).
+    给节点分配一个未分配的分片. 对于索引名称和分片数量接受 `index` 和 `shard` , 以及 `node` 来分配分片到的节点. 它还接受 `allow_primary` 标识来显示地指定它可以被允许显示地分配一个主分片 (可能会导致数据丢失).
 
-WARNING: The `allow_primary` parameter will force a new _empty_ primary shard
-to be allocated *without any data*. If a node which has a copy of the original
-primary shard (including data) rejoins the cluster later on, that data will be
-deleted: the old shard copy will be replaced by the new live shard copy.
+WARNING: `allow_primary` 参数将强制分配一个 *没有任何数据* 的新的 _empty_ 主分片. 如果一个有原始主分片 (包括数据) 的一个副本的节点后来重新加入到集群中, 那么数据将会被删除: 原来的分片副本将会被新生的分片副本所替代.
