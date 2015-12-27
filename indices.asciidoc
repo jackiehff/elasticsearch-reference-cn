@@ -1,15 +1,13 @@
 [[indices]]
-= Indices APIs
+= 索引API
 
 [partintro]
 --
-The indices APIs are used to manage individual indices,
-index settings, aliases, mappings, index templates
-and warmers.
+索引 API 用来管理单个的索引,索引设置, 别名, 映射, 索引模板以及warmers.
 
 [float]
 [[index-management]]
-== Index management:
+== 索引管理:
 
 * <<indices-create-index>>
 * <<indices-delete-index>>
@@ -19,7 +17,7 @@ and warmers.
 
 [float]
 [[mapping-management]]
-== Mapping management:
+== 映射管理:
 
 * <<indices-put-mapping>>
 * <<indices-get-mapping>>
@@ -28,12 +26,12 @@ and warmers.
 
 [float]
 [[alias-management]]
-== Alias management:
+== 别名管理:
 * <<indices-aliases>>
 
 [float]
 [[index-settings]]
-== Index settings:
+== 索引设置:
 * <<indices-update-settings>>
 * <<indices-get-settings>>
 * <<indices-analyze>>
@@ -42,12 +40,12 @@ and warmers.
 
 [float]
 [[shadow-replicas]]
-== Replica configurations
+== 副本配置
 * <<indices-shadow-replicas>>
 
 [float]
 [[monitoring]]
-== Monitoring:
+== 监控:
 * <<indices-stats>>
 * <<indices-segments>>
 * <<indices-recovery>>
@@ -55,7 +53,7 @@ and warmers.
 
 [float]
 [[status-management]]
-== Status management:
+== 状态管理:
 * <<indices-clearcache>>
 * <<indices-refresh>>
 * <<indices-flush>>
@@ -113,4 +111,3 @@ include::indices/refresh.asciidoc[]
 include::indices/optimize.asciidoc[]
 
 include::indices/upgrade.asciidoc[]
-

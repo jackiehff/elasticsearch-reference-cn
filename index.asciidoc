@@ -1,5 +1,5 @@
 [[elasticsearch-reference]]
-= Elasticsearch Reference
+= Elasticsearch 参考文档
 
 :version:   2.0.0
 :branch:    2.0
@@ -47,7 +47,3 @@ include::glossary.asciidoc[]
 include::release-notes.asciidoc[]
 
 include::redirects.asciidoc[]
-
-
-
-

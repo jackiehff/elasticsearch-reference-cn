@@ -1,20 +1,16 @@
 [[search]]
-= Search APIs
+= 搜索API
 
 [partintro]
 --
 
-Most search APIs are <<search-multi-index-type,multi-index&#44; multi-type>>, with the
-exception of the <<search-explain>> endpoints.
+大多数搜索API是 <<search-multi-index-type,多索引&#44; 多类型>>, 除了 <<search-explain>> 端点外.
 
 [float]
 [[search-routing]]
-== Routing
+== 路由
 
-When executing a search, it will be broadcast to all the index/indices
-shards (round robin between replicas). Which shards will be searched on
-can be controlled by providing the `routing` parameter. For example,
-when indexing tweets, the routing value can be the user name:
+当执行一个搜索时, 它会被广播到所有的索引分片 (在副本之间轮询调度). 在哪个分片上执行搜索可以由提供的 `routing` 参数控制. 例如, 当索引推文时, 路由值可以是用户名:
 
 [source,js]
 --------------------------------------------------
@@ -26,9 +22,7 @@ $ curl -XPOST 'http://localhost:9200/twitter/tweet?routing=kimchy' -d '{
 '
 --------------------------------------------------
 
-In such a case, if we want to search only on the tweets for a specific
-user, we can specify it as the routing, resulting in the search hitting
-only the relevant shard:
+在这种情况下, 如果我们只想搜索特定用户的推文, 我们可以指定它作为路由值, 这样搜索只会命中相关的分片:
 
 [source,js]
 --------------------------------------------------
@@ -49,19 +43,13 @@ $ curl -XGET 'http://localhost:9200/twitter/tweet/_search?routing=kimchy' -d '{
 '
 --------------------------------------------------
 
-The routing parameter can be multi valued represented as a comma
-separated string. This will result in hitting the relevant shards where
-the routing values match to.
+路由参数可以是多个值, 由一个逗号分隔的字符串表示. 这样会导致搜索命中路由值匹配到的多个相关的分片.
 
 [float]
 [[stats-groups]]
-== Stats Groups
+== 统计组
 
-A search can be associated with stats groups, which maintains a
-statistics aggregation per group. It can later be retrieved using the
-<<indices-stats,indices stats>> API
-specifically. For example, here is a search body request that associate
-the request with two different groups:
+搜索可以和统计组关联, 它维护了每个组的一个统计数据聚合. 后面可以使用 <<indices-stats,索引统计数据>> API专门地解析它. 例如, 下面是一个搜索体请求, 它将请求和两个不同的组关联在一起:
 
 [source,js]
 --------------------------------------------------
