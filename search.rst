@@ -1,8 +1,4 @@
-[[search]]
 = 搜索API
-
-[partintro]
---
 
 大多数搜索API是 <<search-multi-index-type,多索引&#44; 多类型>>, 除了 <<search-explain>> 端点外.
 

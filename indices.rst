@@ -1,8 +1,5 @@
-[[indices]]
 = 索引API
 
-[partintro]
---
 索引 API 用来管理单个的索引,索引设置, 别名, 映射, 索引模板以及warmers.
 
 [float]

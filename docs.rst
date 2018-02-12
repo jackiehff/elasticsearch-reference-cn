@@ -1,8 +1,4 @@
-[[docs]]
 = 文档 API
-
-[partintro]
---
 
 本节描述了下面的 CRUD API:
 

@@ -1,8 +1,5 @@
-[[testing]]
 = Testing
 
-[partintro]
---
 This section is about utilizing elasticsearch as part of your testing infrastructure.
 
 [float]

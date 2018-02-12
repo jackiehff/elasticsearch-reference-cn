@@ -1,8 +1,5 @@
-[[setup]]
 = 安装
 
-[partintro]
---
 本节包括如何安装和运行 *elasticsearch* 等内容. 如果你还没有安装过Elasticsearch, 那么首先
  http://www.elastic.co/downloads[下载]它, 然后查阅 <<setup-installation,安装>> 文档.
 

@@ -1,8 +1,5 @@
-[[api-conventions]]
 = API约定
 
-[partintro]
---
 *elasticsearch* REST API 使用 <<modules-http,HTTP协议上的JSON>>来暴露.
 
 本章列举出来的约定适用于整个 REST API, 除非另外指定.

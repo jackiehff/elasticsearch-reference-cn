@@ -1,8 +1,5 @@
-[glossary]
-[[glossary]]
 = 名词解释
 
-[glossary]
 [[glossary-analysis]] 分词 ::
 
   分词是将 <<glossary-text,文本>> 转换为

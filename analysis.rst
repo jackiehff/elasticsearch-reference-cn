@@ -1,8 +1,5 @@
-[[analysis]]
 = Analysis
 
-[partintro]
---
 The index analysis module acts as a configurable registry of Analyzers
 that can be used in order to both break indexed (analyzed) fields when a
 document is indexed and process query strings. It maps to the Lucene

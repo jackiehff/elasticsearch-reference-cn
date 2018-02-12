@@ -1,8 +1,5 @@
-[[modules]]
 = 模块
 
-[partintro]
---
 本节包含了Elasticsearch中各个功能模块。每个模块的有如下可能的配置：
 
 _static_::

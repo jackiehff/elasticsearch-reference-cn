@@ -1,8 +1,5 @@
-[[es-release-notes]]
 = Release Notes
 
-[partintro]
---
 This section summarizes the changes in each release.
 
 * <<release-notes-2.0.1>>
