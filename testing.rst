@@ -1,4 +1,6 @@
-= Testing
+########################################
+Testing
+########################################
 
 This section is about utilizing elasticsearch as part of your testing infrastructure.
 

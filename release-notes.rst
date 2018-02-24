@@ -1,4 +1,6 @@
-= Release Notes
+########################################
+Release Notes
+########################################
 
 This section summarizes the changes in each release.
 
